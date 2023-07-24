@@ -11,4 +11,7 @@ public class RootController {
     public String HealthCheck() {
         return "I'm healthy!!";
     }
+
+    @GetMapping("/test")
+    public String test(){ return "Test Complete~";}
 }

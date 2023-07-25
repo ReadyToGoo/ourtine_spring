@@ -67,7 +67,7 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     // 습관 세션 mvp 투표하기
     @Override
     public Long voteMvp(Long sessionId, User user, HabitVoteMvpRequest habitVoteMvpRequest) {
-        HabitSessionFollower habitSessionFollower = habitSessionFollowerRepository.queryGetTodayHabitSessionFollower(user.getId(), sessionId);
+        HabitSessionFollower habitSessionFollower = habitSessionFollowerRepository.queryGetHabitSessionFollower(user.getId(), sessionId);
         habitSessionFollower.voteMvp(habitVoteMvpRequest.getMvpVote());
 
         return habitVoteMvpRequest.getMvpVote();

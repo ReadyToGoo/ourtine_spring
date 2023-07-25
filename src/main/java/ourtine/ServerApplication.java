@@ -1,4 +1,4 @@
-package ourtine.server;
+package ourtine;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

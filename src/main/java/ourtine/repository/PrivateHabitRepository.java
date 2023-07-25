@@ -12,5 +12,4 @@ import java.util.List;
 @Repository
 public interface PrivateHabitRepository extends JpaRepository<PrivateHabit, Long> {
 
-
 }

@@ -14,7 +14,7 @@ import java.util.function.Function;
 
 @Repository
 public interface HashtagRepository extends JpaRepository<Hashtag,Long> {
-    @Query("select hh.hashtag from HabitHashtag hh where hh.habit.id = :habitId")
-    List<Hashtag> queryFindHabitHashtag(Long habitId);
+    @Query("select hh.hashtag.name from HabitHashtag hh where hh.habit.id = :habitId")
+    List<String> queryFindHabitHashtag(Long habitId);
 
 }

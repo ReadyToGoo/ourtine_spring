@@ -1,8 +1,8 @@
 package ourtine.domain.mapping;
 
-import ourtine.server.domain.Habit;
-import ourtine.server.domain.Hashtag;
-import ourtine.server.domain.common.BaseEntity;
+import ourtine.domain.Habit;
+import ourtine.domain.Hashtag;
+import ourtine.domain.common.BaseEntity;
 import javax.persistence.*;
 import lombok.Builder;
 import lombok.NoArgsConstructor;

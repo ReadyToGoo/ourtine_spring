@@ -1,11 +1,16 @@
 package ourtine.domain.mapping;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import ourtine.domain.Category;
 import ourtine.domain.User;
 import ourtine.domain.enums.Status;
 
 import javax.persistence.*;
-
+@Getter
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserCategory {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

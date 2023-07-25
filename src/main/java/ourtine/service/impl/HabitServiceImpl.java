@@ -4,6 +4,7 @@ import ourtine.domain.Category;
 import ourtine.domain.Habit;
 import ourtine.domain.Hashtag;
 import ourtine.domain.User;
+import ourtine.domain.enums.Day;
 import ourtine.domain.enums.Sort;
 import ourtine.domain.mapping.HabitFollowers;
 import ourtine.repository.*;
@@ -33,6 +34,18 @@ public class HabitServiceImpl implements HabitService {
     public boolean getUserIsHabitFollower(Long habitSessionId, User user) {
         Long habitId = habitSessionRepository.queryFindHabitIdBySessionId(habitSessionId);
         return habitFollowersRepository.queryExistsByUserIdAndHabitId(habitId,user.getId());
+    }
+
+    // 홈 - 팔로잉하는 습관 목록 (요일 필터링)
+    @Override
+    public Slice<HabitMyFollowingListGetResponseDto> getMyFollowingHabits(User user, Day day) {
+        Slice<Long> followingHabitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(user.getId());
+        List<Long> habitIdsOfDay = habitDaysRepository.queryFindMyHabitsByDay(followingHabitIds.toList(),day);
+        Slice<Habit> habitsOfDay = habitRepository.queryFindHabitsById(habitIdsOfDay);
+        return habitsOfDay.map(habit -> new HabitMyFollowingListGetResponseDto(
+                habit,
+                habitSessionRepository.queryFindTodaySessionIdByHabitId(habit.getId()),
+                habitSessionFollowerRepository.queryGetHabitSessionFollowerCompleteStatus(user.getId(),habit.getId())));
     }
 
     // 습관 상세 정보조회 (참여 x)

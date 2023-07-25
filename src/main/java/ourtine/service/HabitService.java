@@ -2,6 +2,7 @@ package ourtine.service;
 
 import org.springframework.data.domain.Slice;
 import ourtine.domain.User;
+import ourtine.domain.enums.Day;
 import ourtine.domain.enums.Sort;
 import ourtine.server.web.dto.response.*;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,10 @@ public interface HabitService {
     // 습관 참여 여부
     @Transactional
     public boolean getUserIsHabitFollower(Long habitSessionId, User user);
+    // 홈 - 팔로잉하는 습관 목록 (요일 필터링)
+
+    @Transactional
+    public Slice<HabitMyFollowingListGetResponseDto> getMyFollowingHabits(User user, Day day);
 
     // 습관 상세 정보조회 (참여 x)
     @Transactional

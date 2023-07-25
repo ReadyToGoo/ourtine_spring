@@ -11,8 +11,10 @@ import java.time.LocalTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class HabitFollowingListGetResponseDto {
-    private Long id;
+public class HabitMyFollowingListGetResponseDto {
+    private Long habitId;
+
+    private Long sessionId;
 
     private String title;
 
@@ -32,17 +34,19 @@ public class HabitFollowingListGetResponseDto {
 
     /*private String emoji;*/
 
-    public HabitFollowingListGetResponseDto(Habit habit){
-        this.id = habit.getId();
+    public HabitMyFollowingListGetResponseDto(Habit habit, Long sessionId, boolean completeStatus){
+        this.habitId = habit.getId();
+        this.sessionId = sessionId;
         this.title = habit.getTitle();
         this.imageUrl = habit.getImageUrl();
         this.startDate = habit.getStartDate();
         this.endDate = habit.getEndDate();
         this.startTime = habit.getStartTime();
         this.endTime = habit.getEndTime();
-    }
-
-    public void setCompleteStatus(boolean completeStatus) {
         this.completeStatus = completeStatus;
     }
+
+    /*public void setCompleteStatus(boolean completeStatus) {
+        this.completeStatus = completeStatus;
+    }*/
 }

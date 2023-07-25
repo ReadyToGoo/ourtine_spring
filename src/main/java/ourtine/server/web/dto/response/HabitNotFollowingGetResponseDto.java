@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class HabitGetResponseDto {
+public class HabitNotFollowingGetResponseDto {
     private Long id;
 
     private String title;
@@ -49,7 +49,7 @@ public class HabitGetResponseDto {
 
     private Long followerLimit;
 
-    public HabitGetResponseDto(Habit habit, List<Hashtag> hashtags, Category category, List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto){
+    public HabitNotFollowingGetResponseDto(Habit habit, List<String> hashtags, Category category, List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto){
         this.id = habit.getId();
         this.title = habit.getTitle();
         this.imageUrl = habit.getImageUrl();
@@ -59,9 +59,7 @@ public class HabitGetResponseDto {
         this.endDate = habit.getEndDate();
         this.startTime = habit.getStartTime();
         this.endTime = habit.getEndTime();
-        for (int i=0; i<hashtags.size(); i++){
-            this.hashtags.add(hashtags.get(i).getName());
-        }
+        this.hashtags = hashtags;
         this.followerList = habitFollowersGetResponseDto;
         this.followerCount = habit.getFollowerCount();
         this.followerLimit = habit.getFollowerLimit();

@@ -13,4 +13,6 @@ public class HabitFollowersGetResponseDto {
     private String nickname;
 
     private String imageUrl;
+
+    private boolean isHost;
 }

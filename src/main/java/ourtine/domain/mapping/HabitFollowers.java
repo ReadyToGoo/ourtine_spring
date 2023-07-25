@@ -1,9 +1,9 @@
 package ourtine.domain.mapping;
 
-import ourtine.server.domain.Habit;
-import ourtine.server.domain.User;
-import ourtine.server.domain.common.BaseEntity;
-import ourtine.server.domain.enums.Status;
+import ourtine.domain.Habit;
+import ourtine.domain.User;
+import ourtine.domain.common.BaseEntity;
+import ourtine.domain.enums.Status;
 import javax.persistence.*;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -29,9 +29,12 @@ public class HabitFollowers extends BaseEntity {
     private Status status = Status.ACTIVE;
 
     @Builder
-    public HabitFollowers(Habit habit, User follower, boolean notification ){
+    public HabitFollowers(Habit habit, User follower ){
         this.habit = habit;
         this.follower = follower;
+    }
+
+    public void setNotification(boolean notification) {
         this.notification = notification;
     }
 }

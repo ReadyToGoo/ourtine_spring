@@ -3,6 +3,7 @@ package ourtine.service.impl;
 import ourtine.domain.PublicHabit;
 import ourtine.domain.User;
 import ourtine.repository.PublicHabitRepository;
+import ourtine.server.web.dto.response.HabitJoinPostResponseDto;
 import ourtine.service.PublicHabitService;
 import ourtine.server.web.dto.request.HabitCreateRequestDto;
 import ourtine.server.web.dto.response.HabitCreateResponseDto;
@@ -42,6 +43,11 @@ public class PublicHabitServiceImpl implements PublicHabitService {
         }
 
         return new HabitCreateResponseDto(publicHabitRepository.save(habit).getId());
+    }
+
+    @Override
+    public HabitJoinPostResponseDto joinPublicHabit(Long habitId, User user) {
+        return null;
     }
 
 }

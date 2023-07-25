@@ -12,6 +12,6 @@ public interface PrivateHabitService {
     public HabitCreateResponseDto createPrivateHabit(HabitCreateRequestDto habitCreateRequestDto,/* MultipartFile file,*/  User user);
 
     // 습관 참여하기
-    @Transactional
-    public HabitJoinPostResponseDto joinPrivateHabit(Long habitId, User user);
+    /*@Transactional
+    public HabitJoinPostResponseDto joinPrivateHabit(Long habitId, User user);*/
 }

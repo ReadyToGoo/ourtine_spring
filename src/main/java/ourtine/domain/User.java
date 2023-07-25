@@ -30,7 +30,7 @@ public class User extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private Provider provider;
 
-    @OneToMany(mappedBy = "habit")
+    @OneToMany(mappedBy = "id")
     private List<Category> categories;
 
     @Enumerated(value = EnumType.STRING)

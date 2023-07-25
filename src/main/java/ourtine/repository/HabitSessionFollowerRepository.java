@@ -13,7 +13,7 @@ public interface HabitSessionFollowerRepository extends JpaRepository<HabitSessi
     // 팔로워의 습관 세션 입장 여부
     @Query("select count(hsf)>0 from HabitSessionFollower hsf " +
             "where hsf.follower.id = :userId " +
-            "and hsf.habitSession.id =: habitSessionId " )
+            "and hsf.habitSession.id = :habitSessionId " )
     boolean queryExistsByUserIdAndHabitSessionId (Long userId, Long habitSessionId);
 
     // 입장한 팔로워의 습관 세션 정보

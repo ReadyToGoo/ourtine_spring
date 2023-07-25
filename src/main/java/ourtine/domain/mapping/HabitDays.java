@@ -1,28 +1,28 @@
-package ourtine.domain;
+package ourtine.domain.mapping;
 
-import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ourtine.domain.Habit;
 import ourtine.domain.common.BaseEntity;
+import ourtine.domain.enums.Day;
 import ourtine.domain.enums.Status;
 
 import javax.persistence.*;
 
-@Getter
+@NoArgsConstructor
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Block extends BaseEntity {
+public class HabitDays extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne
-    @JoinColumn(name = "blocker_id",nullable = false)
-    private User blocker;
-    @ManyToOne
-    @JoinColumn(name = "blocked_id",nullable = false)
-    private User blocked;
+    @JoinColumn(name = "habit_id",nullable = false)
+    private Habit habit;
 
     @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private Day day;
+
     @Enumerated(value = EnumType.STRING)
     private Status status;
 }

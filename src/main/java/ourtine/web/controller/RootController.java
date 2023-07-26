@@ -1,4 +1,4 @@
-package ourtine.server.web.controller;
+package ourtine.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

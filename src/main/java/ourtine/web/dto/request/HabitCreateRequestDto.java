@@ -1,4 +1,4 @@
-package ourtine.server.web.dto.request;
+package ourtine.web.dto.request;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;

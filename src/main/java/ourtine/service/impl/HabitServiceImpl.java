@@ -1,5 +1,6 @@
 package ourtine.service.impl;
 
+import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.Category;
 import ourtine.domain.Habit;
 import ourtine.domain.Hashtag;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class HabitServiceImpl implements HabitService {
 
     private final HabitRepository habitRepository;

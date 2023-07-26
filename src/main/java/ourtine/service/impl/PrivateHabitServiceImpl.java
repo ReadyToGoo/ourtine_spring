@@ -1,5 +1,6 @@
 package ourtine.service.impl;
 
+import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.*;
 import ourtine.domain.mapping.HabitDays;
 import ourtine.domain.mapping.HabitFollowers;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PrivateHabitServiceImpl implements PrivateHabitService {
 
     private final PrivateHabitRepository privateHabitRepository;

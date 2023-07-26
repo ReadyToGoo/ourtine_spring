@@ -8,12 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 import ourtine.server.web.dto.response.HabitJoinPostResponseDto;
 
 public interface PublicHabitService {
-    // 습관생성하기
+    // 습관 생성하기
     @Transactional
     public HabitCreateResponseDto createPublicHabit(HabitCreateRequestDto habitCreateRequestDto,/* MultipartFile file,*/  User user);
 
     // 습관 참여하기
-    @Transactional
+    // @Transactional
     public HabitJoinPostResponseDto joinPublicHabit(Long habitId, User user);
 
 }

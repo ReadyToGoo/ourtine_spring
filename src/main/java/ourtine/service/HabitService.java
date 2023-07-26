@@ -10,37 +10,36 @@ import org.springframework.transaction.annotation.Transactional;
 public interface HabitService {
 
     // 습관 참여 여부
-    @Transactional
+    // @Transactional
     public boolean getUserIsHabitFollower(Long habitSessionId, User user);
-    // 홈 - 팔로잉하는 습관 목록 (요일 필터링)
 
-    @Transactional
+    // 홈 - 팔로잉하는 습관 목록 (요일 필터링)
+    // @Transactional
     public Slice<HabitMyFollowingListGetResponseDto> getMyFollowingHabits(User user);
 
     // 습관 상세 정보조회 (참여 x)
-    @Transactional
+    // @Transactional
     public HabitNotFollowingGetResponseDto getNotFollowingHabit(Long habitId, User user);
 
     // 습관 상세 정보조회 (참여 o)
-    @Transactional
+    // @Transactional
     public HabitFollowingGetResponseDto getFollowingHabit(Long habitId, User user);
 
     // 친구 프로필 - 팔로잉 하는 습관 목록
-    @Transactional
+    // @Transactional
     public HabitFriendFollowingListGetResponse getFriendFollowingHabits(User friend, User me);
 
     // 유저 프로필 - 팔로잉 하는 습관 목록
-    @Transactional
+    // @Transactional
     public HabitUserFollowingListGetResponse getUserFollowingHabits(User user);
 
     // 추천 습관 목록
-    @Transactional
+    // @Transactional
     public Slice<HabitRecommendListResponseDto> getRecommendHabits(User user);
 
     //습관 참여하기
     @Transactional
     public HabitJoinPostResponseDto joinHabit(Long habitId, User user);
-
 
     //습관 알림 on
     @Transactional
@@ -50,7 +49,7 @@ public interface HabitService {
     @Transactional
     boolean offNotification(Long habitId, User user);
 
-    @Transactional
+    // @Transactional
     // 습관 검색
     public Slice<HabitSearchResponseDto> searchHabits(Sort sort, User user, String keyword);
 

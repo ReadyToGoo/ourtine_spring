@@ -10,18 +10,18 @@ import ourtine.server.web.dto.response.HabitSessionGetMvpCandidateResponse;
 import java.util.List;
 
 public interface HabitSessionService {
-    @Transactional
+    // @Transactional
     public Long createHabitSession(Long habitId, User user);
 
-    @Transactional
+    // @Transactional
     public HabitActiveSessionGetResponse getActiveHabitSession(Long habitSessionId);
 
-    @Transactional
+    // @Transactional
     public Long enterHabitSession(Long sessionId, User user);
 
-    @Transactional
+    // @Transactional
     public Long voteMvp(Long sessionId, User user, HabitVoteMvpRequest habitVoteMvpRequest);
 
-    @Transactional
+    // @Transactional
     public List<HabitSessionGetMvpCandidateResponse> getMvpCandidateList(Long sessionId);
 }

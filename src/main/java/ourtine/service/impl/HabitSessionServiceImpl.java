@@ -1,6 +1,7 @@
 package ourtine.service.impl;
 
 import org.springframework.data.domain.Slice;
+import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.Habit;
 import ourtine.domain.HabitSession;
 import ourtine.domain.User;
@@ -22,6 +23,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class HabitSessionServiceImpl implements HabitSessionService {
 
     private final HabitRepository habitRepository;

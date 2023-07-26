@@ -33,7 +33,7 @@ public class PublicHabitServiceImpl implements PublicHabitService {
 
         //Public 습관인지 검사
         PublicHabit habit = PublicHabit.builder().build();
-        if (habitCreateRequestDto.getHabitStatus()=="PUBLIC")
+        if (habitCreateRequestDto.getHabitStatus()=="Public")
         {
             Category category = categoryRepository.findByName(habitCreateRequestDto.getCategory()).orElseThrow();
             habit = PublicHabit.builder()

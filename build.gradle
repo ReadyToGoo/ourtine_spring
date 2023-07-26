@@ -33,6 +33,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	// H2
 	runtimeOnly 'com.h2database:h2'
+	// Spring Batch
+	implementation 'org.springframework.boot:spring-boot-starter-batch'
 }
 
 tasks.named('test') {

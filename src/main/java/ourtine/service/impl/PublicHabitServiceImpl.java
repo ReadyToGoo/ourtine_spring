@@ -65,7 +65,7 @@ public class PublicHabitServiceImpl implements PublicHabitService {
             habitCreateRequestDto.getHashtags().forEach(name->{
                 Hashtag hashtag;
                 if (hashtagRepository.existsByName(name)){
-                    hashtag = hashtagRepository.findHashtagByName(name);
+                    hashtag = hashtagRepository.findHashtagByName(name).orElseThrow();
                 }
                 else {
                     hashtag = Hashtag.builder().name(name).build();

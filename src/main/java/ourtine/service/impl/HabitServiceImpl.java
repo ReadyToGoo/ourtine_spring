@@ -32,6 +32,7 @@ public class HabitServiceImpl implements HabitService {
     private final HabitSessionFollowerRepository habitSessionFollowerRepository;
     private final CategoryRepository categoryRepository;
     private final HashtagRepository hashtagRepository;
+    private final HabitHashtagRepository habitHashtagRepository;
 
     // 습관 참여 여부
     @Override
@@ -56,8 +57,8 @@ public class HabitServiceImpl implements HabitService {
         }
 
         Slice<Long> followingHabitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(user.getId());
-        List<Long> habitIdsOfDay = habitDaysRepository.queryFindFollowingHabitsByDay(followingHabitIds.toList(),day);
-        Slice<Habit> habitsOfDay = habitRepository.queryFindHabitsById(habitIdsOfDay);
+        Slice<Long> habitIdsOfDay = habitDaysRepository.queryFindFollowingHabitsByDay(followingHabitIds.toList(),day);
+        Slice<Habit> habitsOfDay = habitRepository.queryFindHabitsById(habitIdsOfDay.getContent());
         return habitsOfDay.map(habit -> new HabitMyFollowingListGetResponseDto(
                 habit,
                 habitSessionRepository.queryFindTodaySessionIdByHabitId(habit.getId()),
@@ -89,7 +90,7 @@ public class HabitServiceImpl implements HabitService {
         Category category  = categoryRepository.findById(habit.getCategoryId()).get();
         List<String> hashtags= hashtagRepository.queryFindHabitHashtag(habitId);
         Slice<User> followers = habitFollowersRepository.queryFindHabitFollowers(habitId);
-        boolean notification = habitFollowersRepository.findByFollowerAndHabit(user,habit).isNotification();
+        boolean notification = habitFollowersRepository.findByFollowerAndHabit(user,habit).orElseThrow().isNotification();
 
         List<HabitFollowersGetResponseDto> habitFollowersResult =
                 followers.map(follower->new HabitFollowersGetResponseDto(
@@ -140,7 +141,7 @@ public class HabitServiceImpl implements HabitService {
     @Override
     public boolean onNotification(Long habitId, User user) {
         Habit habit = habitRepository.findById(habitId).orElseThrow();
-        HabitFollowers habitFollowers = habitFollowersRepository.findByFollowerAndHabit(user,habit);
+        HabitFollowers habitFollowers = habitFollowersRepository.findByFollowerAndHabit(user,habit).orElseThrow();
         // TODO: 에외 처리
         // if (habitFollowers.isNotification())
         habitFollowers.setNotification(true);
@@ -150,7 +151,7 @@ public class HabitServiceImpl implements HabitService {
     @Override
     public boolean offNotification(Long habitId, User user) {
         Habit habit = habitRepository.findById(habitId).orElseThrow();
-        HabitFollowers habitFollowers = habitFollowersRepository.findByFollowerAndHabit(user,habit);
+        HabitFollowers habitFollowers = habitFollowersRepository.findByFollowerAndHabit(user,habit).orElseThrow();
         // TODO: 에외 처리
         // if (!habitFollowers.isNotification())
         habitFollowers.setNotification(false);
@@ -160,19 +161,20 @@ public class HabitServiceImpl implements HabitService {
     // 습관 검색하기
     @Override
     public Slice<HabitSearchResponseDto> searchHabits(Sort sort, User user, String keyword) {
-        Slice<Habit> habits = null;
+        Slice<Habit> habits;
+        // 키워드와 일치하는 해시태그를 가진 습관 아이디 리스트
+        List<Long> habitsIdsSearchByHashtag = habitHashtagRepository.queryFindHabitIdsByHashtag(hashtagRepository.queryFindHashTagIdsByName(keyword).getContent()).getContent();
+
         if (sort == Sort.CREATED_DATE){
-            habits = habitRepository.queryFindHabitOrderByCreatedAt(user.getId(), keyword);
+            habits = habitRepository.queryFindHabitOrderByCreatedAt(user.getId(), keyword, habitsIdsSearchByHashtag);
         }
         else if (sort == Sort.START_DATE){
-            habits = habitRepository.queryFindHabitOrderByStartDate(user.getId(), keyword);
+            habits = habitRepository.queryFindHabitOrderByStartDate(user.getId(), keyword, habitsIdsSearchByHashtag);
         }
         else if (sort == Sort.RECRUITING){
-            habits = habitRepository.querySearchFindOrderByFollowerCount(user.getId(), keyword);
+            habits = habitRepository.querySearchFindOrderByFollowerCount(user.getId(), keyword, habitsIdsSearchByHashtag);
         }
-        else
-            // TODO: 에러 처리 해야함
-            habits = null;
+        else return null;
 
         return habits.map(habit -> new HabitSearchResponseDto(
                 habit,

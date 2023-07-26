@@ -10,11 +10,13 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
+
 
 @Repository
 public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,Long> {
 
-    HabitFollowers findByFollowerAndHabit(User user, Habit habit);
+    Optional<HabitFollowers> findByFollowerAndHabit(User user, Habit habit);
 
     // 습관 참여 여부
     @Query("select count(hf)>0 from HabitFollowers hf " +

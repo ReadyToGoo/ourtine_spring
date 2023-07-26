@@ -46,10 +46,10 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "where h.host.id not in (select b.blocked.id from Block b where b.blocker.id = :hostId) " +
             "and h.host.id not in (select b.blocker.id from Block b where b.blocked.id = :hostId) " +
             "and (h.title like :keyword " +
-            "or (select hh.hashtag.name from HabitHashtag hh where hh.habit.id = h.id) like :keyword) " +
+            "or h.id in :habitIds)" +
             "and h.habitStatus = 'PUBLIC'" +
             "order by h.createdAt desc")
-    Slice<Habit> queryFindHabitOrderByCreatedAt(Long hostId, String keyword);
+    Slice<Habit> queryFindHabitOrderByCreatedAt(Long hostId, String keyword, List<Long> habitIds);
 
     //검색 - 습관 시작일 순
     //차단 유저 필터링
@@ -57,11 +57,11 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "where h.host.id not in (select b.blocked.id from Block b where b.blocker.id = :hostId) " +
             "and h.host.id not in (select b.blocker.id from Block b where b.blocked.id = :hostId) " +
             "and (h.title like :keyword " +
-            "or (select hh.hashtag.name from HabitHashtag hh where hh.habit.id = h.id) like :keyword)" +
+            "or h.id in :habitIds)" +
             "and h.startDate >= CURDATE()" +
-            "and h.habitStatus = 'PUBLIC'" +
+            "and h.habitStatus = 'PUBLIC' " +
             "order by h.createdAt asc")
-    Slice<Habit> queryFindHabitOrderByStartDate(Long hostId, String keyword);
+    Slice<Habit> queryFindHabitOrderByStartDate(Long hostId, String keyword, List<Long> habitIds);
 
     // 검색 - 모집중 ( 임박한 순으로 )
     // 차단 유저 필터링
@@ -69,11 +69,11 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "where h.host.id not in (select b.blocked.id from Block b where b.blocker.id = :hostId) " +
             "and h.host.id not in (select b.blocker.id from Block b where b.blocked.id = :hostId) " +
             "and (h.title like :keyword " +
-            "or (select hh.hashtag.name from HabitHashtag hh where hh.habit.id = h.id) like :keyword)" +
+            "or h.id in :habitIds)" +
             "and h.followerLimit-h.followerCount>0" +
             "and h.habitStatus = 'PUBLIC'" +
             "order by h.followerLimit-h.followerCount asc")
-    Slice<Habit> querySearchFindOrderByFollowerCount(Long hostId, String keyword);
+    Slice<Habit> querySearchFindOrderByFollowerCount(Long hostId, String keyword, List<Long> habitIds);
 
     // 참여 - 카테고리
     // 차단 유저 필터링 & 모집중 필터

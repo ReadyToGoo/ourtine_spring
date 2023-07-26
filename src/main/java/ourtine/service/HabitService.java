@@ -41,6 +41,15 @@ public interface HabitService {
     @Transactional
     public HabitJoinPostResponseDto joinHabit(Long habitId, User user);
 
+
+    //습관 알림 on
+    @Transactional
+    boolean  onNotification(Long habitId, User user);
+
+    //습관 알림 off
+    @Transactional
+    boolean offNotification(Long habitId, User user);
+
     @Transactional
     // 습관 검색
     public Slice<HabitSearchResponseDto> searchHabits(Sort sort, User user, String keyword);

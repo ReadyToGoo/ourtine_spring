@@ -1,5 +1,6 @@
 package ourtine.domain.mapping;
 
+import lombok.Getter;
 import ourtine.domain.Habit;
 import ourtine.domain.User;
 import ourtine.domain.common.BaseEntity;
@@ -8,6 +9,7 @@ import javax.persistence.*;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
+@Getter
 @NoArgsConstructor
 @Entity
 public class HabitFollowers extends BaseEntity {
@@ -36,5 +38,9 @@ public class HabitFollowers extends BaseEntity {
 
     public void setNotification(boolean notification) {
         this.notification = notification;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }

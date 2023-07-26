@@ -14,6 +14,8 @@ import org.springframework.data.jpa.repository.Query;
 @Repository
 public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,Long> {
 
+    HabitFollowers findByFollowerAndHabit(User user, Habit habit);
+
     // 습관 참여 여부
     @Query("select count(hf)>0 from HabitFollowers hf " +
             "where hf.habit.id = :habitId " +
@@ -31,10 +33,6 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
     // 참여하고 있는 습관 정보 조회
     @Query("select hf.habit from HabitFollowers hf where hf.follower.id = :userId and hf.status='ACTIVE'")
     Slice<Habit> queryFindMyFollowingHabits(Long userId);
-
-    // 참여하고 있는 습관 아이디 조회
-    @Query("select hf.habit.id from HabitFollowers hf where hf.follower.id = :userId and hf.status='ACTIVE'")
-    Slice<Long> queryGetHabitsByUserId(Long userId);
 
     // 유저1과 유저2의 같이 하는 습관 정보 조회
     @Query("select hf.habit from HabitFollowers hf "+

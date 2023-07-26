@@ -88,12 +88,13 @@ public class HabitServiceImpl implements HabitService {
         Category category  = categoryRepository.findById(habit.getCategoryId()).get();
         List<String> hashtags= hashtagRepository.queryFindHabitHashtag(habitId);
         Slice<User> followers = habitFollowersRepository.queryFindHabitFollowers(habitId);
+        boolean notification = habitFollowersRepository.findByFollowerAndHabit(user,habit).isNotification();
 
         List<HabitFollowersGetResponseDto> habitFollowersResult =
                 followers.map(follower->new HabitFollowersGetResponseDto(
                         follower.getId(), follower.getNickname(), follower.getImageUrl(),
                         habitFollowersRepository.queryExistsByUserIdAndHabitId(habitId,follower.getId()))).toList();
-        return new HabitFollowingGetResponseDto(habit,hashtags,category,habitFollowersResult);
+        return new HabitFollowingGetResponseDto(habit,hashtags,category,habitFollowersResult,notification);
     }
 
 
@@ -132,6 +133,27 @@ public class HabitServiceImpl implements HabitService {
         HabitFollowers habitFollower = HabitFollowers.builder().follower(user).habit(habit).build();
         habitFollowersRepository.save(habitFollower);
         return new HabitJoinPostResponseDto(habitId, user.getId());
+    }
+
+    // 습관 알림 on
+    @Override
+    public boolean onNotification(Long habitId, User user) {
+        Habit habit = habitRepository.findById(habitId).orElseThrow();
+        HabitFollowers habitFollowers = habitFollowersRepository.findByFollowerAndHabit(user,habit);
+        // TODO: 에외 처리
+        // if (habitFollowers.isNotification())
+        habitFollowers.setNotification(true);
+        return habitFollowers.isNotification();
+    }
+    // 습관 알림 off
+    @Override
+    public boolean offNotification(Long habitId, User user) {
+        Habit habit = habitRepository.findById(habitId).orElseThrow();
+        HabitFollowers habitFollowers = habitFollowersRepository.findByFollowerAndHabit(user,habit);
+        // TODO: 에외 처리
+        // if (!habitFollowers.isNotification())
+        habitFollowers.setNotification(false);
+        return habitFollowers.isNotification();
     }
 
     // 습관 검색하기

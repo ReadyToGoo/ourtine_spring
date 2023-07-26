@@ -61,11 +61,14 @@ public class PublicHabitServiceImpl implements PublicHabitService {
 
             // 해시태그 DB에 저장
             habitCreateRequestDto.getHashtags().forEach(name->{
-                boolean index = false;
-                Hashtag hashtag = Hashtag.builder().name(name).build();
-                if (!index)
-                {hashtagRepository.save(hashtag);
-                    index =true;}
+                Hashtag hashtag;
+                if (hashtagRepository.existsByName(name)){
+                    hashtag = hashtagRepository.findHashtagByName(name);
+                }
+                else {
+                    hashtag = Hashtag.builder().name(name).build();
+                    hashtagRepository.saveAndFlush(hashtag);
+                }
                 // 해시태그 매핑테이블에 저장
                 HabitHashtag habitHashtag = HabitHashtag.builder().habit(savedHabit).hashtag(hashtag).build();
                 habitHashtagRepository.save(habitHashtag);
@@ -84,5 +87,6 @@ public class PublicHabitServiceImpl implements PublicHabitService {
     public HabitJoinPostResponseDto joinPublicHabit(Long habitId, User user) {
         return null;
     }
+
 
 }

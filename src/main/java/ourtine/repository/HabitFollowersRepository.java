@@ -1,6 +1,8 @@
 package ourtine.repository;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.Habit;
 import ourtine.domain.User;
 import ourtine.domain.mapping.HabitFollowers;
@@ -73,8 +75,10 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
     boolean queryGetHabitRecruitingStatus(Long habitId);
 
     // 습관 유저 삭제
+    @Modifying
+    @Transactional
     @Query("delete from HabitFollowers where follower.id = :userId and habit.id = :habitId ")
-    Long queryDeleteFollowerById (Long userId, Long habitId);
+    void queryDeleteFollowerById (Long userId, Long habitId);
 
 }
 

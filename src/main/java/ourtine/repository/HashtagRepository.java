@@ -17,4 +17,9 @@ public interface HashtagRepository extends JpaRepository<Hashtag,Long> {
     @Query("select hh.hashtag.name from HabitHashtag hh where hh.habit.id = :habitId")
     List<String> queryFindHabitHashtag(Long habitId);
 
+    // 해시태그 있는지 여부
+    boolean existsByName(String name);
+
+    Hashtag findHashtagByName(String name);
+
 }

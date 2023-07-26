@@ -19,6 +19,7 @@ public class HabitCreateRequestDto {
         @Size(min= 1, max = 25, message = "길이는 ")
         private String title; // 제목
 
+        @NotEmpty
         @Size(min= 1, max = 25, message = "길이는")
         private String detail;
 
@@ -39,7 +40,7 @@ public class HabitCreateRequestDto {
         private Long followerLimit;
 
         @NotEmpty
-        private Long categoryId;
+        private String category;
 
         @NotEmpty
         private List<String> hashtags;

@@ -1,5 +1,6 @@
 package ourtine.service.impl;
 
+import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.*;
 import ourtine.domain.enums.Day;
 import ourtine.domain.mapping.HabitDays;
@@ -18,6 +19,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PublicHabitServiceImpl implements PublicHabitService {
 
     private final PublicHabitRepository publicHabitRepository;

@@ -1,6 +1,7 @@
 package ourtine.service.impl;
 
 import org.springframework.data.domain.Slice;
+import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.Habit;
 import ourtine.domain.HabitSession;
 import ourtine.domain.User;
@@ -12,7 +13,7 @@ import ourtine.repository.HabitSessionRepository;
 import ourtine.service.HabitSessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ourtine.server.web.dto.request.HabitVoteMvpRequest;
+import ourtine.server.web.dto.request.HabitVotePostRequestDto;
 import ourtine.server.web.dto.response.HabitActiveSessionGetResponse;
 import ourtine.server.web.dto.response.HabitSessionFollowersGetResponseDto;
 import ourtine.server.web.dto.response.HabitSessionGetMvpCandidateResponse;
@@ -22,6 +23,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class HabitSessionServiceImpl implements HabitSessionService {
 
     private final HabitRepository habitRepository;
@@ -66,11 +68,11 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     }
     // 습관 세션 mvp 투표하기
     @Override
-    public Long voteMvp(Long sessionId, User user, HabitVoteMvpRequest habitVoteMvpRequest) {
+    public Long voteMvp(Long sessionId, User user, HabitVotePostRequestDto habitVotePostRequestDto) {
         HabitSessionFollower habitSessionFollower = habitSessionFollowerRepository.queryGetHabitSessionFollower(user.getId(), sessionId);
-        habitSessionFollower.voteMvp(habitVoteMvpRequest.getMvpVote());
+        habitSessionFollower.voteMvp(habitVotePostRequestDto.getMvpVote());
 
-        return habitVoteMvpRequest.getMvpVote();
+        return habitVotePostRequestDto.getMvpVote();
     }
 
     // 습관 세션 MVP 후보 조회

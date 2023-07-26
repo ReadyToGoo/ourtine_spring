@@ -1,8 +1,8 @@
 package ourtine.service.impl;
 
+import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.Category;
 import ourtine.domain.Habit;
-import ourtine.domain.Hashtag;
 import ourtine.domain.User;
 import ourtine.domain.enums.Day;
 import ourtine.domain.enums.Sort;
@@ -16,11 +16,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Calendar;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class HabitServiceImpl implements HabitService {
 
     private final HabitRepository habitRepository;
@@ -55,7 +55,7 @@ public class HabitServiceImpl implements HabitService {
         }
 
         Slice<Long> followingHabitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(user.getId());
-        List<Long> habitIdsOfDay = habitDaysRepository.queryFindMyHabitsByDay(followingHabitIds.toList(),day);
+        List<Long> habitIdsOfDay = habitDaysRepository.queryFindFollowingHabitsByDay(followingHabitIds.toList(),day);
         Slice<Habit> habitsOfDay = habitRepository.queryFindHabitsById(habitIdsOfDay);
         return habitsOfDay.map(habit -> new HabitMyFollowingListGetResponseDto(
                 habit,
@@ -88,12 +88,13 @@ public class HabitServiceImpl implements HabitService {
         Category category  = categoryRepository.findById(habit.getCategoryId()).get();
         List<String> hashtags= hashtagRepository.queryFindHabitHashtag(habitId);
         Slice<User> followers = habitFollowersRepository.queryFindHabitFollowers(habitId);
+        boolean notification = habitFollowersRepository.findByFollowerAndHabit(user,habit).isNotification();
 
         List<HabitFollowersGetResponseDto> habitFollowersResult =
                 followers.map(follower->new HabitFollowersGetResponseDto(
                         follower.getId(), follower.getNickname(), follower.getImageUrl(),
                         habitFollowersRepository.queryExistsByUserIdAndHabitId(habitId,follower.getId()))).toList();
-        return new HabitFollowingGetResponseDto(habit,hashtags,category,habitFollowersResult);
+        return new HabitFollowingGetResponseDto(habit,hashtags,category,habitFollowersResult,notification);
     }
 
 
@@ -134,39 +135,66 @@ public class HabitServiceImpl implements HabitService {
         return new HabitJoinPostResponseDto(habitId, user.getId());
     }
 
+    // 습관 알림 on
+    @Override
+    public boolean onNotification(Long habitId, User user) {
+        Habit habit = habitRepository.findById(habitId).orElseThrow();
+        HabitFollowers habitFollowers = habitFollowersRepository.findByFollowerAndHabit(user,habit);
+        // TODO: 에외 처리
+        // if (habitFollowers.isNotification())
+        habitFollowers.setNotification(true);
+        return habitFollowers.isNotification();
+    }
+    // 습관 알림 off
+    @Override
+    public boolean offNotification(Long habitId, User user) {
+        Habit habit = habitRepository.findById(habitId).orElseThrow();
+        HabitFollowers habitFollowers = habitFollowersRepository.findByFollowerAndHabit(user,habit);
+        // TODO: 에외 처리
+        // if (!habitFollowers.isNotification())
+        habitFollowers.setNotification(false);
+        return habitFollowers.isNotification();
+    }
+
     // 습관 검색하기
     @Override
     public Slice<HabitSearchResponseDto> searchHabits(Sort sort, User user, String keyword) {
+        Slice<Habit> habits = null;
         if (sort == Sort.CREATED_DATE){
-            Slice<Habit> habits = habitRepository.queryFindHabitOrderByCreatedAt(user.getId(), keyword);
-            return habits.map(habit -> new HabitSearchResponseDto(
-                    habit,
-                    habitFollowersRepository.queryGetHabitRecruitingStatus(habit.getId()),
-                    hashtagRepository.queryFindHabitHashtag(habit.getId()),
-                    categoryRepository.findById(habit.getCategoryId()).orElseThrow()
-            ));
+            habits = habitRepository.queryFindHabitOrderByCreatedAt(user.getId(), keyword);
         }
         else if (sort == Sort.START_DATE){
-            Slice<Habit> habits = habitRepository.queryFindHabitOrderByStartDate(user.getId(), keyword);
-            return habits.map(habit -> new HabitSearchResponseDto(
-                    habit,
-                    habitFollowersRepository.queryGetHabitRecruitingStatus(habit.getId()),
-                    hashtagRepository.queryFindHabitHashtag(habit.getId()),
-                    categoryRepository.findById(habit.getCategoryId()).orElseThrow()
-            ));
+            habits = habitRepository.queryFindHabitOrderByStartDate(user.getId(), keyword);
         }
         else if (sort == Sort.RECRUITING){
-            Slice<Habit> habits = habitRepository.querySearchFindOrderByFollowerCount(user.getId(), keyword);
-            return habits.map(habit -> new HabitSearchResponseDto(
-                    habit,
-                    habitFollowersRepository.queryGetHabitRecruitingStatus(habit.getId()),
-                    hashtagRepository.queryFindHabitHashtag(habit.getId()),
-                    categoryRepository.findById(habit.getCategoryId()).orElseThrow()
-            ));
+            habits = habitRepository.querySearchFindOrderByFollowerCount(user.getId(), keyword);
         }
         else
-            //에러 처리 해야함
-            return null;
+            // TODO: 에러 처리 해야함
+            habits = null;
+
+        return habits.map(habit -> new HabitSearchResponseDto(
+                habit,
+                habitFollowersRepository.queryGetHabitRecruitingStatus(habit.getId()),
+                hashtagRepository.queryFindHabitHashtag(habit.getId()),
+                categoryRepository.findById(habit.getCategoryId()).orElseThrow()
+        ));
+    }
+
+    // 카테고리별 검색
+    @Override
+    public Slice<HabitSearchCategoryGetResponse> searchByCategory(String categoryName, User user) {
+        Category category = categoryRepository.findByName(categoryName).orElseThrow();
+        Slice<Habit> habits = habitRepository.querySearchHabitByCategory(user.getId(), category.getId());
+        return habits.map(habit ->
+             new HabitSearchCategoryGetResponse(habit, categoryName));
+    }
+
+    // 습관 탈퇴하기
+    @Override
+    public HabitFollowerResponseDto quitHabit(Long habitId, User user) {
+        habitFollowersRepository.queryDeleteFollowerById(habitId,user.getId());
+        return new HabitFollowerResponseDto(habitId,user.getId());
     }
 
     // 습관 탈퇴하기

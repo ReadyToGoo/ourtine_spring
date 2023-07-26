@@ -32,7 +32,10 @@ public class HabitFollowingGetResponseDto {
 
     private List<HabitFollowersGetResponseDto> followerList = new ArrayList<>();
 
-    public HabitFollowingGetResponseDto(Habit habit, List<String> hashtags, Category category, List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto){
+    private boolean notification;
+
+    public HabitFollowingGetResponseDto(Habit habit, List<String> hashtags, Category category,
+                                        List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto, boolean notification){
         this.id = habit.getId();
         this.title = habit.getTitle();
         this.imageUrl = habit.getImageUrl();
@@ -40,5 +43,6 @@ public class HabitFollowingGetResponseDto {
         this.category = category.getName();
         this.hashtags = hashtags;
         this.followerList = habitFollowersGetResponseDto;
+        this.notification = notification;
     }
 }

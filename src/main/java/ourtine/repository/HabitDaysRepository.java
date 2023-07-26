@@ -1,6 +1,5 @@
 package ourtine.repository;
 
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -16,5 +15,5 @@ public interface HabitDaysRepository extends JpaRepository<HabitDays,Long> {
     @Query("select hd.habit.id from HabitDays hd " +
             "where hd.habit.id in :habitIds " +
             "and hd.day = :day")
-    List<Long> queryFindMyHabitsByDay(List<Long> habitIds, Day day);
+    List<Long> queryFindFollowingHabitsByDay(List<Long> habitIds, Day day);
 }

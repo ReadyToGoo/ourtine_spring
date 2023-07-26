@@ -1,6 +1,8 @@
 package ourtine.service.impl;
 
 import ourtine.domain.*;
+import ourtine.domain.enums.Day;
+import ourtine.domain.mapping.HabitDays;
 import ourtine.domain.mapping.HabitFollowers;
 import ourtine.domain.mapping.HabitHashtag;
 import ourtine.repository.*;
@@ -23,6 +25,7 @@ public class PublicHabitServiceImpl implements PublicHabitService {
     private final HabitFollowersRepository habitFollowersRepository;
     private final HashtagRepository hashtagRepository;
     private final HabitHashtagRepository habitHashtagRepository;
+    private final HabitDaysRepository habitDaysRepository;
 
     @Override
     public HabitCreateResponseDto createPublicHabit(HabitCreateRequestDto habitCreateRequestDto, /*MultipartFile file, */User user) {
@@ -49,7 +52,13 @@ public class PublicHabitServiceImpl implements PublicHabitService {
                     .followerLimit(habitCreateRequestDto.getFollowerLimit())
                     .build();
 
+            // 요일 매핑테이블에 저장
             Habit savedHabit = publicHabitRepository.save(habit);
+            habitCreateRequestDto.getDays().forEach(name ->{
+                HabitDays habitDays = HabitDays.builder().habit(savedHabit).day(name).build();
+                habitDaysRepository.save(habitDays);
+            });
+
             // 해시태그 DB에 저장
             habitCreateRequestDto.getHashtags().forEach(name->{
                 boolean index = false;

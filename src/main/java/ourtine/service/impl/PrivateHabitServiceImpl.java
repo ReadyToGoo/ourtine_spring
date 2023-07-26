@@ -1,6 +1,7 @@
 package ourtine.service.impl;
 
 import ourtine.domain.*;
+import ourtine.domain.mapping.HabitDays;
 import ourtine.domain.mapping.HabitFollowers;
 import ourtine.domain.mapping.HabitHashtag;
 import ourtine.repository.*;
@@ -21,6 +22,7 @@ public class PrivateHabitServiceImpl implements PrivateHabitService {
     private final HashtagRepository hashtagRepository;
     private final HabitHashtagRepository habitHashtagRepository;
     private final HabitFollowersRepository habitFollowersRepository;
+    private final HabitDaysRepository habitDaysRepository;
 
     @Override
     public HabitCreateResponseDto createPrivateHabit(HabitCreateRequestDto habitCreateRequestDto, User user) {
@@ -46,7 +48,12 @@ public class PrivateHabitServiceImpl implements PrivateHabitService {
                     .build();
             privateHabitRepository.save(habit);
 
+            // 요일 매핑테이블에 저장
             Habit savedHabit = privateHabitRepository.save(habit);
+            habitCreateRequestDto.getDays().forEach(name ->{
+                HabitDays habitDays = HabitDays.builder().habit(savedHabit).day(name).build();
+                habitDaysRepository.save(habitDays);
+            });
             // 해시태그 DB에 저장
             habitCreateRequestDto.getHashtags().forEach(name->{
                 boolean index = false;

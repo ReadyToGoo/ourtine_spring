@@ -15,7 +15,7 @@ public interface HabitService {
     // 홈 - 팔로잉하는 습관 목록 (요일 필터링)
 
     @Transactional
-    public Slice<HabitMyFollowingListGetResponseDto> getMyFollowingHabits(User user, Day day);
+    public Slice<HabitMyFollowingListGetResponseDto> getMyFollowingHabits(User user);
 
     // 습관 상세 정보조회 (참여 x)
     @Transactional

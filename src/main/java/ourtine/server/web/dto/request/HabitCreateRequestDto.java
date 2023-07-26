@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ourtine.domain.enums.Day;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -35,6 +36,9 @@ public class HabitCreateRequestDto {
 
         @NotEmpty
         private LocalDate endDate;
+
+        @NotEmpty
+        private List<Day> days;
 
         @NotEmpty
         private Long followerLimit;

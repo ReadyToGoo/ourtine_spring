@@ -4,6 +4,7 @@ import ourtine.domain.Habit;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ourtine.domain.enums.CompleteStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -29,12 +30,12 @@ public class HabitMyFollowingListGetResponseDto {
     private LocalTime endTime;
 
     /*private Long participateRate;*/
-
-    private boolean completeStatus;
+    
+    private CompleteStatus completeStatus;
 
     /*private String emoji;*/
 
-    public HabitMyFollowingListGetResponseDto(Habit habit, Long sessionId, boolean completeStatus){
+    public HabitMyFollowingListGetResponseDto(Habit habit, Long sessionId, CompleteStatus completeStatus){
         this.habitId = habit.getId();
         this.sessionId = sessionId;
         this.title = habit.getTitle();
@@ -46,7 +47,9 @@ public class HabitMyFollowingListGetResponseDto {
         this.completeStatus = completeStatus;
     }
 
-    /*public void setCompleteStatus(boolean completeStatus) {
+    public void setCompleteStatus(CompleteStatus completeStatus) {
         this.completeStatus = completeStatus;
-    }*/
+    }
+
+
 }

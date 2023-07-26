@@ -3,6 +3,7 @@ package ourtine.service.impl;
 import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.Category;
 import ourtine.domain.Habit;
+import ourtine.domain.Hashtag;
 import ourtine.domain.User;
 import ourtine.domain.enums.Day;
 import ourtine.domain.enums.Sort;
@@ -188,13 +189,6 @@ public class HabitServiceImpl implements HabitService {
         Slice<Habit> habits = habitRepository.querySearchHabitByCategory(user.getId(), category.getId());
         return habits.map(habit ->
              new HabitSearchCategoryGetResponse(habit, categoryName));
-    }
-
-    // 습관 탈퇴하기
-    @Override
-    public HabitFollowerResponseDto quitHabit(Long habitId, User user) {
-        habitFollowersRepository.queryDeleteFollowerById(habitId,user.getId());
-        return new HabitFollowerResponseDto(habitId,user.getId());
     }
 
     // 습관 탈퇴하기

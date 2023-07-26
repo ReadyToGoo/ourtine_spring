@@ -197,4 +197,11 @@ public class HabitServiceImpl implements HabitService {
         return new HabitFollowerResponseDto(habitId,user.getId());
     }
 
+    // 습관 탈퇴하기
+    @Override
+    public HabitFollowerResponseDto quitHabit(Long habitId, User user) {
+        habitFollowersRepository.queryDeleteFollowerById(habitId,user.getId());
+        return new HabitFollowerResponseDto(habitId,user.getId());
+    }
+
 }

@@ -15,4 +15,5 @@ public interface PublicHabitService {
     // 습관 참여하기
     @Transactional
     public HabitJoinPostResponseDto joinPublicHabit(Long habitId, User user);
+
 }

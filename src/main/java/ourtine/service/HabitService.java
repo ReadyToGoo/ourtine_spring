@@ -15,7 +15,7 @@ public interface HabitService {
     // 홈 - 팔로잉하는 습관 목록 (요일 필터링)
 
     @Transactional
-    public Slice<HabitMyFollowingListGetResponseDto> getMyFollowingHabits(User user, Day day);
+    public Slice<HabitMyFollowingListGetResponseDto> getMyFollowingHabits(User user);
 
     // 습관 상세 정보조회 (참여 x)
     @Transactional
@@ -37,10 +37,15 @@ public interface HabitService {
     @Transactional
     public Slice<HabitRecommendListResponseDto> getRecommendHabits(User user);
 
+    //습관 참여하기
     @Transactional
     public HabitJoinPostResponseDto joinHabit(Long habitId, User user);
 
     @Transactional
     // 습관 검색
     public Slice<HabitSearchResponseDto> searchHabits(Sort sort, User user, String keyword);
+
+    // 습관 탈퇴하기
+    @Transactional
+    public HabitFollowerResponseDto quitHabit(Long habitId, User user);
 }

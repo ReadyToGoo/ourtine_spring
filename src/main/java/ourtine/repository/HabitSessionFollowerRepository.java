@@ -1,5 +1,6 @@
 package ourtine.repository;
 
+import ourtine.domain.enums.CompleteStatus;
 import ourtine.domain.mapping.HabitSessionFollower;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -29,7 +30,7 @@ public interface HabitSessionFollowerRepository extends JpaRepository<HabitSessi
             "from HabitSessionFollower hsf " +
             "where hsf.follower.id = :userId " +
             "and hsf.habitSession.habit.id =:habitId " +
-            "and DATE_FORMAT(hsf.createdAt,'%Y-%m-%d') = hsf.habitSession.date ")
-    boolean queryGetHabitSessionFollowerCompleteStatus (Long userId, Long habitId);
+            "and hsf.createdAt = hsf.habitSession.date ")
+    CompleteStatus queryGetHabitSessionFollowerCompleteStatus (Long userId, Long habitId);
 
 }

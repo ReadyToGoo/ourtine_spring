@@ -14,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.List;
 
 @Service
@@ -38,7 +41,19 @@ public class HabitServiceImpl implements HabitService {
 
     // 홈 - 팔로잉하는 습관 목록 (요일 필터링)
     @Override
-    public Slice<HabitMyFollowingListGetResponseDto> getMyFollowingHabits(User user, Day day) {
+    public Slice<HabitMyFollowingListGetResponseDto> getMyFollowingHabits(User user) {
+        int dayNum = LocalDate.now(ZoneId.of("Asia/Seoul")).getDayOfWeek().getValue();
+        Day day = null;
+        switch (dayNum) {
+            case 1 : day = Day.MON;break;
+            case 2 : day = Day.TUE;break;
+            case 3 : day = Day.WED;break;
+            case 4 : day = Day.THU;break;
+            case 5 : day = Day.FRI;break;
+            case 6 : day = Day.SAT;break;
+            case 7 : day = Day.SUN;break;
+        }
+
         Slice<Long> followingHabitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(user.getId());
         List<Long> habitIdsOfDay = habitDaysRepository.queryFindMyHabitsByDay(followingHabitIds.toList(),day);
         Slice<Habit> habitsOfDay = habitRepository.queryFindHabitsById(habitIdsOfDay);
@@ -46,6 +61,7 @@ public class HabitServiceImpl implements HabitService {
                 habit,
                 habitSessionRepository.queryFindTodaySessionIdByHabitId(habit.getId()),
                 habitSessionFollowerRepository.queryGetHabitSessionFollowerCompleteStatus(user.getId(),habit.getId())));
+
     }
 
     // 습관 상세 정보조회 (참여 x)
@@ -113,7 +129,8 @@ public class HabitServiceImpl implements HabitService {
     @Override
     public HabitJoinPostResponseDto joinHabit(Long habitId, User user) {
         Habit habit = habitRepository.findById(habitId).orElseThrow();
-        HabitFollowers habitFollowers = HabitFollowers.builder().follower(user).habit(habit).build();
+        HabitFollowers habitFollower = HabitFollowers.builder().follower(user).habit(habit).build();
+        habitFollowersRepository.save(habitFollower);
         return new HabitJoinPostResponseDto(habitId, user.getId());
     }
 
@@ -150,6 +167,13 @@ public class HabitServiceImpl implements HabitService {
         else
             //에러 처리 해야함
             return null;
+    }
+
+    // 습관 탈퇴하기
+    @Override
+    public HabitFollowerResponseDto quitHabit(Long habitId, User user) {
+        habitFollowersRepository.queryDeleteFollowerById(habitId,user.getId());
+        return new HabitFollowerResponseDto(habitId,user.getId());
     }
 
 }

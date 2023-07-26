@@ -1,8 +1,8 @@
 package ourtine.service;
 
 import org.springframework.data.domain.Slice;
+import ourtine.domain.Category;
 import ourtine.domain.User;
-import ourtine.domain.enums.Day;
 import ourtine.domain.enums.Sort;
 import ourtine.server.web.dto.response.*;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,4 +56,8 @@ public interface HabitService {
     // 습관 탈퇴하기
     @Transactional
     public HabitFollowerResponseDto quitHabit(Long habitId, User user);
+
+    // 카테고리별 습관 검색
+    public Slice<HabitSearchCategoryGetResponse> searchByCategory(String categoryName, User user);
+
 }

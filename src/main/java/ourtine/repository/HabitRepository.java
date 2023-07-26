@@ -5,11 +5,18 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import ourtine.domain.User;
 
 import java.util.List;
 
 @Repository
 public interface HabitRepository extends JpaRepository<Habit,Long> {
+
+    //내가 만든 습관 아이디 조회
+    @Query("select h.id from Habit h " +
+            "where h.host.id in :hostId " +
+            "and h.status = 'ACTIVE'")
+    Slice<Long> queryFindMyHabits(Long hostId);
 
     // 아이디로 습관 정보 조회 (PUBLIC + PRIVATE)
     @Query("select h from Habit h " +
@@ -71,13 +78,14 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
     // 참여 - 카테고리
     // 차단 유저 필터링 & 모집중 필터
     @Query("select h from Habit h " +
-            "where h.host.id not in (select b.blocked.id from Block b where b.blocker.id = :hostId) " +
-            "and h.host.id not in (select b.blocker.id from Block b where b.blocked.id = :hostId) " +
+            "where h.host.id not in (select b.blocked.id from Block b where b.blocker.id = :userId) " +
+            "and h.host.id not in (select b.blocker.id from Block b where b.blocked.id = :userId) " +
+            "and not h.host.id = :userId " + // 내가 만든 습관 제외
             "and h.categoryId = :categoryId " +
             "and h.followerLimit-h.followerCount>0" +
             "and h.habitStatus = 'PUBLIC'" +
-            "order by h.followerLimit-h.followerCount asc")
-    List<Habit> querySearchHabitByCategory(Long hostId, Long categoryId);
+            "order by h.followerLimit-h.followerCount desc")
+    Slice<Habit> querySearchHabitByCategory(Long userId, Long categoryId);
 
     // 참여 - 추천 습관 목록
     // 차단 유저 필터링
@@ -85,6 +93,7 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "where h.host.id not in (select b.blocked.id from Block b where b.blocker.id = :hostId) " +
             "and h.host.id not in (select b.blocker.id from Block b where b.blocked.id = :hostId) " +
             "and h.categoryId in (select uc.category.id from UserCategory uc where uc.user.id = :userId and uc.status = 'ACTIVE') " +
+            "and not h.host.id = :userId " + // 내가 만든 습관 제외
             "and h.followerLimit-h.followerCount>0 " +
             "and h.habitStatus = 'PUBLIC'" +
             "and h.status = 'ACTIVE'" )

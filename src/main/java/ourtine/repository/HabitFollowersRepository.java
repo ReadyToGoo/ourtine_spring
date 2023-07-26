@@ -74,7 +74,7 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
 
     // 습관 유저 삭제
     @Modifying
-    ourtine.serviceransactional
+    @Transactional
     @Query("delete from HabitFollowers where follower.id = :userId and habit.id = :habitId ")
     void queryDeleteFollowerById (Long userId, Long habitId);
 

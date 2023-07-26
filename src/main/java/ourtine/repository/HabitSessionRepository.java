@@ -1,6 +1,7 @@
 package ourtine.repository;
 
 import org.springframework.data.jpa.repository.Query;
+import ourtine.domain.Habit;
 import ourtine.domain.HabitSession;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -19,5 +20,6 @@ public interface HabitSessionRepository extends JpaRepository<HabitSession,Long>
             "and hs.date = CURDATE()")
     Long queryFindTodaySessionIdByHabitId(Long habitId);
 
-
+    // 습관 아이디로 삭제
+    void deleteAllByHabit(Habit habit);
 }

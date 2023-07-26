@@ -16,6 +16,8 @@ import java.util.List;
 public class HabitFollowingGetResponseDto {
     private Long id;
 
+    private Long hostId;
+
     private String title;
 
     private String detail;
@@ -37,6 +39,7 @@ public class HabitFollowingGetResponseDto {
     public HabitFollowingGetResponseDto(Habit habit, List<String> hashtags, Category category,
                                         List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto, boolean notification){
         this.id = habit.getId();
+        this.hostId = habit.getHost().getId();
         this.title = habit.getTitle();
         this.imageUrl = habit.getImageUrl();
         this.detail = habit.getDetail();

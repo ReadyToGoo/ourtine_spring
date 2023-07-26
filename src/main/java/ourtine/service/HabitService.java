@@ -31,7 +31,7 @@ public interface HabitService {
 
     // 유저 프로필 - 팔로잉 하는 습관 목록
     // @Transactional
-    public HabitUserFollowingListGetResponse getUserFollowingHabits(User user);
+    public Slice<HabitFollowingInfoDto> getUserFollowingHabits(User user);
 
     // 추천 습관 목록
     // @Transactional
@@ -59,5 +59,9 @@ public interface HabitService {
 
     // 카테고리별 습관 검색
     public Slice<HabitSearchCategoryGetResponse> searchByCategory(String categoryName, User user);
+
+    @Transactional
+    //습관 삭제
+    public HabitDeleteResponseDto deleteHabit(Long habitId, User user);
 
 }

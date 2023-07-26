@@ -54,7 +54,7 @@ public class HabitSessionServiceImpl implements HabitSessionService {
                 = followers.map(user ->
                 new HabitSessionFollowersGetResponseDto(user.getId(), user.getNickname(), user.getImageUrl(),
                         habitSessionFollowerRepository.queryExistsByUserIdAndHabitSessionId(user.getId(),habitSessionId))).toList();
-        return new HabitActiveSessionGetResponse(habitSessionId,habit.getTitle(),habit.getStartTime(),habit.getEndTime(),habitSessionFollowers);
+        return new HabitActiveSessionGetResponse(habitSessionId,habit,habitSessionFollowers);
     }
 
     // 습관 세션 입장하기

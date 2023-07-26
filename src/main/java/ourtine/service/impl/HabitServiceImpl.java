@@ -3,7 +3,6 @@ package ourtine.service.impl;
 import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.Category;
 import ourtine.domain.Habit;
-import ourtine.domain.Hashtag;
 import ourtine.domain.User;
 import ourtine.domain.enums.Day;
 import ourtine.domain.enums.Sort;
@@ -72,7 +71,7 @@ public class HabitServiceImpl implements HabitService {
 
         Habit habit = habitRepository.findById(habitId).orElseThrow();
         Category category  = categoryRepository.findById(habit.getCategoryId()).orElseThrow();
-        List<String> hashtags= hashtagRepository.queryFindHabitHashtag(habitId);
+        List<String> hashtags= habitHashtagRepository.queryFindHashtagNameByHabit(habitId);
         Slice<User> followers = habitFollowersRepository.queryFindHabitFollowers(habitId);
 
         List<HabitFollowersGetResponseDto> habitFollowersResult =
@@ -88,7 +87,7 @@ public class HabitServiceImpl implements HabitService {
     public HabitFollowingGetResponseDto getFollowingHabit(Long habitId, User user) {
         Habit habit = habitRepository.findById(habitId).orElseThrow();
         Category category  = categoryRepository.findById(habit.getCategoryId()).get();
-        List<String> hashtags= hashtagRepository.queryFindHabitHashtag(habitId);
+        List<String> hashtags= habitHashtagRepository.queryFindHashtagNameByHabit(habitId);
         Slice<User> followers = habitFollowersRepository.queryFindHabitFollowers(habitId);
         boolean notification = habitFollowersRepository.findByFollowerAndHabit(user,habit).orElseThrow().isNotification();
 
@@ -112,11 +111,10 @@ public class HabitServiceImpl implements HabitService {
 
     // 유저 프로필 - 팔로잉 하는 습관 목록
     @Override
-    public HabitUserFollowingListGetResponse getUserFollowingHabits(User user) {
+    public Slice<HabitFollowingInfoDto> getUserFollowingHabits(User user) {
         List<Long> habitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(user.getId()).toList();
         Slice<Habit> habits = habitRepository.queryFindHabitsById(habitIds);
-        List<HabitFollowingInfoDto> result = habits.map(HabitFollowingInfoDto::new).toList();
-        return new HabitUserFollowingListGetResponse(result);
+        return habits.map(HabitFollowingInfoDto::new);
     }
 
     // 추천 습관 목록
@@ -143,8 +141,9 @@ public class HabitServiceImpl implements HabitService {
         Habit habit = habitRepository.findById(habitId).orElseThrow();
         HabitFollowers habitFollowers = habitFollowersRepository.findByFollowerAndHabit(user,habit).orElseThrow();
         // TODO: 에외 처리
-        // if (habitFollowers.isNotification())
-        habitFollowers.setNotification(true);
+        if (!habitFollowers.isNotification()){
+            habitFollowers.setNotification(true);
+        }
         return habitFollowers.isNotification();
     }
     // 습관 알림 off
@@ -153,8 +152,9 @@ public class HabitServiceImpl implements HabitService {
         Habit habit = habitRepository.findById(habitId).orElseThrow();
         HabitFollowers habitFollowers = habitFollowersRepository.findByFollowerAndHabit(user,habit).orElseThrow();
         // TODO: 에외 처리
-        // if (!habitFollowers.isNotification())
-        habitFollowers.setNotification(false);
+        if (habitFollowers.isNotification()) {
+            habitFollowers.setNotification(false);
+        }
         return habitFollowers.isNotification();
     }
 
@@ -163,7 +163,7 @@ public class HabitServiceImpl implements HabitService {
     public Slice<HabitSearchResponseDto> searchHabits(Sort sort, User user, String keyword) {
         Slice<Habit> habits;
         // 키워드와 일치하는 해시태그를 가진 습관 아이디 리스트
-        List<Long> habitsIdsSearchByHashtag = habitHashtagRepository.queryFindHabitIdsByHashtag(hashtagRepository.queryFindHashTagIdsByName(keyword).getContent()).getContent();
+        List<Long> habitsIdsSearchByHashtag = habitHashtagRepository.queryFindHabitIdsByHashtag(habitHashtagRepository.queryFindHashTagIdsByName(keyword).getContent()).getContent();
 
         if (sort == Sort.CREATED_DATE){
             habits = habitRepository.queryFindHabitOrderByCreatedAt(user.getId(), keyword, habitsIdsSearchByHashtag);
@@ -179,7 +179,7 @@ public class HabitServiceImpl implements HabitService {
         return habits.map(habit -> new HabitSearchResponseDto(
                 habit,
                 habitFollowersRepository.queryGetHabitRecruitingStatus(habit.getId()),
-                hashtagRepository.queryFindHabitHashtag(habit.getId()),
+                habitHashtagRepository.queryFindHashtagNameByHabit(habit.getId()),
                 categoryRepository.findById(habit.getCategoryId()).orElseThrow()
         ));
     }
@@ -198,6 +198,49 @@ public class HabitServiceImpl implements HabitService {
     public HabitFollowerResponseDto quitHabit(Long habitId, User user) {
         habitFollowersRepository.queryDeleteFollowerById(habitId,user.getId());
         return new HabitFollowerResponseDto(habitId,user.getId());
+    }
+
+
+    // TODO: 습관 삭제
+    // 습관 삭제하기
+    @Override
+    public HabitDeleteResponseDto deleteHabit(Long habitId, User user){
+        // TODO: 에러 처리
+        Habit habit = habitRepository.findById(habitId).orElseThrow();
+        // 습관 개설자와 삭제하려는 유저가 같다면
+        if (habit.getHost()==user) {
+            // 습관-요일 삭제
+            habitDaysRepository.deleteAllByHabit(habit);
+            habitDaysRepository.flush();
+
+            // 습관-해시태그 삭제
+            habitHashtagRepository.deleteAllByHabit(habit);
+            habitHashtagRepository.flush();
+
+            // 이 게시물의 해시태그가 사용되는 게시물이 없다면, 해시태그 삭제
+            habitHashtagRepository.queryFindHashtagIdsByHabit(habitId).forEach(
+                    id->{
+                        if(habitHashtagRepository.countHabitHashtagByHashtagId(id)==0){
+                            hashtagRepository.deleteById(id);
+                        }
+                    }
+            );
+
+            // 습관-팔로워 삭제
+            habitFollowersRepository.deleteAllByHabit(habit);
+            habitFollowersRepository.flush();
+
+            // 습관-세션-팔로워 삭제
+            habitSessionFollowerRepository.deleteAllByHabitSession_Habit(habit);
+            habitSessionFollowerRepository.flush();
+
+            // 습관-세션 삭제
+            habitSessionRepository.deleteAllByHabit(habit);
+            habitSessionRepository.flush();
+
+            habitHashtagRepository.deleteById(habitId);
+        }
+        return null;
     }
 
 }

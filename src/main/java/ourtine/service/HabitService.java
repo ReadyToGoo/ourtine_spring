@@ -4,10 +4,15 @@ import org.springframework.data.domain.Slice;
 import ourtine.domain.Category;
 import ourtine.domain.User;
 import ourtine.domain.enums.Sort;
+import ourtine.server.web.dto.request.HabitCreateRequestDto;
 import ourtine.server.web.dto.response.*;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface HabitService {
+
+    //습관 개설하기
+    @Transactional
+    public HabitCreateResponseDto createHabit(HabitCreateRequestDto habitCreateRequestDto, /*MultipartFile file, */User user);
 
     // 습관 참여 여부
     // @Transactional

@@ -1,13 +1,14 @@
 package ourtine.service.impl;
 
 import org.springframework.transaction.annotation.Transactional;
-import ourtine.domain.Category;
-import ourtine.domain.Habit;
-import ourtine.domain.User;
+import ourtine.domain.*;
 import ourtine.domain.enums.Day;
 import ourtine.domain.enums.Sort;
+import ourtine.domain.mapping.HabitDays;
 import ourtine.domain.mapping.HabitFollowers;
+import ourtine.domain.mapping.HabitHashtag;
 import ourtine.repository.*;
+import ourtine.server.web.dto.request.HabitCreateRequestDto;
 import ourtine.server.web.dto.response.*;
 import ourtine.service.HabitService;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,73 @@ public class HabitServiceImpl implements HabitService {
     private final CategoryRepository categoryRepository;
     private final HashtagRepository hashtagRepository;
     private final HabitHashtagRepository habitHashtagRepository;
+
+    // 습관 개설하기
+    @Override
+    public HabitCreateResponseDto createHabit(HabitCreateRequestDto habitCreateRequestDto, User user) {
+        // TODO:  이미지 유무 검사
+        // TODO:  S3 이미지 업로드
+        Habit habit = null;
+        Category category = categoryRepository.findByName(habitCreateRequestDto.getCategory()).orElseThrow();
+
+        if (habitCreateRequestDto.getHabitStatus()=="Public")
+        {
+            habit = PublicHabit.builder()
+                    .host(user)
+                    .title(habitCreateRequestDto.getTitle())
+                    .detail(habitCreateRequestDto.getDetail())
+                    .imageUrl("이미지")
+                    .categoryId(category.getId())
+                    .startTime(habitCreateRequestDto.getStartTime())
+                    .endTime(habitCreateRequestDto.getEndTime())
+                    .startDate(habitCreateRequestDto.getStartDate())
+                    .endDate(habitCreateRequestDto.getEndDate())
+                    .followerLimit(habitCreateRequestDto.getFollowerLimit())
+                    .build();
+        }
+        else if (habitCreateRequestDto.getHabitStatus()=="Private"){
+            habit = PrivateHabit.builder()
+                    .host(user)
+                    .title(habitCreateRequestDto.getTitle())
+                    .detail(habitCreateRequestDto.getDetail())
+                    .imageUrl("이미지")
+                    .categoryId(category.getId())
+                    .startTime(habitCreateRequestDto.getStartTime())
+                    .endTime(habitCreateRequestDto.getEndTime())
+                    .startDate(habitCreateRequestDto.getStartDate())
+                    .endDate(habitCreateRequestDto.getEndDate())
+                    .followerLimit(habitCreateRequestDto.getFollowerLimit())
+                    .build();
+        }
+
+        Habit savedHabit = habitRepository.save(habit);
+
+        habitCreateRequestDto.getDays().forEach(name ->{
+            HabitDays habitDays = HabitDays.builder().habit(savedHabit).day(name).build();
+            habitDaysRepository.save(habitDays);
+        });
+
+        // 해시태그 DB에 저장
+        habitCreateRequestDto.getHashtags().forEach(name->{
+            Hashtag hashtag;
+            if (hashtagRepository.existsByName(name)){
+                hashtag = hashtagRepository.findHashtagByName(name).orElseThrow();
+            }
+            else {
+                hashtag = Hashtag.builder().name(name).build();
+                hashtagRepository.saveAndFlush(hashtag);
+            }
+            // 해시태그 매핑테이블에 저장
+            HabitHashtag habitHashtag = HabitHashtag.builder().habit(savedHabit).hashtag(hashtag).build();
+            habitHashtagRepository.save(habitHashtag);
+        });
+
+        // 팔로워 매핑테이블에 호스트 저장
+        HabitFollowers habitFollowers = HabitFollowers.builder().follower(user).habit(habit).build();
+        habitFollowersRepository.save(habitFollowers);
+
+        return new HabitCreateResponseDto(savedHabit.getId());
+    }
 
     // 습관 참여 여부
     @Override

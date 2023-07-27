@@ -1,5 +1,6 @@
 package ourtine.service.impl;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.Habit;
@@ -44,6 +45,7 @@ public class HabitSessionServiceImpl implements HabitSessionService {
         return habitSessionRepository.save(habitSession).getId();
     }
 
+    // TODO: 수정 필요
     // 활성화 된 습관 세션 정보 조회
     @Override
     public HabitActiveSessionGetResponse getActiveHabitSession(Long habitSessionId) {

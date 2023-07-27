@@ -10,7 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface HabitSessionRepository extends JpaRepository<HabitSession,Long> {
-    boolean existsByHabitId(Long aLong);
 
     // 습관 세션의 습관 아이디 조회
     @Query("select hs.habit.id from HabitSession hs where hs.id = :habitSessionId")

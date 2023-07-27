@@ -18,6 +18,8 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "and h.status = 'ACTIVE'")
     Slice<Long> queryFindMyHabits(Long hostId);
 
+    //내가 참여하는 습관인지 여부
+
     // 아이디로 습관 정보 조회 (PUBLIC + PRIVATE)
     @Query("select h from Habit h " +
             "where h.id in :habitIds " +
@@ -49,7 +51,7 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "or h.id in :habitIds)" +
             "and h.habitStatus = 'PUBLIC'" +
             "order by h.createdAt desc")
-    Slice<Habit> queryFindHabitOrderByCreatedAt(Long hostId, String keyword, List<Long> habitIds);
+    Slice<Habit> queryFindHabitOrderByCreatedAt(Long hostId, String keyword, List<Long> habitIds,Pageable pageable);
 
     //검색 - 습관 시작일 순
     //차단 유저 필터링
@@ -61,7 +63,7 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "and h.startDate >= CURDATE()" +
             "and h.habitStatus = 'PUBLIC' " +
             "order by h.createdAt asc")
-    Slice<Habit> queryFindHabitOrderByStartDate(Long hostId, String keyword, List<Long> habitIds);
+    Slice<Habit> queryFindHabitOrderByStartDate(Long hostId, String keyword, List<Long> habitIds, Pageable pageable);
 
     // 검색 - 모집중 ( 임박한 순으로 )
     // 차단 유저 필터링
@@ -73,7 +75,7 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "and h.followerLimit-h.followerCount>0" +
             "and h.habitStatus = 'PUBLIC'" +
             "order by h.followerLimit-h.followerCount asc")
-    Slice<Habit> querySearchFindOrderByFollowerCount(Long hostId, String keyword, List<Long> habitIds);
+    Slice<Habit> querySearchFindOrderByFollowerCount(Long hostId, String keyword, List<Long> habitIds, Pageable pageable);
 
     // 참여 - 카테고리
     // 차단 유저 필터링 & 모집중 필터
@@ -85,7 +87,7 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "and h.followerLimit-h.followerCount>0" +
             "and h.habitStatus = 'PUBLIC'" +
             "order by h.followerLimit-h.followerCount desc")
-    Slice<Habit> querySearchHabitByCategory(Long userId, Long categoryId);
+    Slice<Habit> querySearchHabitByCategory(Long userId, Long categoryId, Pageable pageable);
 
     // 참여 - 추천 습관 목록
     // 차단 유저 필터링
@@ -97,6 +99,6 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "and h.followerLimit-h.followerCount>0 " +
             "and h.habitStatus = 'PUBLIC'" +
             "and h.status = 'ACTIVE'" )
-    Slice<Habit> queryGetRecommendHabits(Long userId);
+    Slice<Habit> queryGetRecommendHabits(Long userId, Pageable pageable);
 
 }

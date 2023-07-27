@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ourtine.domain.enums.Day;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -31,9 +32,9 @@ public class HabitNotFollowingGetResponseDto {
 
     private String imageUrl;
 
-/*    private Long participateRate;
+    private Long participateRate;
 
-    private Double starRate;*/
+    private BigDecimal starRate;
 
     private List<HabitFollowersGetResponseDto> followerList = new ArrayList<>();
 

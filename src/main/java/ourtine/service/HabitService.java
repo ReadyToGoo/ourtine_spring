@@ -14,9 +14,9 @@ public interface HabitService {
     @Transactional
     public HabitCreateResponseDto createHabit(HabitCreateRequestDto habitCreateRequestDto, /*MultipartFile file, */User user);
 
-    // 습관 참여 여부
+/*    // 습관 참여 여부
     // @Transactional
-    public boolean getUserIsHabitFollower(Long habitSessionId, User user);
+    public boolean getUserIsHabitFollower(Long habitSessionId, User user);*/
 
     // 홈 - 팔로잉하는 습관 목록 (요일 필터링)
     // @Transactional

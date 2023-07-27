@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class HabitSessionGetMvpCandidateResponse {
+public class HabitSessionMvpCandidateGetResponse {
     private Long id;
 
     private String nickname;

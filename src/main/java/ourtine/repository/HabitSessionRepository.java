@@ -6,6 +6,8 @@ import ourtine.domain.HabitSession;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface HabitSessionRepository extends JpaRepository<HabitSession,Long> {
     boolean existsByHabitId(Long aLong);
@@ -19,6 +21,12 @@ public interface HabitSessionRepository extends JpaRepository<HabitSession,Long>
             "where hs.habit.id = :habitId " +
             "and hs.date = CURDATE()")
     Long queryFindTodaySessionIdByHabitId(Long habitId);
+
+    // 습관 아이디로 오늘 진행되는 습관 세션 아이디조회
+    @Query("select hs from HabitSession hs " +
+            "where hs.habit.id = :habitId " +
+            "and hs.date = CURDATE()")
+    Optional<HabitSession> queryFindTodaySessionByHabitId(Long habitId);
 
     // 습관 아이디로 삭제
     void deleteAllByHabit(Habit habit);

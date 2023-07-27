@@ -35,8 +35,12 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	// Spring Batch
 	implementation 'org.springframework.boot:spring-boot-starter-batch'
-}
+	// Quartz
+	implementation 'org.springframework.boot:spring-boot-starter-quartz'
+	//
+	testImplementation 'org.springframework.batch:spring-batch-test'
 
+}
 tasks.named('test') {
 	useJUnitPlatform()
 }

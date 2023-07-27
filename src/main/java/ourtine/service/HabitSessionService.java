@@ -1,5 +1,6 @@
 package ourtine.service;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.User;
@@ -11,8 +12,6 @@ import ourtine.server.web.dto.response.HabitSessionMvpCandidateGetResponse;
 import java.util.List;
 @Service
 public interface HabitSessionService {
-    @Transactional
-    public Long createHabitSession(Long habitId, User user);
 
     // @Transactional
     public HabitActiveSessionGetResponse getActiveHabitSession(Long habitSessionId);

@@ -1,6 +1,5 @@
 package ourtine.service.impl;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.Habit;
@@ -33,17 +32,15 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     private final HabitSessionFollowerRepository habitSessionFollowerRepository;
     private final HabitSessionRepository habitSessionRepository;
 
-    // 스케쥴러 사용해서 수정하기
+/*    // 스케쥴러 사용해서 수정하기
     // 습관 세션 생성하기
     @Override
-    public Long createHabitSession(Long habitId, User user) {
-        Habit habit = habitRepository.findById(habitId).orElseThrow();
-        Date date = new Date(); // 현재 날짜
+    public Long createHabitSession() {
 
         HabitSession habitSession = HabitSession.builder().habit(habit).date(date).build();
         habitSessionRepository.save(habitSession);
         return habitSessionRepository.save(habitSession).getId();
-    }
+    }*/
 
     // TODO: 수정 필요
     // 활성화 된 습관 세션 정보 조회

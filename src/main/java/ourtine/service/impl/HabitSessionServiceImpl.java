@@ -32,7 +32,7 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     private final HabitSessionFollowerRepository habitSessionFollowerRepository;
     private final HabitSessionRepository habitSessionRepository;
 
-    // 스케쥴러 사용해서 수정하기
+/*    // 스케쥴러 사용해서 수정하기
     // 습관 세션 생성하기
     @Override
     public Long createHabitSession() {
@@ -40,7 +40,7 @@ public class HabitSessionServiceImpl implements HabitSessionService {
         HabitSession habitSession = HabitSession.builder().habit(habit).date(date).build();
         habitSessionRepository.save(habitSession);
         return habitSessionRepository.save(habitSession).getId();
-    }
+    }*/
 
     // TODO: 수정 필요
     // 활성화 된 습관 세션 정보 조회

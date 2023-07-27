@@ -189,28 +189,6 @@ public class HabitServiceImpl implements HabitService {
         return new HabitJoinPostResponseDto(habitId, user.getId());
     }
 
-    // 습관 알림 on
-    @Override
-    public boolean onNotification(Long habitId, User user) {
-        Habit habit = habitRepository.findById(habitId).orElseThrow();
-        HabitFollowers habitFollowers = habitFollowersRepository.findByFollowerAndHabit(user,habit).orElseThrow();
-        // TODO: 에외 처리
-        if (!habitFollowers.isNotification()){
-            habitFollowers.setNotification(true);
-        }
-        return habitFollowers.isNotification();
-    }
-    // 습관 알림 off
-    @Override
-    public boolean offNotification(Long habitId, User user) {
-        Habit habit = habitRepository.findById(habitId).orElseThrow();
-        HabitFollowers habitFollowers = habitFollowersRepository.findByFollowerAndHabit(user,habit).orElseThrow();
-        // TODO: 에외 처리
-        if (habitFollowers.isNotification()) {
-            habitFollowers.setNotification(false);
-        }
-        return habitFollowers.isNotification();
-    }
 
     // 습관 검색하기
     @Override

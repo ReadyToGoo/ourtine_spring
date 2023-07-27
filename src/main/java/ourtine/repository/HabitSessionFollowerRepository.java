@@ -1,5 +1,6 @@
 package ourtine.repository;
 
+import ourtine.domain.Habit;
 import ourtine.domain.enums.CompleteStatus;
 import ourtine.domain.mapping.HabitSessionFollower;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,4 +34,6 @@ public interface HabitSessionFollowerRepository extends JpaRepository<HabitSessi
             "and hsf.createdAt = hsf.habitSession.date ")
     CompleteStatus queryGetHabitSessionFollowerCompleteStatus (Long userId, Long habitId);
 
+    // 습관 아이디로 삭제
+    void deleteAllByHabitSession_Habit(Habit habit);
 }

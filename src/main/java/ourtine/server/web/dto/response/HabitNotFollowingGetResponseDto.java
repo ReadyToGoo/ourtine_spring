@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ourtine.domain.enums.Day;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -19,6 +20,8 @@ import java.util.List;
 public class HabitNotFollowingGetResponseDto {
     private Long id;
 
+    private Long hostId;
+
     private String title;
 
     private String detail;
@@ -29,9 +32,9 @@ public class HabitNotFollowingGetResponseDto {
 
     private String imageUrl;
 
-/*    private Long participateRate;
+    private Long participateRate;
 
-    private Double starRate;*/
+    private BigDecimal starRate;
 
     private List<HabitFollowersGetResponseDto> followerList = new ArrayList<>();
 
@@ -51,6 +54,7 @@ public class HabitNotFollowingGetResponseDto {
 
     public HabitNotFollowingGetResponseDto(Habit habit, List<String> hashtags, Category category, List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto){
         this.id = habit.getId();
+        this.hostId = habit.getHost().getId();
         this.title = habit.getTitle();
         this.imageUrl = habit.getImageUrl();
         this.detail = habit.getDetail();

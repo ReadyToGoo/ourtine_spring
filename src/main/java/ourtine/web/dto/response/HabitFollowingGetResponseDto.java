@@ -1,11 +1,10 @@
-package ourtine.server.web.dto.response;
+package ourtine.web.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ourtine.domain.Category;
 import ourtine.domain.Habit;
-import ourtine.domain.Hashtag;
 
 import java.util.ArrayList;
 import java.util.List;

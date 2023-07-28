@@ -1,5 +1,6 @@
 package ourtine.repository;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.Habit;
 import ourtine.domain.enums.CompleteStatus;
@@ -30,6 +31,17 @@ public interface HabitSessionFollowerRepository extends JpaRepository<HabitSessi
     @Query("select hsf from HabitSessionFollower hsf " +
             "where hsf.habitSession.id = :habitSessionId " )
     List<HabitSessionFollower> queryGetHabitSessionFollowers (Long habitSessionId);
+
+    // 습관 세션의 투표 결과 조회
+    @Query("select hsf.mvpVote from HabitSessionFollower hsf " +
+            "where hsf.habitSession.id = :habitSessionId " )
+    List<Long> queryGetHabitSessionVotes(Long habitSessionId);
+
+    // 습관에 대한 유저의 회고
+    @Query("select hsf from HabitSessionFollower hsf " +
+            "where hsf.follower.id = :userId " +
+            "and hsf.habitSession.habit.id = :habitId " )
+    Slice<HabitSessionFollower> queryGetHabitSessionReviewByHabit (Long userId, Long habitId);
 
     // 입장한 팔로워의 습관 세션 완료 여부
     @Query("select case " +

@@ -35,7 +35,7 @@ public class HabitFollowingGetResponseDto {
 
 
     public HabitFollowingGetResponseDto(Habit habit, List<String> hashtags, Category category,
-                                        List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto/*, boolean notification*/){
+                                        List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto){
         this.id = habit.getId();
         this.hostId = habit.getHost().getId();
         this.title = habit.getTitle();

@@ -27,6 +27,8 @@ public class HabitSessionFollower extends BaseEntity {
     @JoinColumn(name = "follower_id",nullable = false)
     private User follower;
 
+    private String videoUrl;
+
     // 해당 유저가 투표한 mvp 후보.
     private Long mvpVote;
 
@@ -52,7 +54,10 @@ public class HabitSessionFollower extends BaseEntity {
         this.mvpVote  =mvpVote;
     }
 
-    public void completeSession() {this.completeStatus = CompleteStatus.COMPLETE;};
+    public void uploadVideo(String videoUrl){
+        this.videoUrl = videoUrl;
+        this.completeStatus = CompleteStatus.COMPLETE;
+    }
 
     //회고 작성
     public void writeReview(Long starRate, Emotion emotion){

@@ -2,6 +2,8 @@ package ourtine.service.impl;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import ourtine.aws.s3.S3Uploader;
 import ourtine.domain.*;
 import ourtine.domain.common.SliceResponseDto;
 import ourtine.domain.enums.Day;
@@ -9,6 +11,7 @@ import ourtine.domain.enums.Sort;
 import ourtine.domain.mapping.HabitDays;
 import ourtine.domain.mapping.HabitFollowers;
 import ourtine.domain.mapping.HabitHashtag;
+import ourtine.domain.mapping.HabitSessionFollower;
 import ourtine.repository.*;
 import ourtine.web.dto.request.HabitCreateRequestDto;
 import ourtine.service.HabitService;
@@ -17,6 +20,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import ourtine.web.dto.response.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
@@ -35,22 +39,26 @@ public class HabitServiceImpl implements HabitService {
     private final CategoryRepository categoryRepository;
     private final HashtagRepository hashtagRepository;
     private final HabitHashtagRepository habitHashtagRepository;
+    private final S3Uploader s3Uploader;
 
     // 습관 개설하기
     @Override
-    public HabitCreateResponseDto createHabit(HabitCreateRequestDto habitCreateRequestDto, User user) {
-        // TODO:  이미지 유무 검사
+    public HabitCreateResponseDto createHabit(HabitCreateRequestDto habitCreateRequestDto, MultipartFile file, User user) throws IOException {
+        // TODO:  이미지 유무 에러 처리
+        if(file.isEmpty()){}
         // TODO:  S3 이미지 업로드
-        Habit habit = null;
+        Habit habit;
         Category category = categoryRepository.findByName(habitCreateRequestDto.getCategory()).orElseThrow();
 
         if (habitCreateRequestDto.getHabitStatus()=="Public")
         {
+            String imageUrl = s3Uploader.upload(file,"");
+
             habit = PublicHabit.builder()
                     .host(user)
                     .title(habitCreateRequestDto.getTitle())
                     .detail(habitCreateRequestDto.getDetail())
-                    .imageUrl("이미지")
+                    .imageUrl(imageUrl)
                     .categoryId(category.getId())
                     .startTime(habitCreateRequestDto.getStartTime())
                     .endTime(habitCreateRequestDto.getEndTime())
@@ -60,11 +68,13 @@ public class HabitServiceImpl implements HabitService {
                     .build();
         }
         else if (habitCreateRequestDto.getHabitStatus()=="Private"){
+            String imageUrl = s3Uploader.upload(file,"");
+
             habit = PrivateHabit.builder()
                     .host(user)
                     .title(habitCreateRequestDto.getTitle())
                     .detail(habitCreateRequestDto.getDetail())
-                    .imageUrl("이미지")
+                    .imageUrl(imageUrl)
                     .categoryId(category.getId())
                     .startTime(habitCreateRequestDto.getStartTime())
                     .endTime(habitCreateRequestDto.getEndTime())
@@ -73,6 +83,7 @@ public class HabitServiceImpl implements HabitService {
                     .followerLimit(habitCreateRequestDto.getFollowerLimit())
                     .build();
         }
+        else return null;
 
         Habit savedHabit = habitRepository.save(habit);
 
@@ -234,7 +245,7 @@ public class HabitServiceImpl implements HabitService {
     // 카테고리별 검색
     @Override
     public Slice<HabitFindByCategoryGetResponseDto> findHabitsByCategory(String categoryName, User user, Pageable pageable) {
-        Category category = categoryRepository.findByName(categoryName).orElseThrow();
+        Category category = categoryRepository.findByName(categoryName).orElseThrow(); // 에러 처리
         Slice<Habit> habits = habitRepository.querySearchHabitByCategory(user.getId(), category.getId(), pageable);
         return habits.map(habit ->
              new HabitFindByCategoryGetResponseDto(habit, categoryName));
@@ -247,6 +258,15 @@ public class HabitServiceImpl implements HabitService {
         return new HabitFollowerResponseDto(habitId,user.getId());
     }
 
+    // 습관 위클리 로그
+    @Override
+    public Slice<HabitWeeklyLogResponseDto> getHabitWeeklyLog(Long habitId, User user) {
+        if (habitRepository.findById(habitId).isEmpty()){} // 에러
+        return habitSessionFollowerRepository.
+                queryGetHabitSessionReviewByHabit(user.getId(),habitId).map(
+                        review-> new HabitWeeklyLogResponseDto(review.getHabitSession().getDate(), review.getEmotion())); // 에러 처리
+
+    }
 
     // TODO: 습관 삭제
     // 습관 삭제하기
@@ -289,9 +309,6 @@ public class HabitServiceImpl implements HabitService {
         else return null;
     }
 
-    @Override
-    public void sendInvitation(Long habitId, User user) {
 
-    }
 
 }

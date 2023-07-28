@@ -32,68 +32,70 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     private final HabitSessionRepository habitSessionRepository;
     private final S3Uploader s3Uploader;
 
-
-    // 활성화 된 습관 세션 정보 조회
-    @Override
-    public HabitSessionGetResponseDto getHabitSession(Long habitId) {
-        Habit habit = habitRepository.findById(habitId).orElseThrow();
-        HabitSession habitSession = habitSessionRepository.queryFindTodaySessionByHabitId(habitId).orElseThrow();
-        Slice<User> followers = habitFollowersRepository.queryFindHabitFollowers(habitId);
-
-        List<HabitSessionFollowersGetResponseDto> habitSessionFollowers
-                = followers.map(user ->
-                new HabitSessionFollowersGetResponseDto(user.getId(), user.getNickname(), user.getImageUrl(),
-                        habitSessionFollowerRepository.queryExistsByUserIdAndHabitSessionId(user.getId(),habitSession.getId()))).toList();
-        return new HabitSessionGetResponseDto(habitSession.getId(),habit,habitSessionFollowers);
-    }
-
     // 습관 세션 입장하기
     @Override
     public HabitSessionEnterPostResponseDto enterHabitSession(Long habitId, User user) {
-        HabitSession habitSession = habitSessionRepository.queryFindTodaySessionByHabitId(habitId).orElseThrow();
+        if (habitRepository.findById(habitId).isEmpty()){} // 에러 처리
+        HabitSession habitSession = habitSessionRepository.queryFindTodaySessionByHabitId(habitId).orElseThrow(); // 에러 처기
+
         HabitSessionFollower habitSessionFollower = HabitSessionFollower.builder()
-                        .follower(user).habitSession(habitSession).build();
+                .follower(user).habitSession(habitSession).build();
         habitSessionFollowerRepository.save(habitSessionFollower);
         return new HabitSessionEnterPostResponseDto(habitSession,user);
     }
 
+    // 활성화 된 습관 세션 정보 조회
+    @Override
+    public HabitSessionGetResponseDto getHabitSession(Long sessionId, User user) {
+        HabitSession habitSession = habitSessionRepository.findById(sessionId).orElseThrow(); //에러처리
+
+        Habit habit = habitSession.getHabit();
+        Slice<User> followers = habitFollowersRepository.queryFindHabitFollowers(habit.getId());
+
+        List<HabitSessionFollowersGetResponseDto> habitSessionFollowers
+                = followers.map(follower ->
+                new HabitSessionFollowersGetResponseDto(follower.getId(), follower.getNickname(), follower.getImageUrl(),
+                        habitSessionFollowerRepository.existsByFollowerIdAndHabitSessionId(follower.getId(),sessionId))).toList();
+        return new HabitSessionGetResponseDto(habitSession.getId(),habit,habitSessionFollowers);
+    }
+
+
     // 습관 인증샷 올리기
     @Override
     public HabitSessionUploadVideoPostResponseDto uploadVideo(Long sessionId, MultipartFile file, User user) throws IOException {
-        HabitSession habitSession = habitSessionRepository.findById(sessionId).orElseThrow();
-        HabitSessionFollower habitSessionFollower = habitSessionFollowerRepository.queryGetHabitSessionFollower(user.getId(),habitSession.getId()).orElseThrow();
+        if (habitSessionRepository.findById(sessionId).isEmpty()){}
+        HabitSessionFollower habitSessionFollower = habitSessionFollowerRepository.findByHabitSessionIdAndFollower(sessionId,user).orElseThrow();
 
-        if (file.isEmpty()){} // TODO: 에러 처리
         // 영상 업로드
         String videoUrl = s3Uploader.upload(file,"");
         // 유저의 세션 완료 처리 & 세션 완료 처리
         habitSessionFollower.uploadVideo(videoUrl);
-        return new HabitSessionUploadVideoPostResponseDto(habitSession.getId(),user.getId());
+        return new HabitSessionUploadVideoPostResponseDto(sessionId,user.getId());
     }
 
-    // 습관 세션 MVP 후보 조회
+    // 베스트 습관러 후보 조회
     @Override
     public HabitSessionMvpCandidateGetResponseDto getMvpCandidateList(Long sessionId) {
-        HabitSession habitSession = habitSessionRepository.findById(sessionId).orElseThrow();
-        List<HabitSessionFollower> followers = habitSessionFollowerRepository.queryGetHabitSessionFollowers(sessionId);
+        if (habitSessionRepository.findById(sessionId).isEmpty()){} // 에러 처리
+        List<HabitSessionFollower> followers = habitSessionFollowerRepository.findByHabitSession_Id(sessionId).getContent();
 
         List<HabitSessionFollowerGetResponseDto> result = new ArrayList<>();
         // TODO: user 정보
         followers.forEach(follower -> {
             result.add(new HabitSessionFollowerGetResponseDto(follower.getId(),"닉네임","이미지",follower.getVideoUrl(),
-                    habitSessionFollowerRepository.queryGetHabitSessionFollowerCompleteStatus(follower.getId(),habitSession.getId())));
+                    habitSessionFollowerRepository.queryGetHabitSessionFollowerCompleteStatus(follower.getId(),sessionId)));
         });
-      return  new HabitSessionMvpCandidateGetResponseDto(habitSession.getId(),result) ;
+      return  new HabitSessionMvpCandidateGetResponseDto(sessionId,result) ;
     }
 
-    // 습관 세션 mvp 투표하기
+    // 베스트 습관러 투표하기
     @Override
     public HabitSessionMvpVotePostResponseDto voteMvp(Long sessionId, User user, HabitSessionMvpVotePostRequestDto habitSessionMvpVotePostRequestDto) {
-        HabitSession habitSession = habitSessionRepository.findById(sessionId).orElseThrow();
-        HabitSessionFollower mySession = habitSessionFollowerRepository.queryGetHabitSessionFollower(user.getId(), habitSession.getId()).orElseThrow();
-        HabitSessionFollower mvpUser = habitSessionFollowerRepository.queryGetHabitSessionFollower(user.getId(), sessionId).orElseThrow();
+        HabitSessionFollower mySession = habitSessionFollowerRepository.findByHabitSessionIdAndFollower(sessionId,user).orElseThrow();
+        if (!habitSessionFollowerRepository.existsByFollowerIdAndHabitSessionId(
+                habitSessionMvpVotePostRequestDto.getMvpVote(),sessionId)){} // 에러 처리
 
-        mySession.voteMvp(mvpUser.getId());
+        mySession.voteMvp(habitSessionMvpVotePostRequestDto.getMvpVote());
 
         return new HabitSessionMvpVotePostResponseDto(habitSessionMvpVotePostRequestDto.getMvpVote());
     }
@@ -104,7 +106,6 @@ public class HabitSessionServiceImpl implements HabitSessionService {
         HabitSession habitSession = habitSessionRepository.findById(sessionId).orElseThrow();
         List<Long> followers = habitFollowersRepository.queryFindHabitFollowerIds(habitSession.getHabit());
         List<Long> votes = habitSessionFollowerRepository.queryGetHabitSessionVotes(sessionId);
-
 
         long [] voteNum = new long[followers.size()]; // 득표 수 저장
         HashMap<Long,Long> resultMap = new HashMap<>(); // ( 유저 아이디, 득표 수)
@@ -123,6 +124,7 @@ public class HabitSessionServiceImpl implements HabitSessionService {
                 mvpId.add(follower);
             }
         }
+
         List<HabitSessionMvpGetResponseDto> habitSessionMvpGetResponseDto = new ArrayList<>();
         mvpId.forEach(mvp->{ habitSessionMvpGetResponseDto.add(
                 new HabitSessionMvpGetResponseDto(mvp,"닉네임","이미지"));});

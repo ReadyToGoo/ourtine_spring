@@ -44,8 +44,6 @@ public class HabitServiceImpl implements HabitService {
     // 습관 개설하기
     @Override
     public HabitCreateResponseDto createHabit(HabitCreateRequestDto habitCreateRequestDto, MultipartFile file, User user) throws IOException {
-        // TODO:  이미지 유무 에러 처리
-        if(file.isEmpty()){}
         // TODO:  S3 이미지 업로드
         Habit habit;
         Category category = categoryRepository.findByName(habitCreateRequestDto.getCategory()).orElseThrow();
@@ -150,12 +148,12 @@ public class HabitServiceImpl implements HabitService {
         Slice<User> followers = habitFollowersRepository.queryFindHabitFollowers(habitId);
         List<HabitFollowersGetResponseDto> habitFollowersResult =
                 followers.map(follower->new HabitFollowersGetResponseDto(
-                        follower.getId(), habitFollowersRepository.queryExistsByUserIdAndHabitId(habitId,follower.getId()),
+                        follower.getId(), habitFollowersRepository.findByHabit_IdAndFollower_Id(habitId,follower.getId()).isPresent(),
                         follower.getNickname(), follower.getImageUrl()
                         )).toList();
 
         // 참여하고 있으면
-        if(habitFollowersRepository.queryExistsByUserIdAndHabitId(habitId, user.getId())){
+        if(habitFollowersRepository.findByHabit_IdAndFollower_Id(habitId, user.getId()).isPresent()){
             return new HabitGetResponseDto(true,null,new HabitFollowingGetResponseDto(habit,hashtags,category,habitFollowersResult));
         }
         // 참여 안 하고 있으면
@@ -201,8 +199,8 @@ public class HabitServiceImpl implements HabitService {
         Habit habit = habitRepository.findById(habitId).orElseThrow();
         HabitFollowers habitFollower = HabitFollowers.builder().follower(user).habit(habit).build();
         //참여하고 있으면
-        if (habitFollowersRepository.queryExistsByUserIdAndHabitId(habitId,user.getId()) ||
-                habit.getFollowerLimit()-habit.getFollowerCount()<=0 ){
+        if (habitFollowersRepository.findByHabit_IdAndFollower_Id(habitId,user.getId()).isPresent() ||
+                habit.getFollowerLimit()-habit.getFollowerCount()<1 ){
             //에러 처리
             return null;
         }
@@ -263,7 +261,7 @@ public class HabitServiceImpl implements HabitService {
     public Slice<HabitWeeklyLogResponseDto> getHabitWeeklyLog(Long habitId, User user) {
         if (habitRepository.findById(habitId).isEmpty()){} // 에러
         return habitSessionFollowerRepository.
-                queryGetHabitSessionReviewByHabit(user.getId(),habitId).map(
+                findByFollowerIdAndHabitSessionHabitId(user.getId(),habitId).map(
                         review-> new HabitWeeklyLogResponseDto(review.getHabitSession().getDate(), review.getEmotion())); // 에러 처리
 
     }

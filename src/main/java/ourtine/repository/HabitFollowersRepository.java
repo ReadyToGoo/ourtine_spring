@@ -21,10 +21,7 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
     Optional<HabitFollowers> findByFollowerAndHabit(User user, Habit habit);
 
     // 습관 참여 여부
-    @Query("select count(hf)>0 from HabitFollowers hf " +
-            "where hf.habit.id = :habitId " +
-            "and hf.habit.host.id = :userId")
-    boolean queryExistsByUserIdAndHabitId (Long habitId, Long userId);
+    Optional<HabitFollowers> findByHabit_IdAndFollower_Id (Long habitId, Long userId);
 
     // 습관의 팔로워 수 조회
     @Query("select count (hf) from HabitFollowers hf where hf.habit = :habit " +

@@ -1,5 +1,6 @@
-package ourtine.server.web.dto.response;
+package ourtine.web.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,11 +15,11 @@ import java.util.List;
 public class HabitSearchResponseDto {
     private Long id;
     private String title;
-    private boolean isRecruiting;
+    private Boolean isRecruiting;
     private List<String> hashtags;
     private String category;
 
-    public HabitSearchResponseDto(Habit habit, boolean isRecruiting, List<String> hashtags, Category category){
+    public HabitSearchResponseDto(Habit habit, Boolean isRecruiting, List<String> hashtags, Category category){
         this.id = habit.getId();
         this.title = habit.getTitle();
         this.isRecruiting  =isRecruiting;

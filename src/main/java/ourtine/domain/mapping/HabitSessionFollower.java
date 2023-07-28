@@ -4,6 +4,7 @@ import ourtine.domain.HabitSession;
 import ourtine.domain.User;
 import ourtine.domain.common.BaseEntity;
 import ourtine.domain.enums.CompleteStatus;
+import ourtine.domain.enums.Emotion;
 import ourtine.domain.enums.Status;
 import javax.persistence.*;
 import lombok.Builder;
@@ -33,7 +34,7 @@ public class HabitSessionFollower extends BaseEntity {
     private Long starRate;
 
     // 감정
-    private Long emoji;
+    private Emotion emotion;
 
     @Enumerated(value = EnumType.STRING)
     private CompleteStatus completeStatus = CompleteStatus.INCOMPLETE;
@@ -54,9 +55,9 @@ public class HabitSessionFollower extends BaseEntity {
     public void completeSession() {this.completeStatus = CompleteStatus.COMPLETE;};
 
     //회고 작성
-    public void writeReview(Long starRate, Long emoji){
+    public void writeReview(Long starRate, Emotion emotion){
         this.starRate = starRate;
-        this.emoji = emoji;
+        this.emotion = emotion;
     }
 
 }

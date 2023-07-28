@@ -18,8 +18,6 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "and h.status = 'ACTIVE'")
     Slice<Long> queryFindMyHabits(Long hostId);
 
-    //내가 참여하는 습관인지 여부
-
     // 아이디로 습관 정보 조회 (PUBLIC + PRIVATE)
     @Query("select h from Habit h " +
             "where h.id in :habitIds " +
@@ -100,5 +98,14 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "and h.habitStatus = 'PUBLIC'" +
             "and h.status = 'ACTIVE'" )
     Slice<Habit> queryGetRecommendHabits(Long userId, Pageable pageable);
+
+    // 습관의 모집 여부 조회
+    @Query("select case " +
+            "when h.followerLimit-h.followerCount > 0  " +
+            "and h.endDate >= CURDATE() then true " +
+            "else false end " +
+            "from Habit h " +
+            "where h.id = :habitId")
+    boolean queryGetHabitRecruitingStatus(Long habitId);
 
 }

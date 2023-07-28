@@ -1,4 +1,4 @@
-package ourtine.server.web.dto.response;
+package ourtine.web.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,12 +9,12 @@ import ourtine.domain.User;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class HabitSessionEnterPostResponse {
+public class HabitSessionEnterPostResponseDto {
     private Long sessionId;
     private Long followerId ;
     private Long habitId;
 
-    public HabitSessionEnterPostResponse(HabitSession habitSession, User user){
+    public HabitSessionEnterPostResponseDto(HabitSession habitSession, User user){
         this.sessionId = habitSession.getId();
         this.followerId = user.getId();
         this.habitId = habitSession.getHabit().getId();

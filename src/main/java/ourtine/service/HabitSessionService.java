@@ -1,27 +1,26 @@
 package ourtine.service;
 
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.User;
-import ourtine.server.web.dto.request.HabitSessionMvpVotePostRequestDto;
-import ourtine.server.web.dto.response.HabitActiveSessionGetResponse;
-import ourtine.server.web.dto.response.HabitSessionEnterPostResponse;
-import ourtine.server.web.dto.response.HabitSessionMvpCandidateGetResponse;
+import ourtine.web.dto.request.HabitSessionMvpVotePostRequestDto;
+import ourtine.web.dto.response.HabitSessionGetResponseDto;
+import ourtine.web.dto.response.HabitSessionEnterPostResponseDto;
+import ourtine.web.dto.response.HabitSessionMvpCandidateGetResponseDto;
+import ourtine.web.dto.response.HabitSessionMvpVotePostResponseDto;
 
-import java.util.List;
 @Service
 public interface HabitSessionService {
 
     // @Transactional
-    public HabitActiveSessionGetResponse getActiveHabitSession(Long habitSessionId);
+    public HabitSessionGetResponseDto getHabitSession(Long habitSessionId);
 
     // @Transactional
-    public HabitSessionEnterPostResponse enterHabitSession(Long sessionId, User user);
+    public HabitSessionEnterPostResponseDto enterHabitSession(Long sessionId, User user);
 
     @Transactional
-    public HabitSessionMvpVotePostRequestDto voteMvp(Long sessionId, User user, HabitSessionMvpVotePostRequestDto habitSessionMvpVotePostRequestDto);
+    public HabitSessionMvpVotePostResponseDto voteMvp(Long sessionId, User user, HabitSessionMvpVotePostRequestDto habitSessionMvpVotePostRequestDto);
 
     // @Transactional
-    public List<HabitSessionMvpCandidateGetResponse> getMvpCandidateList(Long sessionId);
+    public HabitSessionMvpCandidateGetResponseDto getMvpCandidateList(Long sessionId);
 }

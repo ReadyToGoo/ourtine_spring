@@ -1,11 +1,10 @@
-package ourtine.server.web.dto.response;
+package ourtine.web.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ourtine.domain.Category;
 import ourtine.domain.Habit;
-import ourtine.domain.Hashtag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +33,6 @@ public class HabitFollowingGetResponseDto {
 
     private List<HabitFollowersGetResponseDto> followerList = new ArrayList<>();
 
-/*    private Boolean notification = null;*/
 
     public HabitFollowingGetResponseDto(Habit habit, List<String> hashtags, Category category,
                                         List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto/*, boolean notification*/){
@@ -46,6 +44,6 @@ public class HabitFollowingGetResponseDto {
         this.category = category.getName();
         this.hashtags = hashtags;
         this.followerList = habitFollowersGetResponseDto;
-     /*   this.notification = notification;*/
+
     }
 }

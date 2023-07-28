@@ -1,8 +1,7 @@
-package ourtine.server.web.dto.response;
+package ourtine.web.dto.response;
 
 import ourtine.domain.Category;
 import ourtine.domain.Habit;
-import ourtine.domain.Hashtag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -52,7 +51,10 @@ public class HabitNotFollowingGetResponseDto {
 
     private Long followerLimit;
 
-    public HabitNotFollowingGetResponseDto(Habit habit, List<String> hashtags, Category category, List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto){
+    private Boolean isRecruiting;
+
+    public HabitNotFollowingGetResponseDto(Habit habit, List<String> hashtags, Category category, List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto,
+                                           boolean isRecruiting){
         this.id = habit.getId();
         this.hostId = habit.getHost().getId();
         this.title = habit.getTitle();
@@ -67,5 +69,6 @@ public class HabitNotFollowingGetResponseDto {
         this.followerList = habitFollowersGetResponseDto;
         this.followerCount = habit.getFollowerCount();
         this.followerLimit = habit.getFollowerLimit();
+        this.isRecruiting = isRecruiting;
     }
 }

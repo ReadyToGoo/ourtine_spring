@@ -2,6 +2,7 @@ package ourtine.repository;
 
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.Habit;
 import ourtine.domain.mapping.HabitHashtag;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,7 +21,8 @@ public interface HabitHashtagRepository extends JpaRepository<HabitHashtag,Long>
     Slice<Long> queryFindHabitIdsByHashtag(List<Long> hashtagIds);
 
     // 습관 아이디로 삭제
-    void deleteAllByHabit(Habit habit);
+    @Transactional
+    void deleteByHabit(Habit habit);
 
     // 습관의 해시태그  찾기
     @Query("select hh.hashtag.name from HabitHashtag hh where hh.habit.id = :habitId")

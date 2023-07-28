@@ -27,7 +27,6 @@ import java.util.List;
 public class HabitServiceImpl implements HabitService {
 
     private final HabitRepository habitRepository;
-    private final PublicHabitRepository publicHabitRepository;
     private final HabitSessionRepository habitSessionRepository;
     private final HabitFollowersRepository habitFollowersRepository;
     private final HabitDaysRepository habitDaysRepository;
@@ -154,7 +153,7 @@ public class HabitServiceImpl implements HabitService {
 
     // 친구 프로필 - 팔로잉 하는 습관 목록
     @Override
-    public HabitUserFollowingListGetResponse getUserFollowingHabits(Long userId, User me, Pageable pageable) {
+    public HabitUserFollowingListGetResponseDto getUserFollowingHabits(Long userId, User me, Pageable pageable) {
         // 친구인 유저면
        Slice<Habit> commonHabits = habitFollowersRepository.queryGetCommonHabitsByUserId(userId,me.getId());
        Slice<Habit> otherHabits = habitFollowersRepository.queryFindOtherHabitsByUserId(userId,me.getId(),pageable);
@@ -242,11 +241,11 @@ public class HabitServiceImpl implements HabitService {
         // 습관 개설자와 삭제하려는 유저가 같다면
         if (habit.getHost().equals(user)) {
             // 습관-요일 삭제
-            habitDaysRepository.deleteAllByHabit(habit);
+            habitDaysRepository.deleteByHabit(habit);
             habitDaysRepository.flush();
 
             // 습관-해시태그 삭제
-            habitHashtagRepository.deleteAllByHabit(habit);
+            habitHashtagRepository.deleteByHabit(habit);
             habitHashtagRepository.flush();
 
             // 이 게시물의 해시태그가 사용되는 게시물이 없다면, 해시태그 삭제
@@ -259,11 +258,11 @@ public class HabitServiceImpl implements HabitService {
             );
 
             // 습관-팔로워 삭제
-            habitFollowersRepository.deleteAllByHabit(habit);
+            habitFollowersRepository.deleteByHabit(habit);
             habitFollowersRepository.flush();
 
             // 습관-세션-팔로워 삭제
-            habitSessionFollowerRepository.deleteAllByHabitSession_Habit(habit);
+            habitSessionFollowerRepository.deleteByHabitSession_Habit(habit);
             habitSessionFollowerRepository.flush();
 
             // 습관-세션 삭제

@@ -101,4 +101,13 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "and h.status = 'ACTIVE'" )
     Slice<Habit> queryGetRecommendHabits(Long userId, Pageable pageable);
 
+    // 습관의 모집 여부 조회
+    @Query("select case " +
+            "when h.followerLimit-h.followerCount > 0  " +
+            "and h.endDate >= CURDATE() then true " +
+            "else false end " +
+            "from Habit h " +
+            "where h.id = :habitId")
+    boolean queryGetHabitRecruitingStatus(Long habitId);
+
 }

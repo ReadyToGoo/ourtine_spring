@@ -28,7 +28,7 @@ public interface HabitService {
 
     // 유저 프로필 - 팔로잉 하는 습관 목록
     // @Transactional
-    public HabitUserFollowingListGetResponse getUserFollowingHabits(Long userId,User me, Pageable pageable);
+    public HabitUserFollowingListGetResponseDto getUserFollowingHabits(Long userId, User me, Pageable pageable);
 
     // 추천 습관 목록
     // @Transactional

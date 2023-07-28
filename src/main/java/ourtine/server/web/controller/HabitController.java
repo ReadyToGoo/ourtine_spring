@@ -80,9 +80,5 @@ public class HabitController {
         return habitService.quitHabit(habit_id, user);
     }
 
-    // 습관 세션 생성
-    @PostMapping(value = "/{habit_id}/habit-sessions")
-    public void createHabitSession
-
 }
 

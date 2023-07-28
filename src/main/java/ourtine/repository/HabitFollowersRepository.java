@@ -1,5 +1,6 @@
 package ourtine.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,11 +11,13 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
+
 
 @Repository
 public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,Long> {
 
-    HabitFollowers findByFollowerAndHabit(User user, Habit habit);
+    Optional<HabitFollowers> findByFollowerAndHabit(User user, Habit habit);
 
     // 습관 참여 여부
     @Query("select count(hf)>0 from HabitFollowers hf " +
@@ -28,11 +31,11 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
 
     // 참여하고 있는 습관 아이디 조회
     @Query("select hf.habit.id from HabitFollowers hf where hf.follower.id = :userId and hf.status='ACTIVE' and hf.habit.status = 'ACTIVE'")
-    Slice<Long> queryFindMyFollowingHabitIds(Long userId);
+    Slice<Long> queryFindMyFollowingHabitIds(Long userId, Pageable pageable);
 
     // 참여하고 있는 습관 정보 조회
     @Query("select hf.habit from HabitFollowers hf where hf.follower.id = :userId and hf.status='ACTIVE'")
-    Slice<Habit> queryFindMyFollowingHabits(Long userId);
+    Slice<Habit> queryFindMyFollowingHabits(Long userId, Pageable pageable);
 
     // 유저1과 유저2의 같이 하는 습관 정보 조회
     @Query("select hf.habit from HabitFollowers hf "+
@@ -52,7 +55,7 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
             "and hf.habit.status = 'ACTIVE' " +
             "and hf.status='ACTIVE'" +
             "order by hf.habit.id asc")
-    Slice<Long> queryGetCommonHabitIdsByUserId(Long userId1, Long userId2);
+    Slice<Long> queryGetCommonHabitIdsByUserId(Long userId1, Long userId2, Pageable pageable);
 
     // 유저 1의 습관 중, 유저2와 같이 하지 않는 습관 정보 조회
     @Query("select hf.habit from HabitFollowers hf "+
@@ -62,7 +65,7 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
             "and hf.habit.status = 'ACTIVE' " +
             "and hf.status='ACTIVE'" +
             "order by hf.habit.id asc")
-    Slice<Habit> queryFindOtherHabitsByUserId(Long userId1, Long userId2);
+    Slice<Habit> queryFindOtherHabitsByUserId(Long userId1, Long userId2, Pageable pageable);
 
     // 습관의 모집 여부 조회
     @Query("select case " +
@@ -77,6 +80,9 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
     @Transactional
     @Query("delete from HabitFollowers where follower.id = :userId and habit.id = :habitId ")
     void queryDeleteFollowerById (Long userId, Long habitId);
+
+    // 습관 아이디로 삭제
+    void deleteAllByHabit(Habit habit);
 
 }
 

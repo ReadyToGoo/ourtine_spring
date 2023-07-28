@@ -7,8 +7,5 @@ import org.springframework.transaction.annotation.Transactional;
 import ourtine.server.web.dto.response.HabitJoinPostResponseDto;
 
 public interface PrivateHabitService {
-    // 습관 생성하기
-     @Transactional
-    public HabitCreateResponseDto createPrivateHabit(HabitCreateRequestDto habitCreateRequestDto,/* MultipartFile file,*/  User user);
 
 }

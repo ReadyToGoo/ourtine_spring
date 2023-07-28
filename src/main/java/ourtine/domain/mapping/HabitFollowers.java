@@ -25,7 +25,6 @@ public class HabitFollowers extends BaseEntity {
     @JoinColumn(name = "follower_id",nullable = false)
     private User follower;
 
-    private boolean notification;
 
     @Enumerated(value = EnumType.STRING)
     private Status status = Status.ACTIVE;
@@ -34,10 +33,6 @@ public class HabitFollowers extends BaseEntity {
     public HabitFollowers(Habit habit, User follower ){
         this.habit = habit;
         this.follower = follower;
-    }
-
-    public void setNotification(boolean notification) {
-        this.notification = notification;
     }
 
     public void setStatus(Status status) {

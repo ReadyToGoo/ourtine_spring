@@ -14,7 +14,7 @@ import java.util.List;
 public interface HabitSessionService {
 
     // @Transactional
-    public HabitSessionGetResponseDto getHabitSession(Long habitSessionId);
+    public HabitSessionGetResponseDto getHabitSession(Long habitId, User user);
 
     // @Transactional
     public HabitSessionEnterPostResponseDto enterHabitSession(Long sessionId, User user);

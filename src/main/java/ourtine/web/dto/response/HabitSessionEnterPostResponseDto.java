@@ -11,8 +11,8 @@ import ourtine.domain.User;
 @NoArgsConstructor
 public class HabitSessionEnterPostResponseDto {
     private Long sessionId;
-    private Long followerId ;
     private Long habitId;
+    private Long followerId ;
 
     public HabitSessionEnterPostResponseDto(HabitSession habitSession, User user){
         this.sessionId = habitSession.getId();

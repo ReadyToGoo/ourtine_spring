@@ -1,4 +1,5 @@
 package ourtine.service.impl;
 
-public interface S3FileService {
+public interface
+S3FileService {
 }

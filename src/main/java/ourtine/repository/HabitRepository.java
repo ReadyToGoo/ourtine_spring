@@ -12,14 +12,6 @@ import java.util.List;
 @Repository
 public interface HabitRepository extends JpaRepository<Habit,Long> {
 
-    //내가 만든 습관 아이디 조회
-    @Query("select h.id from Habit h " +
-            "where h.host.id in :hostId " +
-            "and h.status = 'ACTIVE'")
-    Slice<Long> queryFindMyHabits(Long hostId);
-
-    //내가 참여하는 습관인지 여부
-
     // 아이디로 습관 정보 조회 (PUBLIC + PRIVATE)
     @Query("select h from Habit h " +
             "where h.id in :habitIds " +
@@ -36,11 +28,6 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "and h.habitStatus = 'PUBLIC'" +
             "order by h.id desc ")
     Slice<Habit> queryFindPublicHabitsById(List<Long> habitIds);
-
-    // 습관 호스트 여부
-    // TODO: 2023/07/25
-   /* @Query("select if(h.host.id , 'YES', 'NO' ) as isHost from Habit h " +
-            "where h.id = :habitId ")*/
 
     // 검색 - 습관 개설 순
     // 차단 유저 필터링

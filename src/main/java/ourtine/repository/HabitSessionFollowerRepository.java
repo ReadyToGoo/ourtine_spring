@@ -31,9 +31,6 @@ public interface HabitSessionFollowerRepository extends JpaRepository<HabitSessi
     List<Long> queryGetHabitSessionVotes(Long habitSessionId);
 
     // 습관에 대한 유저의 회고
-    @Query("select hsf from HabitSessionFollower hsf " +
-            "where hsf.follower.id = :userId " +
-            "and hsf.habitSession.habit.id = :habitId " )
     Slice<HabitSessionFollower> findByFollowerIdAndHabitSessionHabitId (Long userId, Long habitId);
 
     // 입장한 팔로워의 습관 세션 완료 여부

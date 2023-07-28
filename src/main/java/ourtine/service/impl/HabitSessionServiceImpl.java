@@ -10,16 +10,15 @@ import ourtine.repository.HabitFollowersRepository;
 import ourtine.repository.HabitRepository;
 import ourtine.repository.HabitSessionFollowerRepository;
 import ourtine.repository.HabitSessionRepository;
-import ourtine.server.web.dto.response.HabitSessionEnterPostResponse;
+import ourtine.web.dto.request.HabitSessionMvpVotePostRequestDto;
+import ourtine.web.dto.response.HabitSessionEnterPostResponse;
 import ourtine.service.HabitSessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ourtine.server.web.dto.request.HabitSessionMvpVotePostRequestDto;
-import ourtine.server.web.dto.response.HabitActiveSessionGetResponse;
-import ourtine.server.web.dto.response.HabitSessionFollowersGetResponseDto;
-import ourtine.server.web.dto.response.HabitSessionMvpCandidateGetResponse;
+import ourtine.web.dto.response.HabitActiveSessionGetResponse;
+import ourtine.web.dto.response.HabitSessionFollowersGetResponseDto;
+import ourtine.web.dto.response.HabitSessionMvpCandidateGetResponse;
 
-import java.util.Date;
 import java.util.List;
 
 @Service

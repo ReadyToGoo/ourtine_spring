@@ -1,4 +1,4 @@
-package ourtine.server.web.controller;
+package ourtine.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -8,8 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 import ourtine.domain.User;
 import ourtine.domain.common.SliceResponseDto;
 import ourtine.domain.enums.Sort;
-import ourtine.server.web.dto.request.HabitCreateRequestDto;
-import ourtine.server.web.dto.response.*;
+import ourtine.web.dto.request.HabitCreateRequestDto;
+import ourtine.web.dto.response.*;
 import ourtine.service.impl.HabitServiceImpl;
 
 import javax.validation.Valid;

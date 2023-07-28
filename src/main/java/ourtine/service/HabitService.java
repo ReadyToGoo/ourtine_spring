@@ -4,8 +4,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import ourtine.domain.User;
 import ourtine.domain.enums.Sort;
-import ourtine.server.web.dto.request.HabitCreateRequestDto;
-import ourtine.server.web.dto.response.*;
+import ourtine.web.dto.request.HabitCreateRequestDto;
+import ourtine.web.dto.response.*;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface HabitService {

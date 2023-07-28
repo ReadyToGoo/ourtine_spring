@@ -7,10 +7,10 @@ import ourtine.domain.mapping.HabitDays;
 import ourtine.domain.mapping.HabitFollowers;
 import ourtine.domain.mapping.HabitHashtag;
 import ourtine.repository.*;
-import ourtine.server.web.dto.response.HabitJoinPostResponseDto;
+import ourtine.web.dto.response.HabitJoinPostResponseDto;
 import ourtine.service.PublicHabitService;
-import ourtine.server.web.dto.request.HabitCreateRequestDto;
-import ourtine.server.web.dto.response.HabitCreateResponseDto;
+import ourtine.web.dto.request.HabitCreateRequestDto;
+import ourtine.web.dto.response.HabitCreateResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

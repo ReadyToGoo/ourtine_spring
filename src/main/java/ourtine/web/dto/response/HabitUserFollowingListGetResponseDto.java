@@ -4,13 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import ourtine.domain.common.SliceResponseDto;
 
-import java.util.List;
-
 @Getter
 @AllArgsConstructor
-public class HabitUserFollowingListGetResponse {
+public class HabitUserFollowingListGetResponseDto {
 
-    private boolean isFriend; // 유저가 친구인지 아닌지 보여주는 필드
+    private Boolean isFriend; // 유저가 친구인지 아닌지 보여주는 필드
 
     private SliceResponseDto<HabitFollowingInfoDto> habits; // 친구가 아닌 유저
 

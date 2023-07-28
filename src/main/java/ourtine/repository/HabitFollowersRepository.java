@@ -25,6 +25,11 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
             "and hf.habit.host.id = :userId")
     boolean queryExistsByUserIdAndHabitId (Long habitId, Long userId);
 
+    // 습관의 팔로워 수 조회
+    @Query("select count (hf) from HabitFollowers hf where hf.habit = :habit " +
+            "and hf.status='ACTIVE'" )
+    long countHabitFollowersByHabitId(Habit habit);
+
     // 습관 팔로워 정보 조회
     @Query("select hf.follower from HabitFollowers hf where hf.habit.id = :habitId and hf.status='ACTIVE' and hf.habit.status = 'ACTIVE'")
     Slice<User> queryFindHabitFollowers(Long habitId);
@@ -41,7 +46,7 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
     @Query("select hf.habit from HabitFollowers hf "+
             "where hf.habit.id in (select hf.habit.id from HabitFollowers hf where hf.follower.id = :userId1 and hf.status='ACTIVE') " +
             "and hf.follower.id = :userId2 " +
-            "and hf.habit.endDate >= CURDATE() " + // 종료 되지 않은 습관 필터링
+            "and hf.habit.endDate >= CURDATE() " + // 종료 된 습관 필터링
             "and hf.habit.status = 'ACTIVE' " +
             "and hf.status='ACTIVE'" +
             "order by hf.habit.id asc")
@@ -51,7 +56,7 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
     @Query("select hf.habit.id from HabitFollowers hf "+
             "where hf.habit.id in (select hf.habit.id from HabitFollowers hf where hf.follower.id = :userId2 and hf.status='ACTIVE') " +
             "and hf.follower.id = :userId1 " +
-            "and hf.habit.endDate >= CURDATE() " + // 종료 되지 않은 습관 필터링
+            "and hf.habit.endDate >= CURDATE() " + // 종료 된 습관 필터링
             "and hf.habit.status = 'ACTIVE' " +
             "and hf.status='ACTIVE'" +
             "order by hf.habit.id asc")
@@ -82,7 +87,8 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
     void queryDeleteFollowerById (Long userId, Long habitId);
 
     // 습관 아이디로 삭제
-    void deleteAllByHabit(Habit habit);
+    @Transactional
+    void deleteByHabit(Habit habit);
 
 }
 

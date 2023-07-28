@@ -3,11 +3,12 @@ package ourtine.web.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ourtine.domain.enums.CompleteStatus;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class HabitSessionMvpCandidateGetResponse {
+public class HabitSessionFollowerGetResponseDto {
     private Long id;
 
     private String nickname;
@@ -16,8 +17,6 @@ public class HabitSessionMvpCandidateGetResponse {
 
     private String videoUrl;
 
-    private boolean enterStatus; // 입장 여부
-
-    private boolean completeStatus ; // 습관 완료 여부
+    private CompleteStatus completeStatus ; // 습관 완료 여부
 
 }

@@ -8,12 +8,12 @@ import org.springframework.web.multipart.MultipartFile;
 import ourtine.domain.User;
 import ourtine.domain.common.SliceResponseDto;
 import ourtine.domain.enums.Sort;
-import ourtine.repository.UserRepository;
 import ourtine.web.dto.request.HabitCreateRequestDto;
 import ourtine.service.impl.HabitServiceImpl;
 import ourtine.web.dto.response.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController
@@ -24,8 +24,8 @@ public class HabitController {
 
     // 습관 개설
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public HabitCreateResponseDto creatHabit(@RequestPart @Valid HabitCreateRequestDto habitCreateRequestDto, User user, @RequestPart MultipartFile file){
-        return habitService.createHabit(habitCreateRequestDto,user);
+    public HabitCreateResponseDto creatHabit(@RequestPart @Valid HabitCreateRequestDto habitCreateRequestDto, @RequestPart MultipartFile file, User user) throws IOException {
+        return habitService.createHabit(habitCreateRequestDto,file,user);
         // TODO: 응답 형식 추가해야함
     }
 
@@ -39,6 +39,12 @@ public class HabitController {
     @GetMapping(value = "/{habit_id}")
     public HabitGetResponseDto getHabit(@PathVariable Long habit_id, User user){
         return habitService.getHabit(habit_id,user);
+    }
+
+    // 습관 위클리 로그
+    @GetMapping(value = "/{habit_id}/weekly-log")
+    public SliceResponseDto<HabitWeeklyLogResponseDto> getHabitWeeklyLog(@PathVariable Long habit_id,User user){
+        return new SliceResponseDto<>(habitService.getHabitWeeklyLog(habit_id,user));
     }
 
     // 유저 프로필 - 팔로잉 하는 습관 목록
@@ -59,7 +65,7 @@ public class HabitController {
         return habitService.joinHabit(habit_id,user);
     }
 
-    //습관 검색하기
+    // 습관 검색하기
     @GetMapping(value = "/search")
     public SliceResponseDto<HabitSearchResponseDto> searchHabits(@RequestParam Sort sort_by,  @RequestParam String keyword, User user, Pageable pageable){
         return new SliceResponseDto<>(habitService.searchHabits(sort_by,user,keyword,pageable));
@@ -70,6 +76,7 @@ public class HabitController {
     public SliceResponseDto<HabitFindByCategoryGetResponseDto> findHabitsByCategory(@RequestParam String category, User user, Pageable pageable){
         return new SliceResponseDto<>(habitService.findHabitsByCategory(category, user, pageable));
     }
+
     // 습관 탈퇴
     @DeleteMapping(value = "/{habit_id}")
     public HabitFollowerResponseDto quitHabit(@PathVariable Long habit_id, User user){

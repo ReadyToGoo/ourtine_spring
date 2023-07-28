@@ -2,21 +2,21 @@ package ourtine.service;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.web.multipart.MultipartFile;
 import ourtine.domain.User;
 import ourtine.domain.enums.Sort;
 import ourtine.web.dto.request.HabitCreateRequestDto;
 import org.springframework.transaction.annotation.Transactional;
 import ourtine.web.dto.response.*;
 
+import java.io.IOException;
+import java.util.List;
+
 public interface HabitService {
 
     //습관 개설하기
     @Transactional
-    public HabitCreateResponseDto createHabit(HabitCreateRequestDto habitCreateRequestDto, /*MultipartFile file, */User user);
-
-/*    // 습관 참여 여부
-    // @Transactional
-    public boolean getUserIsHabitFollower(Long habitSessionId, User user);*/
+    public HabitCreateResponseDto createHabit(HabitCreateRequestDto habitCreateRequestDto, MultipartFile file, User user) throws IOException;
 
     // 홈 - 팔로잉하는 습관 목록 (요일 필터링)
     // @Transactional
@@ -54,6 +54,7 @@ public interface HabitService {
     // 습관 삭제
     public HabitDeleteResponseDto deleteHabit(Long habitId, User user);
 
-    // 초대장 발신
-    public void sendInvitation(Long habitId, User user);
+    // 습관 위클리 로그
+    public Slice<HabitWeeklyLogResponseDto> getHabitWeeklyLog(Long habitId, User user);
+
 }

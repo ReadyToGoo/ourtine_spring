@@ -8,9 +8,10 @@ import org.springframework.web.multipart.MultipartFile;
 import ourtine.domain.User;
 import ourtine.domain.common.SliceResponseDto;
 import ourtine.domain.enums.Sort;
+import ourtine.repository.UserRepository;
 import ourtine.web.dto.request.HabitCreateRequestDto;
-import ourtine.web.dto.response.*;
 import ourtine.service.impl.HabitServiceImpl;
+import ourtine.web.dto.response.*;
 
 import javax.validation.Valid;
 
@@ -34,16 +35,15 @@ public class HabitController {
         return new SliceResponseDto<>(habitService.getMyFollowingHabits(user,pageable));
     }
 
-    // TODO: dto 확정 필요
-    // 습관 프로필 조회 (참여 x)
+    // 습관 프로필 조회
     @GetMapping(value = "/{habit_id}")
-    public HabitGetResponseDto getNotFollowingHabit(@PathVariable Long habit_id, User user){
-        return habitService.getHabit(habit_id, user);
+    public HabitGetResponseDto getHabit(@PathVariable Long habit_id, User user){
+        return habitService.getHabit(habit_id,user);
     }
 
     // 유저 프로필 - 팔로잉 하는 습관 목록
     @GetMapping(value = "/users/{user_id}")
-    public HabitUserFollowingListGetResponse getUserFollowingHabits(@PathVariable Long user_id, User me, Pageable pageable){
+    public HabitUserFollowingListGetResponseDto getUserFollowingHabits(@PathVariable Long user_id, User me, Pageable pageable){
         return habitService.getUserFollowingHabits(user_id, me, pageable);
     }
 
@@ -55,30 +55,27 @@ public class HabitController {
 
     // 습관 참여하기
     @PostMapping(value = "/{habit_id}")
-    public HabitJoinPostResponseDto joinHabit(Long habit_id,User user){
+    public HabitJoinPostResponseDto joinHabit(@PathVariable @Valid Long habit_id, User user){
         return habitService.joinHabit(habit_id,user);
     }
 
-    // TODO: 정책 확인 필요
-    // 습관 알림
-
     //습관 검색하기
     @GetMapping(value = "/search")
-    public SliceResponseDto<HabitSearchResponseDto> searchHabits(@RequestParam Sort sort_by, String keyword, User user, Pageable pageable){
+    public SliceResponseDto<HabitSearchResponseDto> searchHabits(@RequestParam Sort sort_by,  @RequestParam String keyword, User user, Pageable pageable){
         return new SliceResponseDto<>(habitService.searchHabits(sort_by,user,keyword,pageable));
     }
 
     // 카테고리별 검색
-    @GetMapping
-    public SliceResponseDto<HabitFindByCategoryGetResponse> findHabitsByCategory(@RequestParam String category, User user, Pageable pageable){
+    @GetMapping("/discover")
+    public SliceResponseDto<HabitFindByCategoryGetResponseDto> findHabitsByCategory(@RequestParam String category, User user, Pageable pageable){
         return new SliceResponseDto<>(habitService.findHabitsByCategory(category, user, pageable));
     }
-
     // 습관 탈퇴
     @DeleteMapping(value = "/{habit_id}")
     public HabitFollowerResponseDto quitHabit(@PathVariable Long habit_id, User user){
         return habitService.quitHabit(habit_id, user);
     }
+
 
 }
 

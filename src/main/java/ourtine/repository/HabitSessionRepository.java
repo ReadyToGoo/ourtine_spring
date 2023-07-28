@@ -31,5 +31,5 @@ public interface HabitSessionRepository extends JpaRepository<HabitSession,Long>
 
     // 습관 아이디로 삭제
     @Transactional
-    void deleteAllByHabit(Habit habit);
+    void deleteByHabit(Habit habit);
 }

@@ -14,5 +14,5 @@ public class HabitSessionFollowersGetResponseDto {
 
         private String imageUrl;
 
-        private boolean enterStatus;
+        private Boolean enterStatus;
 }

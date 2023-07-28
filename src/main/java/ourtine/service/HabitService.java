@@ -5,8 +5,8 @@ import org.springframework.data.domain.Slice;
 import ourtine.domain.User;
 import ourtine.domain.enums.Sort;
 import ourtine.web.dto.request.HabitCreateRequestDto;
-import ourtine.web.dto.response.*;
 import org.springframework.transaction.annotation.Transactional;
+import ourtine.web.dto.response.*;
 
 public interface HabitService {
 
@@ -48,10 +48,12 @@ public interface HabitService {
     public HabitFollowerResponseDto quitHabit(Long habitId, User user);
 
     // 카테고리별 습관 검색
-    public Slice<HabitFindByCategoryGetResponse> findHabitsByCategory(String categoryName, User user, Pageable pageable);
+    public Slice<HabitFindByCategoryGetResponseDto> findHabitsByCategory(String categoryName, User user, Pageable pageable);
 
     @Transactional
-    //습관 삭제
+    // 습관 삭제
     public HabitDeleteResponseDto deleteHabit(Long habitId, User user);
 
+    // 초대장 발신
+    public void sendInvitation(Long habitId, User user);
 }

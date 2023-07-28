@@ -8,7 +8,7 @@ import ourtine.domain.Habit;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class HabitFindByCategoryGetResponse {
+public class HabitFindByCategoryGetResponseDto {
     Long id;
 
     String title;
@@ -19,7 +19,7 @@ public class HabitFindByCategoryGetResponse {
 
     String imageUrl;
 
-    public HabitFindByCategoryGetResponse(Habit habit, String category){
+    public HabitFindByCategoryGetResponseDto(Habit habit, String category){
         this.id = habit.getId();
         this.title = habit.getTitle();
         this.category = category;

@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class HabitCreateResponseDto {
+public class HabitCreatePostResponseDto {
     Long habitId;
 }

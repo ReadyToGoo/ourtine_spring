@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ourtine.domain.User;
 import ourtine.web.dto.request.HabitSessionMvpVotePostRequestDto;
+import ourtine.web.dto.request.HabitSessionReviewPostRequestDto;
 import ourtine.web.dto.response.*;
 
 import java.io.IOException;
@@ -29,5 +30,8 @@ public interface HabitSessionService {
     public HabitSessionMvpCandidateGetResponseDto getMvpCandidateList(Long sessionId);
 
     public List<HabitSessionMvpGetResponseDto> showMvp(Long sessionId, User user);
+
+    @Transactional
+    public HabitSessionReviewPostResponseDto writeReview(Long sessionId, HabitSessionReviewPostRequestDto requestDto, User user);
 
 }

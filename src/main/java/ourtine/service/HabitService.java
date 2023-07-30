@@ -5,18 +5,17 @@ import org.springframework.data.domain.Slice;
 import org.springframework.web.multipart.MultipartFile;
 import ourtine.domain.User;
 import ourtine.domain.enums.Sort;
-import ourtine.web.dto.request.HabitCreateRequestDto;
+import ourtine.web.dto.request.HabitCreatePostRequestDto;
 import org.springframework.transaction.annotation.Transactional;
+import ourtine.web.dto.request.HabitInvitationPostRequestDto;
 import ourtine.web.dto.response.*;
 
 import java.io.IOException;
-import java.util.List;
 
 public interface HabitService {
-
     //습관 개설하기
     @Transactional
-    public HabitCreateResponseDto createHabit(HabitCreateRequestDto habitCreateRequestDto, MultipartFile file, User user) throws IOException;
+    public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto habitCreatePostRequestDto, MultipartFile file, User user) throws IOException;
 
     // 홈 - 팔로잉하는 습관 목록 (요일 필터링)
     // @Transactional
@@ -36,7 +35,7 @@ public interface HabitService {
 
     //습관 참여하기
     @Transactional
-    public HabitJoinPostResponseDto joinHabit(Long habitId, User user);
+    public HabitFollowerResponseDto joinHabit(Long habitId, User user);
 
 
     // @Transactional
@@ -57,4 +56,6 @@ public interface HabitService {
     // 습관 위클리 로그
     public Slice<HabitWeeklyLogResponseDto> getHabitWeeklyLog(Long habitId, User user);
 
+    // 습관 초대
+    public HabitInvitationPostResponseDto sendInvitation(Long habitId, User user, HabitInvitationPostRequestDto requestDto);
 }

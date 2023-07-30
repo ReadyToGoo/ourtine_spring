@@ -47,11 +47,11 @@ public class HabitNotFollowingGetResponseDto {
 
     private LocalDate endDate;
 
+    private Boolean isRecruiting;
+
     private Long followerCount;
 
     private Long followerLimit;
-
-    private Boolean isRecruiting;
 
     public HabitNotFollowingGetResponseDto(Habit habit, List<String> hashtags, Category category, List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto,
                                            boolean isRecruiting){
@@ -67,7 +67,7 @@ public class HabitNotFollowingGetResponseDto {
         this.endTime = habit.getEndTime();
         this.hashtags = hashtags;
         this.followerList = habitFollowersGetResponseDto;
-        this.followerCount = habit.getFollowerCount();
+        this.followerCount = habit.getFollowerLimit() - habit.getFollowerCount();
         this.followerLimit = habit.getFollowerLimit();
         this.isRecruiting = isRecruiting;
     }

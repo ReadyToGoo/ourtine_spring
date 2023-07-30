@@ -1,5 +1,6 @@
 package ourtine.web.dto.request;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ourtine.domain.enums.Day;
+import ourtine.domain.enums.HabitStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -15,42 +17,41 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class HabitCreateRequestDto {
-        @NotEmpty(message = "습관명을 입력해주세요")
+public class HabitCreatePostRequestDto {
+        @NotBlank(message = "습관명을 입력해주세요")
         @Size(min= 1, max = 25, message = "길이는 ")
         private String title; // 제목
 
-        @NotEmpty
+        @NotBlank
         @Size(min= 1, max = 25, message = "길이는")
         private String detail;
 
-
-        @NotEmpty
+        @NotBlank
         private LocalTime startTime;
 
-        @NotEmpty
+        @NotBlank
         private LocalTime endTime;
 
-        @NotEmpty
+        @NotBlank
         private LocalDate startDate;
 
-        @NotEmpty
+        @NotBlank
         private LocalDate endDate;
 
-        @NotEmpty
+        @NotBlank
         private List<Day> days;
 
-        @NotEmpty
+        @NotBlank
         private Long followerLimit;
 
-        @NotEmpty
+        @NotBlank
         private String category;
 
-        @NotEmpty
+        @NotBlank
         private List<String> hashtags;
 
-        @NotEmpty
-        private String habitStatus;
+        @NotBlank
+        private HabitStatus habitStatus;
 
 
 }

@@ -7,17 +7,19 @@ import ourtine.aws.s3.S3Uploader;
 import ourtine.domain.*;
 import ourtine.domain.common.SliceResponseDto;
 import ourtine.domain.enums.Day;
+import ourtine.domain.enums.HabitStatus;
+import ourtine.domain.enums.MessageType;
 import ourtine.domain.enums.Sort;
 import ourtine.domain.mapping.HabitDays;
 import ourtine.domain.mapping.HabitFollowers;
 import ourtine.domain.mapping.HabitHashtag;
-import ourtine.domain.mapping.HabitSessionFollower;
 import ourtine.repository.*;
-import ourtine.web.dto.request.HabitCreateRequestDto;
+import ourtine.web.dto.request.HabitCreatePostRequestDto;
 import ourtine.service.HabitService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import ourtine.web.dto.request.HabitInvitationPostRequestDto;
 import ourtine.web.dto.response.*;
 
 import java.io.IOException;
@@ -31,7 +33,6 @@ import java.util.List;
 public class HabitServiceImpl implements HabitService {
 
     private final HabitRepository habitRepository;
-    private final PublicHabitRepository publicHabitRepository;
     private final HabitSessionRepository habitSessionRepository;
     private final HabitFollowersRepository habitFollowersRepository;
     private final HabitDaysRepository habitDaysRepository;
@@ -40,58 +41,59 @@ public class HabitServiceImpl implements HabitService {
     private final HashtagRepository hashtagRepository;
     private final HabitHashtagRepository habitHashtagRepository;
     private final S3Uploader s3Uploader;
+    private final MessageRepository messageRepository;
 
     // 습관 개설하기
     @Override
-    public HabitCreateResponseDto createHabit(HabitCreateRequestDto habitCreateRequestDto, MultipartFile file, User user) throws IOException {
+    public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto habitCreatePostRequestDto, MultipartFile file, User user) throws IOException {
         // TODO:  S3 이미지 업로드
         Habit habit;
-        Category category = categoryRepository.findByName(habitCreateRequestDto.getCategory()).orElseThrow();
+        Category category = categoryRepository.findByName(habitCreatePostRequestDto.getCategory()).orElseThrow();
 
-        if (habitCreateRequestDto.getHabitStatus()=="Public")
+        if (habitCreatePostRequestDto.getHabitStatus()== HabitStatus.PUBLIC)
         {
             String imageUrl = s3Uploader.upload(file,"");
 
             habit = PublicHabit.builder()
                     .host(user)
-                    .title(habitCreateRequestDto.getTitle())
-                    .detail(habitCreateRequestDto.getDetail())
+                    .title(habitCreatePostRequestDto.getTitle())
+                    .detail(habitCreatePostRequestDto.getDetail())
                     .imageUrl(imageUrl)
                     .categoryId(category.getId())
-                    .startTime(habitCreateRequestDto.getStartTime())
-                    .endTime(habitCreateRequestDto.getEndTime())
-                    .startDate(habitCreateRequestDto.getStartDate())
-                    .endDate(habitCreateRequestDto.getEndDate())
-                    .followerLimit(habitCreateRequestDto.getFollowerLimit())
+                    .startTime(habitCreatePostRequestDto.getStartTime())
+                    .endTime(habitCreatePostRequestDto.getEndTime())
+                    .startDate(habitCreatePostRequestDto.getStartDate())
+                    .endDate(habitCreatePostRequestDto.getEndDate())
+                    .followerLimit(habitCreatePostRequestDto.getFollowerLimit())
                     .build();
         }
-        else if (habitCreateRequestDto.getHabitStatus()=="Private"){
+        else if (habitCreatePostRequestDto.getHabitStatus()==HabitStatus.PRIVATE){
             String imageUrl = s3Uploader.upload(file,"");
 
             habit = PrivateHabit.builder()
                     .host(user)
-                    .title(habitCreateRequestDto.getTitle())
-                    .detail(habitCreateRequestDto.getDetail())
+                    .title(habitCreatePostRequestDto.getTitle())
+                    .detail(habitCreatePostRequestDto.getDetail())
                     .imageUrl(imageUrl)
                     .categoryId(category.getId())
-                    .startTime(habitCreateRequestDto.getStartTime())
-                    .endTime(habitCreateRequestDto.getEndTime())
-                    .startDate(habitCreateRequestDto.getStartDate())
-                    .endDate(habitCreateRequestDto.getEndDate())
-                    .followerLimit(habitCreateRequestDto.getFollowerLimit())
+                    .startTime(habitCreatePostRequestDto.getStartTime())
+                    .endTime(habitCreatePostRequestDto.getEndTime())
+                    .startDate(habitCreatePostRequestDto.getStartDate())
+                    .endDate(habitCreatePostRequestDto.getEndDate())
+                    .followerLimit(habitCreatePostRequestDto.getFollowerLimit())
                     .build();
         }
         else return null;
 
         Habit savedHabit = habitRepository.save(habit);
 
-        habitCreateRequestDto.getDays().forEach(name ->{
+        habitCreatePostRequestDto.getDays().forEach(name ->{
             HabitDays habitDays = HabitDays.builder().habit(savedHabit).day(name).build();
             habitDaysRepository.save(habitDays);
         });
 
         // 해시태그 DB에 저장
-        habitCreateRequestDto.getHashtags().forEach(name->{
+        habitCreatePostRequestDto.getHashtags().forEach(name->{
             Hashtag hashtag;
             if (hashtagRepository.existsByName(name)){
                 hashtag = hashtagRepository.findHashtagByName(name).orElseThrow();
@@ -109,7 +111,7 @@ public class HabitServiceImpl implements HabitService {
         HabitFollowers habitFollowers = HabitFollowers.builder().follower(user).habit(habit).build();
         habitFollowersRepository.save(habitFollowers);
 
-        return new HabitCreateResponseDto(savedHabit.getId());
+        return new HabitCreatePostResponseDto(savedHabit.getId());
     }
 
 
@@ -195,7 +197,7 @@ public class HabitServiceImpl implements HabitService {
 
     // 습관 참여하기
     @Override
-    public HabitJoinPostResponseDto joinHabit(Long habitId, User user) {
+    public HabitFollowerResponseDto joinHabit(Long habitId, User user) {
         Habit habit = habitRepository.findById(habitId).orElseThrow();
         HabitFollowers habitFollower = HabitFollowers.builder().follower(user).habit(habit).build();
         //참여하고 있으면
@@ -208,7 +210,7 @@ public class HabitServiceImpl implements HabitService {
             habitFollowersRepository.save(habitFollower);
             // 습관 참여자 수 업데이트
             habit.setFollowerCount(habitFollowersRepository.countHabitFollowersByHabitId(habit));
-            return new HabitJoinPostResponseDto(habitId, user.getId());
+            return new HabitFollowerResponseDto(habitId, user.getId());
         }
 
     }
@@ -249,9 +251,12 @@ public class HabitServiceImpl implements HabitService {
              new HabitFindByCategoryGetResponseDto(habit, categoryName));
     }
 
-    // 습관 탈퇴하기
+    // 습관 참여 취소 하기
     @Override
     public HabitFollowerResponseDto quitHabit(Long habitId, User user) {
+        if (habitRepository.findById(habitId).isEmpty()){}
+        if(habitFollowersRepository.findByHabit_IdAndFollower_Id(habitId, user.getId()).isEmpty()){}
+
         habitFollowersRepository.queryDeleteFollowerById(habitId,user.getId());
         return new HabitFollowerResponseDto(habitId,user.getId());
     }
@@ -263,6 +268,19 @@ public class HabitServiceImpl implements HabitService {
         return habitSessionFollowerRepository.
                 findByFollowerIdAndHabitSessionHabitId(user.getId(),habitId).map(
                         review-> new HabitWeeklyLogResponseDto(review.getHabitSession().getDate(), review.getEmotion())); // 에러 처리
+    }
+
+    // 습관 초대장
+    @Override
+    public HabitInvitationPostResponseDto sendInvitation(Long habitId, User user, HabitInvitationPostRequestDto requestDto){
+        List<Long> friends = requestDto.getFriends();
+        // TODO: 유저 확인
+        for(Long friend : friends){
+            Message invitation = NewMessage.builder().messageType(MessageType.HABITINVITE)
+                    .sender(user).receiver(user).contents(habitId.toString()).build();
+            messageRepository.save(invitation);
+        }
+        return new HabitInvitationPostResponseDto();
 
     }
 

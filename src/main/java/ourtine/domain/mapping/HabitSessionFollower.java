@@ -39,7 +39,7 @@ public class HabitSessionFollower extends BaseEntity {
     private Emotion emotion;
 
     @Enumerated(value = EnumType.STRING)
-    private CompleteStatus completeStatus = CompleteStatus.INCOMPLETE;
+    private CompleteStatus completeStatus = CompleteStatus.ENTERED;
 
     @Enumerated(value = EnumType.STRING)
     private Status status = Status.ACTIVE;

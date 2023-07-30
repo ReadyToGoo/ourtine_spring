@@ -8,8 +8,9 @@ import org.springframework.web.multipart.MultipartFile;
 import ourtine.domain.User;
 import ourtine.domain.common.SliceResponseDto;
 import ourtine.domain.enums.Sort;
-import ourtine.web.dto.request.HabitCreatePostRequestDto;
+import ourtine.repository.UserRepository;
 import ourtine.service.impl.HabitServiceImpl;
+import ourtine.web.dto.request.HabitCreatePostRequestDto;
 import ourtine.web.dto.response.*;
 
 import javax.validation.Valid;
@@ -17,8 +18,8 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/habits")
-public class HabitController {
+@RequestMapping("/habits/test")
+public class HabitTestController {
 
     private final HabitServiceImpl habitService;
 
@@ -39,19 +40,19 @@ public class HabitController {
     // 습관 프로필 조회
     @GetMapping(value = "/{habit_id}")
     public HabitGetResponseDto getHabit(@PathVariable Long habit_id, User user){
-        return habitService.getHabit(habit_id,user);
+        return habitService.getHabit(habit_id, user);
     }
 
     // 습관 위클리 로그
     @GetMapping(value = "/{habit_id}/weekly-log")
     public SliceResponseDto<HabitWeeklyLogResponseDto> getHabitWeeklyLog(@PathVariable Long habit_id,User user){
-        return new SliceResponseDto<>(habitService.getHabitWeeklyLog(habit_id,user));
+        return new SliceResponseDto<>(habitService.getHabitWeeklyLog(habit_id, user));
     }
 
     // 유저 프로필 - 팔로잉 하는 습관 목록
     @GetMapping(value = "/users/{user_id}")
     public HabitUserFollowingListGetResponseDto getUserFollowingHabits(@PathVariable Long user_id, User me, Pageable pageable){
-        return habitService.getUserFollowingHabits(user_id, me, pageable);
+        return habitService.getUserFollowingHabits(2l, me, pageable);
     }
 
     // 추천 습관 목록
@@ -89,7 +90,6 @@ public class HabitController {
     public HabitDeleteResponseDto deleteHabit(@PathVariable Long habit_id, User user){
         return habitService.deleteHabit(habit_id, user);
     }
-
 
 }
 

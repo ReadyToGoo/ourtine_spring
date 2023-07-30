@@ -27,9 +27,8 @@ public class HabitFollowingGetResponseDto {
 
     private String imageUrl;
 
-/*  private Long participateRate;
-
-    private Double starRate;*/
+/*  private Long participateRate; // 내 참여율
+*/
 
     private List<HabitFollowersGetResponseDto> followerList = new ArrayList<>();
 

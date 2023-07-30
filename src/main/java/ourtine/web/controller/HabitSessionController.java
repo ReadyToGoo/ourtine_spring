@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ourtine.domain.User;
 import ourtine.service.impl.HabitSessionServiceImpl;
 import ourtine.web.dto.request.HabitSessionMvpVotePostRequestDto;
+import ourtine.web.dto.request.HabitSessionReviewPostRequestDto;
 import ourtine.web.dto.response.*;
 
 import java.io.IOException;
@@ -53,6 +54,12 @@ public class HabitSessionController {
     @GetMapping("/habit-sessions/{session_id}/mvp")
     public List<HabitSessionMvpGetResponseDto> showMvp(@PathVariable Long session_id, User user){
         return habitSessionService.showMvp(session_id, user);
+    }
+
+    // 습관 회고 쓰기
+    @PostMapping("/habit-sessions/{session_id}/review")
+    public HabitSessionReviewPostResponseDto writeReview(@PathVariable Long session_id, @RequestBody HabitSessionReviewPostRequestDto requestDto, User user)
+    {return habitSessionService.writeReview(session_id,requestDto,user);
     }
 
 }

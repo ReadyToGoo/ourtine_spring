@@ -16,6 +16,7 @@ import ourtine.service.HabitSessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ourtine.web.dto.request.HabitSessionMvpVotePostRequestDto;
+import ourtine.web.dto.request.HabitSessionReviewPostRequestDto;
 import ourtine.web.dto.response.*;
 
 import java.io.IOException;
@@ -68,7 +69,7 @@ public class HabitSessionServiceImpl implements HabitSessionService {
 
         // 영상 업로드
         String videoUrl = s3Uploader.upload(file,"");
-        // 유저의 세션 완료 처리 & 세션 완료 처리
+        // 유저의 세션 완료 처리
         habitSessionFollower.uploadVideo(videoUrl);
         return new HabitSessionUploadVideoPostResponseDto(sessionId,user.getId());
     }
@@ -109,8 +110,8 @@ public class HabitSessionServiceImpl implements HabitSessionService {
 
         long [] voteNum = new long[followers.size()]; // 득표 수 저장
         HashMap<Long,Long> resultMap = new HashMap<>(); // ( 유저 아이디, 득표 수)
-        long result=0L; // 최다 득표수 저장
-        List<Long> mvpId = new ArrayList<>(); // 베스트 습관러 저장
+        long result = 0L; // 최다 득표수
+        List<Long> mvp = new ArrayList<>(); // 베스트 습관러
 
         for(int i = 0; i<followers.size(); i++){
             voteNum[i] = Collections.frequency(votes, followers.get(i));
@@ -121,14 +122,23 @@ public class HabitSessionServiceImpl implements HabitSessionService {
         }
         for (Long follower : followers) {
             if (resultMap.get(follower) == result) { // 최다 득표수와 유저의 득표수가 같다면 유저 아이디 저장
-                mvpId.add(follower);
+                mvp.add(follower);
             }
         }
 
         List<HabitSessionMvpGetResponseDto> habitSessionMvpGetResponseDto = new ArrayList<>();
-        mvpId.forEach(mvp->{ habitSessionMvpGetResponseDto.add(
-                new HabitSessionMvpGetResponseDto(mvp,"닉네임","이미지"));});
+        mvp.forEach(mvpId->{ habitSessionMvpGetResponseDto.add(
+                new HabitSessionMvpGetResponseDto(mvpId,"닉네임","이미지"));});
         return habitSessionMvpGetResponseDto;
+    }
+
+    // 습관 회고 쓰기
+    @Override
+    public HabitSessionReviewPostResponseDto writeReview(Long sessionId, HabitSessionReviewPostRequestDto requestDto, User user) {
+        if (habitSessionRepository.findById(sessionId).isEmpty()){} //에러 처리
+        HabitSessionFollower habitSessionFollower = habitSessionFollowerRepository.findByHabitSessionIdAndFollower(sessionId,user).orElseThrow();
+        habitSessionFollower.writeReview(requestDto.getStarRate(), requestDto.getEmotion());
+        return new HabitSessionReviewPostResponseDto(user.getId(),sessionId);
     }
 
 }

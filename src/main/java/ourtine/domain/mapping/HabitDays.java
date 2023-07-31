@@ -8,6 +8,8 @@ import ourtine.domain.enums.Day;
 import ourtine.domain.enums.Status;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 @NoArgsConstructor
 @Entity
@@ -32,4 +34,5 @@ public class HabitDays extends BaseEntity {
         this.habit = habit;
         this.day = day;
     }
+
 }

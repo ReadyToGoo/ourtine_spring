@@ -8,5 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HabitCreatePostResponseDto {
-    Long habitId;
+    private Long habitId;
+    private Long habitNum; // 유저가 몇번째로 개설한 습관인지
 }

@@ -24,7 +24,7 @@ public class HabitController {
 
     // 습관 개설
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public HabitCreatePostResponseDto creatHabit(@RequestPart @Valid HabitCreatePostRequestDto habitCreatePostRequestDto, @RequestPart MultipartFile file, User user) throws IOException {
+    public HabitCreatePostResponseDto createHabit(@RequestPart @Valid HabitCreatePostRequestDto habitCreatePostRequestDto, @RequestPart MultipartFile file, User user) throws IOException {
         if (file.isEmpty()){} // TODO: 에러 처리
         return habitService.createHabit(habitCreatePostRequestDto,file,user);
         // TODO: 응답 형식 추가해야함

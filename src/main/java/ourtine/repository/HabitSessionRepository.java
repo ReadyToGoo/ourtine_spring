@@ -8,6 +8,7 @@ import ourtine.domain.HabitSession;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,15 +19,15 @@ public interface HabitSessionRepository extends JpaRepository<HabitSession,Long>
     @Query("select hs.id from HabitSession hs " +
             "where hs.habit.id = :habitId " +
             "and hs.date = CURDATE()" +
-            "and hs.status = ''")
+            "and hs.status = 'ACTIVE'")
     Long queryFindTodaySessionIdByHabitId(Long habitId);
 
     // 현재 진행중인 습관 아이디 조회
     @Query("select hs from HabitSession hs " +
             "where hs.date = CURDATE() "+
-            "and hs.habit.endTime = CURTIME() "+
+            "and hs.habit.endTime = :time "+
             "and hs.status = 'ACTIVE'")
-    List<HabitSession> queryFindActiveSession();
+    List<HabitSession> queryFindActiveSession(LocalTime time);
 
 
     // 습관 아이디로 오늘 진행되는 습관 세션 조회
@@ -38,7 +39,7 @@ public interface HabitSessionRepository extends JpaRepository<HabitSession,Long>
     // 참여율 - 습관 아이디로 종료된 습관 세션 조회
     @Query("select hs.id from HabitSession hs " +
             "where hs.habit.id = :habitId " +
-            "and hs.status = 'END'")
+            "and hs.status = 'INACTIVE'")
     List<Long> queryFindEndSessionIdsByHabitId (Long habitId);
 
     // 습관 아이디로 삭제

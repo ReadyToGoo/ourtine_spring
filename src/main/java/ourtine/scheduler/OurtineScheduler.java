@@ -29,11 +29,25 @@ public class OurtineScheduler {
     @Autowired
     @Qualifier("SESSION_JOB")
     private Job HabitSessionJob;
+    @Autowired
+    @Qualifier("VOTE_JOB")
+    private Job VoteJob;
 
    /* @Bean
     public Executor taskExecutor(){
         return Executors.newScheduledThreadPool(4);
     }*/
+
+    @Scheduled(cron = "0 * * * * *")
+    public void startVoteJob() {
+        JobParameters jobParameters = new JobParametersBuilder().addString("voteJob", LocalDateTime.now().toString()).toJobParameters();
+        try {
+            jobLauncher.run(VoteJob,jobParameters);
+        } catch (JobExecutionException ex) {
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
 
     @Scheduled(cron = "0 * * * * *")
     public void startHabitJob() {

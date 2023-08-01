@@ -1,8 +1,6 @@
 package ourtine.domain;
 
 import ourtine.domain.common.BaseEntity;
-import ourtine.domain.enums.Day;
-import ourtine.domain.enums.SessionStatus;
 import ourtine.domain.enums.Status;
 import javax.persistence.*;
 import lombok.AccessLevel;
@@ -12,7 +10,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @Entity
@@ -31,7 +28,7 @@ public class HabitSession extends BaseEntity {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private SessionStatus status = SessionStatus.INACTIVE; // 자동 생성 시 INACTIVE
+    private Status status = Status.ACTIVE;
 
     @Builder
     public HabitSession(Habit habit, Date date){
@@ -39,7 +36,7 @@ public class HabitSession extends BaseEntity {
         this.date = date;
     }
 
-    public void setStatus(SessionStatus status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 }

@@ -100,7 +100,7 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
     boolean queryGetHabitRecruitingStatus(Long habitId);
 
     // 호스트로 습관 갯수 조회
-    Long countByHost(User user);
+    Long countByHost(User host);
 
     // 습관 종료 시간 & 종료 날짜 습관 조회
     @Query("select h from Habit h " +

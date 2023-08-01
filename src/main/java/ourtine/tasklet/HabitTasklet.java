@@ -28,7 +28,7 @@ public class HabitTasklet implements Tasklet {
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         LocalDate endDate = LocalDate.now(ZoneId.of("Asia/Seoul"));
         LocalTime now = LocalTime.now(ZoneId.of("Asia/Seoul"));
-        LocalTime endTime = now.minusMinutes(15);
+        LocalTime endTime = now.minusMinutes(5);
 
         List<Habit> habits = habitRepository.queryFindHabitsByEndTime(endTime,endDate);
         for(Habit habit: habits){

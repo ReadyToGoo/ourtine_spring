@@ -34,9 +34,8 @@ public class HabitSessionTasklet implements Tasklet {
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         Day day  = dayConverter.dayOfWeek();
-
         LocalTime now = LocalTime.now(ZoneId.of("Asia/Seoul"));
-        LocalTime createTime = now.plusMinutes(5);
+        LocalTime createTime = now.plusMinutes(15);
 
         List<Habit> habits = habitDaysRepository.queryFindHabitsByStartTime(createTime,day); // 오늘 요일의, 시작 시간 15분 후의 습관 조회
         if (habits.size()>0) {

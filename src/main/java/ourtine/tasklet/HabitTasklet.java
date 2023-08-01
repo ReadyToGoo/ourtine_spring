@@ -1,17 +1,13 @@
-package ourtine.Batch;
+package ourtine.tasklet;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
-import ourtine.converter.DayConverter;
 import ourtine.domain.Habit;
-import ourtine.domain.enums.Day;
 import ourtine.domain.enums.Status;
-import ourtine.repository.HabitDaysRepository;
 import ourtine.repository.HabitRepository;
-import ourtine.repository.HabitSessionRepository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

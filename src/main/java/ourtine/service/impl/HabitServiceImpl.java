@@ -3,7 +3,6 @@ package ourtine.service.impl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import ourtine.Batch.HabitSessionTasklet;
 import ourtine.aws.s3.S3Uploader;
 import ourtine.converter.DayConverter;
 import ourtine.domain.*;

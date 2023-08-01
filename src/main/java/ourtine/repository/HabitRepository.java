@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ourtine.domain.User;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Repository
@@ -97,4 +99,13 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "where h.id = :habitId")
     boolean queryGetHabitRecruitingStatus(Long habitId);
 
+    // 호스트로 습관 갯수 조회
+    Long countByHost(User user);
+
+    // 습관 종료 시간 & 종료 날짜 습관 조회
+    @Query("select h from Habit h " +
+            "where h.endTime = :endTime " +
+            "and h.status = 'ACTIVE'" +
+            "and h.endDate = :endDate")
+    List<Habit> queryFindHabitsByEndTime(LocalTime endTime, LocalDate endDate);
 }

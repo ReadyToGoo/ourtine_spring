@@ -81,4 +81,8 @@ public class Habit extends BaseEntity {
     public void setFollowerCount(Long followerCount) {
         this.followerCount = followerCount;
     }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 }

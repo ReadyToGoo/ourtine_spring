@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ourtine.aws.s3.S3Uploader;
+import ourtine.converter.DayConverter;
 import ourtine.domain.*;
 import ourtine.domain.common.SliceResponseDto;
 import ourtine.domain.enums.Day;
@@ -42,7 +43,7 @@ public class HabitServiceImpl implements HabitService {
     private final HabitHashtagRepository habitHashtagRepository;
     private final S3Uploader s3Uploader;
     private final MessageRepository messageRepository;
-
+    private final DayConverter dayConverter;
     // 습관 개설하기
     @Override
     public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto habitCreatePostRequestDto, MultipartFile file, User user) throws IOException {
@@ -86,9 +87,10 @@ public class HabitServiceImpl implements HabitService {
         else return null;
 
         Habit savedHabit = habitRepository.save(habit);
+        Long habitNum = habitRepository.countByHost(user);
 
-        habitCreatePostRequestDto.getDays().forEach(name ->{
-            HabitDays habitDays = HabitDays.builder().habit(savedHabit).day(name).build();
+        habitCreatePostRequestDto.getDays().forEach(day ->{
+            HabitDays habitDays = HabitDays.builder().habit(savedHabit).day(day).build();
             habitDaysRepository.save(habitDays);
         });
 
@@ -111,7 +113,7 @@ public class HabitServiceImpl implements HabitService {
         HabitFollowers habitFollowers = HabitFollowers.builder().follower(user).habit(habit).build();
         habitFollowersRepository.save(habitFollowers);
 
-        return new HabitCreatePostResponseDto(savedHabit.getId());
+        return new HabitCreatePostResponseDto(savedHabit.getId(),habitNum);
     }
 
 
@@ -129,7 +131,6 @@ public class HabitServiceImpl implements HabitService {
             case 6 : day = Day.SAT;break;
             case 7 : day = Day.SUN;break;
         }
-
         Slice<Long> followingHabitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(user.getId(),pageable);
         Slice<Long> habitIdsOfDay = habitDaysRepository.queryFindFollowingHabitsByDay(followingHabitIds.toList(),day,pageable);
         Slice<Habit> habitsOfDay = habitRepository.queryFindHabitsById(habitIdsOfDay.getContent());
@@ -254,7 +255,7 @@ public class HabitServiceImpl implements HabitService {
     // 습관 참여 취소 하기
     @Override
     public HabitFollowerResponseDto quitHabit(Long habitId, User user) {
-        if (habitRepository.findById(habitId).isEmpty()){}
+        if(habitRepository.findById(habitId).isEmpty()){}
         if(habitFollowersRepository.findByHabit_IdAndFollower_Id(habitId, user.getId()).isEmpty()){}
 
         habitFollowersRepository.queryDeleteFollowerById(habitId,user.getId());
@@ -324,7 +325,5 @@ public class HabitServiceImpl implements HabitService {
         }
         else return null;
     }
-
-
 
 }

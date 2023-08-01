@@ -1,6 +1,6 @@
 package ourtine.domain.enums;
 
-public enum CompleteStatus {
+public enum HabitFollowerStatus {
 
     COMPLETE("인증완료"),
     ENTERED("입장"),
@@ -8,5 +8,5 @@ public enum CompleteStatus {
 
     private String description;
 
-    CompleteStatus(String description){this.description = description;}
+    HabitFollowerStatus(String description){this.description = description;}
 }

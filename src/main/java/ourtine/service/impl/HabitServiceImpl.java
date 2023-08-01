@@ -24,8 +24,7 @@ import ourtine.web.dto.request.HabitInvitationPostRequestDto;
 import ourtine.web.dto.response.*;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -120,24 +119,16 @@ public class HabitServiceImpl implements HabitService {
     // 홈 - 팔로잉하는 습관 목록 (요일 필터링)
     @Override
     public Slice<HabitMyFollowingListGetResponseDto> getMyFollowingHabits(User user, Pageable pageable) {
-        int dayNum = LocalDate.now(ZoneId.of("Asia/Seoul")).getDayOfWeek().getValue();
-        Day day = null;
-        switch (dayNum) {
-            case 1 : day = Day.MON;break;
-            case 2 : day = Day.TUE;break;
-            case 3 : day = Day.WED;break;
-            case 4 : day = Day.THU;break;
-            case 5 : day = Day.FRI;break;
-            case 6 : day = Day.SAT;break;
-            case 7 : day = Day.SUN;break;
-        }
+        Day day = dayConverter.dayOfWeek();
         Slice<Long> followingHabitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(user.getId(),pageable);
         Slice<Long> habitIdsOfDay = habitDaysRepository.queryFindFollowingHabitsByDay(followingHabitIds.toList(),day,pageable);
         Slice<Habit> habitsOfDay = habitRepository.queryFindHabitsById(habitIdsOfDay.getContent());
+
         return habitsOfDay.map(habit -> new HabitMyFollowingListGetResponseDto(
                 habit,
-                habitSessionRepository.queryFindTodaySessionIdByHabitId(habit.getId()),
-                habitSessionFollowerRepository.queryGetHabitSessionFollowerCompleteStatus(user.getId(),habit.getId())));
+                habitSessionFollowerRepository.queryGetHabitSessionFollowerCompleteStatus(user.getId(),habit.getId()),1
+                // TODO: mvp
+                ));
 
     }
 
@@ -148,20 +139,48 @@ public class HabitServiceImpl implements HabitService {
         Habit habit = habitRepository.findById(habitId).orElseThrow();
         Category category  = categoryRepository.findById(habit.getCategoryId()).orElseThrow();
         List<String> hashtags= habitHashtagRepository.queryFindHashtagNameByHabit(habitId);
-        Slice<User> followers = habitFollowersRepository.queryFindHabitFollowers(habitId);
-        List<HabitFollowersGetResponseDto> habitFollowersResult =
-                followers.map(follower->new HabitFollowersGetResponseDto(
-                        follower.getId(), habitFollowersRepository.findByHabit_IdAndFollower_Id(habitId,follower.getId()).isPresent(),
-                        follower.getNickname(), follower.getImageUrl()
-                        )).toList();
+        List<User> followers = habitFollowersRepository.queryFindHabitFollowers(habitId);
+        List<HabitFollowersGetResponseDto> habitFollowersResult = new ArrayList<>();
+        // todo 호스트 여부
+        for (User follower : followers){
+            habitFollowersResult.add(new HabitFollowersGetResponseDto(follower.getId(),habitRepository.existsByHostAndId(user, habitId)
+                    ,follower.getNickname(),follower.getImageUrl()));
+        }
 
         // 참여하고 있으면
-        if(habitFollowersRepository.findByHabit_IdAndFollower_Id(habitId, user.getId()).isPresent()){
-            return new HabitGetResponseDto(true,null,new HabitFollowingGetResponseDto(habit,hashtags,category,habitFollowersResult));
+        if(habitFollowersRepository.findByHabitIdAndFollowerId(habitId, user.getId()).isPresent()){
+            int participateRate = 0;
+            // 진행 된 세션이 하나라도 있으면 참여율 산출
+            if (habitSessionRepository.queryFindEndSessionIdsByHabitId(habitId).size()>0){
+                // 해당 습관의 종료된 세션 목록
+                List<Long> sessionIds = habitSessionRepository.queryFindEndSessionIdsByHabitId(habitId);
+                // 유저가 세션에 참여한 횟수
+                Long participatedSessions = habitSessionFollowerRepository.queryGetParticipateSessionNumber(user, habitId, sessionIds);
+                // 내 참여율
+                participateRate = Math.round((float) participatedSessions / sessionIds.size()) * 100;
+            }
+            return new HabitGetResponseDto(true,null,new HabitFollowingGetResponseDto(habit,hashtags,category,participateRate,habitFollowersResult));
         }
         // 참여 안 하고 있으면
         else {
-            return new HabitGetResponseDto(false, new HabitNotFollowingGetResponseDto(habit, hashtags, category, habitFollowersResult,
+            int participateRate = 0;
+            // 진행 된 세션이 하나라도 있으면 참여율 산출
+            if (habitSessionRepository.queryFindEndSessionIdsByHabitId(habitId).size()>0){
+                // 해당 습관의 종료된 세션 목록
+                List<Long> sessionIds = habitSessionRepository.queryFindEndSessionIdsByHabitId(habitId);
+
+                // 유저들의 참여한 횟수
+                long participatedSessionsSum =0l;
+                for (User follower : followers){
+                    // 유저가 세션에 참여한 횟수
+                    Long participatedSessions = habitSessionFollowerRepository.queryGetParticipateSessionNumber(follower, habitId, sessionIds);
+                    participatedSessionsSum += participatedSessions;
+                }
+
+                // 종합 참여율
+                participateRate = Math.round ((float) participatedSessionsSum / sessionIds.size() / followers.size() * 100);
+            }
+            return new HabitGetResponseDto(false, new HabitNotFollowingGetResponseDto(habit,participateRate, hashtags, category, habitFollowersResult,
                     habitRepository.queryGetHabitRecruitingStatus(habitId)), null);
         }
 
@@ -202,7 +221,7 @@ public class HabitServiceImpl implements HabitService {
         Habit habit = habitRepository.findById(habitId).orElseThrow();
         HabitFollowers habitFollower = HabitFollowers.builder().follower(user).habit(habit).build();
         //참여하고 있으면
-        if (habitFollowersRepository.findByHabit_IdAndFollower_Id(habitId,user.getId()).isPresent() ||
+        if (habitFollowersRepository.findByHabitIdAndFollowerId(habitId,user.getId()).isPresent() ||
                 habit.getFollowerLimit()-habit.getFollowerCount()<1 ){
             //에러 처리
             return null;
@@ -210,7 +229,7 @@ public class HabitServiceImpl implements HabitService {
         else {
             habitFollowersRepository.save(habitFollower);
             // 습관 참여자 수 업데이트
-            habit.setFollowerCount(habitFollowersRepository.countHabitFollowersByHabitId(habit));
+            habit.setFollowerCount(habitFollowersRepository.countHabitFollowersByHabit(habit));
             return new HabitFollowerResponseDto(habitId, user.getId());
         }
 
@@ -256,7 +275,7 @@ public class HabitServiceImpl implements HabitService {
     @Override
     public HabitFollowerResponseDto quitHabit(Long habitId, User user) {
         if(habitRepository.findById(habitId).isEmpty()){}
-        if(habitFollowersRepository.findByHabit_IdAndFollower_Id(habitId, user.getId()).isEmpty()){}
+        if(habitFollowersRepository.findByHabitIdAndFollowerId(habitId, user.getId()).isEmpty()){}
 
         habitFollowersRepository.queryDeleteFollowerById(habitId,user.getId());
         return new HabitFollowerResponseDto(habitId,user.getId());

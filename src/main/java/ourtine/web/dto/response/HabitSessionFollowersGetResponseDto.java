@@ -5,14 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
 public class HabitSessionFollowersGetResponseDto {
 
-        private Long id;
+        private Long entryNum;
+
+        private Long userId;
 
         private String nickname;
 
         private String imageUrl;
-
-        private Boolean enterStatus;
 }

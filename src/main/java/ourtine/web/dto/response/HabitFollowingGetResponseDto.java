@@ -27,13 +27,12 @@ public class HabitFollowingGetResponseDto {
 
     private String imageUrl;
 
-/*  private Long participateRate; // 내 참여율
-*/
+    private int participateRate;  // 내 참여율
 
     private List<HabitFollowersGetResponseDto> followerList = new ArrayList<>();
 
 
-    public HabitFollowingGetResponseDto(Habit habit, List<String> hashtags, Category category,
+    public HabitFollowingGetResponseDto(Habit habit, List<String> hashtags, Category category, int participateRate,
                                         List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto){
         this.id = habit.getId();
         this.hostId = habit.getHost().getId();
@@ -42,6 +41,7 @@ public class HabitFollowingGetResponseDto {
         this.detail = habit.getDetail();
         this.category = category.getName();
         this.hashtags = hashtags;
+        this.participateRate = participateRate;
         this.followerList = habitFollowersGetResponseDto;
 
     }

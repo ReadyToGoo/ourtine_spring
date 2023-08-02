@@ -1,5 +1,6 @@
 package ourtine.web.dto.response;
 
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ourtine.domain.Habit;

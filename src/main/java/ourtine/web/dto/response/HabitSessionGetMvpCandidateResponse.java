@@ -1,7 +1,4 @@
-
 package ourtine.web.dto.response;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,13 +7,17 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class HabitFollowersGetResponseDto {
+public class HabitSessionGetMvpCandidateResponse {
     private Long id;
-
-    private Boolean isHost;
 
     private String nickname;
 
-    private String imageUrl;
+    private String profileImg;
+
+    private String videoUrl;
+
+    private boolean enterStatus; // 입장 여부
+
+    private boolean completeStatus ; // 습관 완료 여부
 
 }

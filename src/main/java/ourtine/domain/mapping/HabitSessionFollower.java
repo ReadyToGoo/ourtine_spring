@@ -3,7 +3,7 @@ package ourtine.domain.mapping;
 import ourtine.domain.HabitSession;
 import ourtine.domain.User;
 import ourtine.domain.common.BaseEntity;
-import ourtine.domain.enums.CompleteStatus;
+import ourtine.domain.enums.HabitFollowerStatus;
 import ourtine.domain.enums.Emotion;
 import ourtine.domain.enums.Status;
 import javax.persistence.*;
@@ -39,7 +39,7 @@ public class HabitSessionFollower extends BaseEntity {
     private Emotion emotion;
 
     @Enumerated(value = EnumType.STRING)
-    private CompleteStatus completeStatus = CompleteStatus.ENTERED;
+    private HabitFollowerStatus habitFollowerStatus = HabitFollowerStatus.ENTERED;
 
     @Enumerated(value = EnumType.STRING)
     private Status status = Status.ACTIVE;
@@ -56,7 +56,7 @@ public class HabitSessionFollower extends BaseEntity {
 
     public void uploadVideo(String videoUrl){
         this.videoUrl = videoUrl;
-        this.completeStatus = CompleteStatus.COMPLETE;
+        this.habitFollowerStatus = HabitFollowerStatus.COMPLETE;
     }
 
     //회고 작성

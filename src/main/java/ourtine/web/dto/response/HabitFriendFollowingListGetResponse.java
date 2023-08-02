@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ourtine.domain.Habit;
+import ourtine.web.dto.response.HabitFollowingInfoDto;
 
 import java.util.ArrayList;
 import java.util.List;

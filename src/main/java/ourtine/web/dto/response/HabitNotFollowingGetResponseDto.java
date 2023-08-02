@@ -1,14 +1,11 @@
-
 package ourtine.web.dto.response;
 
 import ourtine.domain.Category;
 import ourtine.domain.Habit;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ourtine.domain.enums.Day;
-
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -34,7 +31,7 @@ public class HabitNotFollowingGetResponseDto {
 
     private String imageUrl;
 
-    private Long participateRate;
+    private int participateRate;
 
     private BigDecimal starRate;
 
@@ -56,14 +53,14 @@ public class HabitNotFollowingGetResponseDto {
 
     private Long followerLimit;
 
-
-    public HabitNotFollowingGetResponseDto(Habit habit, List<String> hashtags, Category category, List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto,
+    public HabitNotFollowingGetResponseDto(Habit habit,int participateRate, List<String> hashtags, Category category, List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto,
                                            boolean isRecruiting){
         this.id = habit.getId();
         this.hostId = habit.getHost().getId();
         this.title = habit.getTitle();
         this.imageUrl = habit.getImageUrl();
         this.detail = habit.getDetail();
+        this.participateRate = participateRate;
         this.category = category.getName();
         this.startDate = habit.getStartDate();
         this.endDate = habit.getEndDate();

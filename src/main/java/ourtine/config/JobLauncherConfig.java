@@ -11,7 +11,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @Configuration
 public class JobLauncherConfig {
     @Bean
-    public JobLauncher jobLauncher(ThreadPoolTaskExecutor taskExecutor, JobRepository jobRepository){
+    public JobLauncher Launcher(ThreadPoolTaskExecutor taskExecutor, JobRepository jobRepository){
         SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
         jobLauncher.setTaskExecutor(taskExecutor);
         jobLauncher.setJobRepository(jobRepository);

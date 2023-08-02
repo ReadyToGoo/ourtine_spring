@@ -5,6 +5,7 @@ import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import ourtine.domain.Habit;
 import ourtine.domain.enums.Status;
 import ourtine.repository.HabitRepository;
@@ -18,6 +19,7 @@ import java.util.List;
 public class HabitTasklet implements Tasklet {
     private final HabitRepository habitRepository;
 
+    @Autowired
     public HabitTasklet(HabitRepository habitRepository) {
         this.habitRepository = habitRepository;
 

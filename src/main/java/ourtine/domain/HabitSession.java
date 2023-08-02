@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,10 +26,6 @@ public class HabitSession extends BaseEntity {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date date;
 
-    @ManyToOne
-    @JoinColumn(name = "mvp_id")
-    private User mvp;
-
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private Status status = Status.ACTIVE;
@@ -37,10 +34,6 @@ public class HabitSession extends BaseEntity {
     public HabitSession(Habit habit, Date date){
         this.habit = habit;
         this.date = date;
-    }
-
-    public void setMvp(User mvp) {
-        this.mvp = mvp;
     }
 
     public void setStatus(Status status) {

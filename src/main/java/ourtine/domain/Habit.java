@@ -36,6 +36,7 @@ public class Habit extends BaseEntity {
     @Column(nullable = false)
     private String imageUrl;
 
+    @Column(nullable = false)
     private Long categoryId;
 
     @OneToMany(mappedBy = "habit")
@@ -44,6 +45,9 @@ public class Habit extends BaseEntity {
 
     @Column(nullable = false)
     private Long followerLimit;
+
+    @OneToMany(mappedBy = "id")
+    List<User> followers;
 
    // 습관 시작 시간
     @Column(nullable = false)

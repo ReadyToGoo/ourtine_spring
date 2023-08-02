@@ -1,6 +1,5 @@
 package ourtine.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -154,7 +153,7 @@ public class HabitServiceImpl implements HabitService {
 
         // 참여하고 있으면
         if(habitFollowersRepository.findByHabitIdAndFollowerId(habitId, user.getId()).isPresent()){
-            int participateRate = calculatorClass.myParticipateRate(habitId,user,habitSessionRepository,habitSessionFollowerRepository);
+            int participateRate = calculatorClass.myHabitParticipateRate(habitId,user,habitSessionRepository,habitSessionFollowerRepository);
             return new HabitGetResponseDto(true,null,new HabitFollowingGetResponseDto(habit,hashtags,category,participateRate,habitFollowersResult));
         }
         // 참여 안 하고 있으면

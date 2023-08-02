@@ -10,8 +10,22 @@ import java.util.List;
 @Component
 public final class CalculatorClass {
 
-    public int myParticipateRate(Long habitId, User user,
+    public int myParticipateRate(User user,
                                  HabitSessionRepository habitSessionRepository, HabitSessionFollowerRepository habitSessionFollowerRepository){
+            int participateRate = 0;
+            // 진행 된 세션이 하나라도 있으면 참여율 산출
+            if (habitSessionRepository.queryCountEndSessionsByUser(user)>0){
+                // 유저가 참여한 세션 횟수
+                Long participatedSessions = habitSessionFollowerRepository.queryFindEndSessionsByUser(user);
+
+                participateRate = Math.round((float) participatedSessions / habitSessionRepository.queryCountEndSessionsByUser(user)) * 100;
+            }
+            return participateRate;
+
+    }
+
+    public int myHabitParticipateRate(Long habitId, User user,
+                                      HabitSessionRepository habitSessionRepository, HabitSessionFollowerRepository habitSessionFollowerRepository){
         int participateRate = 0;
         // 진행 된 세션이 하나라도 있으면 참여율 산출
         if (habitSessionRepository.queryFindEndSessionIdsByHabitId(habitId).size()>0){

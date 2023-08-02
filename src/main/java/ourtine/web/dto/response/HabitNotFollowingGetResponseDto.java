@@ -33,7 +33,7 @@ public class HabitNotFollowingGetResponseDto {
 
     private int participateRate;
 
-    private BigDecimal starRate;
+    private double starRate;
 
     private List<HabitFollowersGetResponseDto> followerList = new ArrayList<>();
 
@@ -53,7 +53,7 @@ public class HabitNotFollowingGetResponseDto {
 
     private Long followerLimit;
 
-    public HabitNotFollowingGetResponseDto(Habit habit,int participateRate, List<String> hashtags, Category category, List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto,
+    public HabitNotFollowingGetResponseDto(Habit habit,int participateRate, double starRate, List<String> hashtags, Category category, List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto,
                                            boolean isRecruiting){
         this.id = habit.getId();
         this.hostId = habit.getHost().getId();
@@ -61,6 +61,7 @@ public class HabitNotFollowingGetResponseDto {
         this.imageUrl = habit.getImageUrl();
         this.detail = habit.getDetail();
         this.participateRate = participateRate;
+        this.starRate = starRate;
         this.category = category.getName();
         this.startDate = habit.getStartDate();
         this.endDate = habit.getEndDate();

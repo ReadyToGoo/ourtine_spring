@@ -56,7 +56,7 @@ public class HabitController {
 
     // 추천 습관 목록
     @GetMapping(value = "/recommend")
-    public SliceResponseDto<HabitRecommendListResponseDto> getRecommendHabits(User user, Pageable pageable){
+    public SliceResponseDto<HabitRecommendResponseDto> getRecommendHabits(User user, Pageable pageable){
         return new  SliceResponseDto<>(habitService.getRecommendHabits(user, pageable));
     }
 

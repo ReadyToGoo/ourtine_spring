@@ -10,15 +10,10 @@ import ourtine.domain.HabitSession;
 import ourtine.domain.User;
 import ourtine.domain.enums.Status;
 import ourtine.domain.mapping.UserMvp;
-import ourtine.repository.HabitFollowersRepository;
-import ourtine.repository.HabitSessionFollowerRepository;
-import ourtine.repository.HabitSessionRepository;
-import ourtine.repository.UserMvpRepository;
+import ourtine.repository.*;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -31,14 +26,16 @@ public class VoteTasklet implements Tasklet {
     private final HabitFollowersRepository habitFollowersRepository;
     private final HabitSessionRepository habitSessionRepository;
     private final HabitSessionFollowerRepository habitSessionFollowerRepository;
+    private final UserRepository userRepository;
 
 
     @Autowired
-    public VoteTasklet(UserMvpRepository userMvpRepository, HabitFollowersRepository habitFollowersRepository, HabitSessionRepository habitSessionRepository, HabitSessionFollowerRepository habitSessionFollowerRepository) {
+    public VoteTasklet(UserMvpRepository userMvpRepository, HabitFollowersRepository habitFollowersRepository, HabitSessionRepository habitSessionRepository, HabitSessionFollowerRepository habitSessionFollowerRepository, UserRepository userRepository) {
         this.userMvpRepository = userMvpRepository;
         this.habitFollowersRepository = habitFollowersRepository;
         this.habitSessionRepository = habitSessionRepository;
         this.habitSessionFollowerRepository = habitSessionFollowerRepository;
+        this.userRepository = userRepository;
     }
 
 
@@ -55,10 +52,11 @@ public class VoteTasklet implements Tasklet {
                 List<Long> votes = habitSessionFollowerRepository.queryGetHabitSessionVotes(session.getId());
 
                 if (votes.size()>0) {
+                    // 표가 1표라면
                     if (votes.size()==1){
-                        // TODO: 유저 코드
-                        /*UserMvp userMvp = UserMvp.builder().habitSession(session).user().build();
-                        userMvpRepository.save(userMvp);*/
+                        User user = userRepository.findById(votes.get(0)).orElseThrow();
+                        UserMvp userMvp = UserMvp.builder().habitSession(session).user(user).build();
+                        userMvpRepository.save(userMvp);
                     }
                     else {
                         long[] voteNum = new long[followers.size()]; // 유저마다 득표 수 저장

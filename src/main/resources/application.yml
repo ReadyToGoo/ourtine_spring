@@ -7,11 +7,14 @@ spring:
   output:
     ansi:
       enabled: always
-  #  batch:
-  #    jdbc:
-  #      initialize-schema: always
-  #    job:
-  #      names: myJob
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled:
+      names: HABIT_JOB , SESSION_JOB
+  main:
+    allow-bean-definition-overriding: true
   jpa:
     properties:
       hibernate:
@@ -28,3 +31,15 @@ spring:
       #      root: info
       org.hibernate.SQL: DEBUG
       org.hibernate.type: trace
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${aws.s3.accesskey}
+      secret-key: ${aws.s3.secretkey}
+    s3:
+      bucket: ${aws.s3.bucket}
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false

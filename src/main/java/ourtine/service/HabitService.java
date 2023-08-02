@@ -31,7 +31,7 @@ public interface HabitService {
 
     // 추천 습관 목록
     // @Transactional
-    public Slice<HabitRecommendListResponseDto> getRecommendHabits(User user, Pageable pageable);
+    public Slice<HabitRecommendResponseDto> getRecommendHabits(User user, Pageable pageable);
 
     //습관 참여하기
     @Transactional

@@ -37,6 +37,8 @@ public class OurtineBatchConfig {
 
     private final HabitFollowersRepository habitFollowersRepository;
 
+    private final UserRepository userRepository;
+
 
     @Bean
     @Qualifier("SESSION_TASKLET")
@@ -87,8 +89,9 @@ public class OurtineBatchConfig {
     @Bean
     @Qualifier("VOTE_TASKLET")
     public Tasklet voteTasklet(UserMvpRepository userMvpRepository,HabitFollowersRepository habitFollowersRepository,
-                               HabitSessionRepository habitSessionRepository, HabitSessionFollowerRepository habitSessionFollowerRepository){
-        return new VoteTasklet(userMvpRepository,habitFollowersRepository,habitSessionRepository,habitSessionFollowerRepository);
+                               HabitSessionRepository habitSessionRepository, HabitSessionFollowerRepository habitSessionFollowerRepository,
+                               UserRepository userRepository){
+        return new VoteTasklet(userMvpRepository,habitFollowersRepository,habitSessionRepository,habitSessionFollowerRepository, userRepository);
     }
 
 
@@ -104,7 +107,7 @@ public class OurtineBatchConfig {
     @Qualifier("VOTE_STEP")
     public Step voteStep(){
         return stepBuilderFactory.get("VOTE_STEP")
-                .tasklet(voteTasklet(userMvpRepository,habitFollowersRepository,habitSessionRepository,habitSessionFollowerRepository)) // Tasklet 설정
+                .tasklet(voteTasklet(userMvpRepository,habitFollowersRepository,habitSessionRepository,habitSessionFollowerRepository, userRepository)) // Tasklet 설정
                 .build();
     }
 

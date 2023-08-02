@@ -6,6 +6,6 @@ import ourtine.domain.enums.HabitFollowerStatus;
 public class HabitFollowerStatusConverter implements Converter<String, HabitFollowerStatus> {
     @Override
     public HabitFollowerStatus convert(String source) {
-        return HabitFollowerStatus.valueOf(source);
+        return HabitFollowerStatus.valueOf(source.toUpperCase());
     }
 }

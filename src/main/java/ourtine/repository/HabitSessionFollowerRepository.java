@@ -50,6 +50,13 @@ public interface HabitSessionFollowerRepository extends JpaRepository<HabitSessi
             "and hsf.habitSession.id in :sessionIds" )
     Long queryGetParticipateSessionNumber (User user, Long habitId, List<Long> sessionIds);
 
+    // 유저가 참여한 습관 세션의 만족도
+    @Query("select hsf.starRate from HabitSessionFollower hsf " +
+            "where hsf.follower = :user " +
+            "and hsf.habitSession.habit = :habitId " +
+            "and hsf.habitSession.id in :sessionIds" )
+    List<Long> queryGetStarRate (User user, Long habitId, List<Long> sessionIds);
+
     // 습관 아이디로 삭제
     @Transactional
     void deleteByHabitSession_Habit(Habit habit);

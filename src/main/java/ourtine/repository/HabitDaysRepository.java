@@ -18,6 +18,11 @@ import java.util.List;
 @Repository
 public interface HabitDaysRepository extends JpaRepository<HabitDays,Long> {
 
+    // 습관 아이디로 조회
+    @Query("select hd.day from HabitDays hd " +
+            "where hd.habit = :habit")
+    List<Day> findDaysByHabit(Habit habit);
+
     // 해당 요일에 진행되는 습관 ID
     @Query("select hd.habit.id from HabitDays hd " +
             "where hd.habit.id in :habitIds " +

@@ -1,5 +1,6 @@
 package ourtine.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +16,7 @@ import ourtine.domain.mapping.HabitDays;
 import ourtine.domain.mapping.HabitFollowers;
 import ourtine.domain.mapping.HabitHashtag;
 import ourtine.repository.*;
+import ourtine.util.CalculatorClass;
 import ourtine.web.dto.request.HabitCreatePostRequestDto;
 import ourtine.service.HabitService;
 import lombok.RequiredArgsConstructor;
@@ -44,12 +46,16 @@ public class HabitServiceImpl implements HabitService {
     private final MessageRepository messageRepository;
     private final DayConverter dayConverter;
     private final UserMvpRepository userMvpRepository;
+    private final UserRepository userRepository;
+    private final FollowRepository followRepository;
+    private final CalculatorClass calculatorClass;
+
     // 습관 개설하기
     @Override
     public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto habitCreatePostRequestDto, MultipartFile file, User user) throws IOException {
         Habit habit;
         Category category = categoryRepository.findByName(habitCreatePostRequestDto.getCategory()).orElseThrow();
-
+        if (file.isEmpty()){} // 에러 처리
         if (habitCreatePostRequestDto.getHabitStatus()== HabitStatus.PUBLIC)
         {
             String imageUrl = s3Uploader.upload(file,"");
@@ -148,38 +154,14 @@ public class HabitServiceImpl implements HabitService {
 
         // 참여하고 있으면
         if(habitFollowersRepository.findByHabitIdAndFollowerId(habitId, user.getId()).isPresent()){
-            int participateRate = 0;
-            // 진행 된 세션이 하나라도 있으면 참여율 산출
-            if (habitSessionRepository.queryFindEndSessionIdsByHabitId(habitId).size()>0){
-                // 해당 습관의 종료된 세션 목록
-                List<Long> sessionIds = habitSessionRepository.queryFindEndSessionIdsByHabitId(habitId);
-                // 유저가 세션에 참여한 횟수
-                Long participatedSessions = habitSessionFollowerRepository.queryGetParticipateSessionNumber(user, habitId, sessionIds);
-                // 내 참여율
-                participateRate = Math.round((float) participatedSessions / sessionIds.size()) * 100;
-            }
+            int participateRate = calculatorClass.myParticipateRate(habitId,user,habitSessionRepository,habitSessionFollowerRepository);
             return new HabitGetResponseDto(true,null,new HabitFollowingGetResponseDto(habit,hashtags,category,participateRate,habitFollowersResult));
         }
         // 참여 안 하고 있으면
         else {
-            int participateRate = 0;
-            // 진행 된 세션이 하나라도 있으면 참여율 산출
-            if (habitSessionRepository.queryFindEndSessionIdsByHabitId(habitId).size()>0){
-                // 해당 습관의 종료된 세션 목록
-                List<Long> sessionIds = habitSessionRepository.queryFindEndSessionIdsByHabitId(habitId);
-
-                // 유저들의 참여한 횟수
-                long participatedSessionsSum =0l;
-                for (User follower : followers){
-                    // 유저가 세션에 참여한 횟수
-                    Long participatedSessions = habitSessionFollowerRepository.queryGetParticipateSessionNumber(follower, habitId, sessionIds);
-                    participatedSessionsSum += participatedSessions;
-                }
-
-                // 종합 참여율
-                participateRate = Math.round ((float) participatedSessionsSum / sessionIds.size() / followers.size() * 100);
-            }
-            return new HabitGetResponseDto(false, new HabitNotFollowingGetResponseDto(habit,participateRate, hashtags, category, habitFollowersResult,
+            int participateRate = calculatorClass.habitParticipateRate(habitId,followers,habitSessionRepository,habitSessionFollowerRepository);
+            double starRate = calculatorClass.starRate(habitId,followers,habitSessionRepository,habitSessionFollowerRepository);
+            return new HabitGetResponseDto(false, new HabitNotFollowingGetResponseDto(habit,participateRate, starRate, hashtags, category, habitFollowersResult,
                     habitRepository.queryGetHabitRecruitingStatus(habitId)), null);
         }
 
@@ -189,28 +171,35 @@ public class HabitServiceImpl implements HabitService {
     // 친구 프로필 - 팔로잉 하는 습관 목록
     @Override
     public HabitUserFollowingListGetResponseDto getUserFollowingHabits(Long userId, User me, Pageable pageable) {
-        // 친구인 유저면
-       Slice<Habit> commonHabits = habitFollowersRepository.queryGetCommonHabitsByUserId(userId,me.getId());
-       Slice<Habit> otherHabits = habitFollowersRepository.queryFindOtherHabitsByUserId(userId,me.getId(),pageable);
-       SliceResponseDto<HabitFollowingInfoDto> commonHabitsInfo = new SliceResponseDto<>(commonHabits.map(HabitFollowingInfoDto::new));
-       SliceResponseDto<HabitFollowingInfoDto> otherHabitsInfo = new SliceResponseDto<>(otherHabits.map(HabitFollowingInfoDto::new));
-        HabitUserFollowingListGetResponseDto result1 =  new HabitUserFollowingListGetResponseDto(true,null,commonHabitsInfo,otherHabitsInfo);
+        User user = userRepository.findById(userId).orElseThrow(); // 에러 처리
+        HabitUserFollowingListGetResponseDto responseDto = null;
 
-        // 친구가 아닌 유저면
-       List<Long> habitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(me.getId(),pageable).toList();
-       Slice<Habit> habits = habitRepository.queryFindHabitsById(habitIds);
-       SliceResponseDto<HabitFollowingInfoDto> habitsInfo=  new SliceResponseDto<>(habits.map(HabitFollowingInfoDto::new));
-        HabitUserFollowingListGetResponseDto result2 = new HabitUserFollowingListGetResponseDto(false,habitsInfo,null,null);
+        if (followRepository.findBySenderAndReceiverId(me,userId).isPresent()) {
+            // 친구인 유저면
+            Slice<Habit> commonHabits = habitFollowersRepository.queryGetCommonHabitsByUserId(userId, me.getId());
+            Slice<Habit> otherHabits = habitFollowersRepository.queryFindOtherHabitsByUserId(userId, me.getId(), pageable);
+            SliceResponseDto<HabitFollowingInfoDto> commonHabitsInfo = new SliceResponseDto<>(commonHabits.map(HabitFollowingInfoDto::new));
+            SliceResponseDto<HabitFollowingInfoDto> otherHabitsInfo = new SliceResponseDto<>(otherHabits.map(HabitFollowingInfoDto::new));
+            responseDto = new HabitUserFollowingListGetResponseDto(true, null, commonHabitsInfo, otherHabitsInfo);
+        }
+        else {
+            // 친구가 아닌 유저면
+            List<Long> habitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(me.getId(),pageable).toList();
+            Slice<Habit> habits = habitRepository.queryFindHabitsById(habitIds);
+            SliceResponseDto<HabitFollowingInfoDto> habitsInfo=  new SliceResponseDto<>(habits.map(HabitFollowingInfoDto::new));
+            responseDto = new HabitUserFollowingListGetResponseDto(false,habitsInfo,null,null);
+        }
 
-        return null;
+        return responseDto;
     }
 
     // 추천 습관 목록
     @Override
-    public Slice<HabitRecommendListResponseDto> getRecommendHabits(User user, Pageable pageable) {
+    public Slice<HabitRecommendResponseDto> getRecommendHabits(User user, Pageable pageable) {
         Slice<Habit> habits = habitRepository.queryGetRecommendHabits(user.getId(),pageable);
-        Slice<HabitRecommendListResponseDto> result = habits.map(habit ->
-                new HabitRecommendListResponseDto(habit,categoryRepository.findById(habit.getCategoryId()).get(),habit.getHost()));
+        Slice<HabitRecommendResponseDto> result = habits.map(habit ->
+                new HabitRecommendResponseDto(habit,categoryRepository.findById(habit.getCategoryId()).get(),habit.getHost(),
+                        habitDaysRepository.findDaysByHabit(habit)));
         return result;
     }
 
@@ -291,14 +280,17 @@ public class HabitServiceImpl implements HabitService {
 
     // 습관 초대장
     @Override
-    public HabitInvitationPostResponseDto sendInvitation(Long habitId, User user, HabitInvitationPostRequestDto requestDto){
+    public HabitInvitationPostResponseDto sendInvitation(Long habitId, User me, HabitInvitationPostRequestDto requestDto){
         List<Long> friends = requestDto.getFriends();
-        // TODO: 유저 확인
-        for(Long friend : friends){
-            Message invitation = NewMessage.builder().messageType(MessageType.HABITINVITE)
-                    .sender(user).receiver(user).contents(habitId.toString()).build();
-            messageRepository.save(invitation);
+        friends.forEach(friend ->{
+            User receiver = userRepository.findById(friend).orElseThrow();
+                if (followRepository.findBySenderAndReceiverId(me,friend).isPresent()) {
+                    Message invitation = NewMessage.builder().messageType(MessageType.HABITINVITE)
+                            .sender(me).receiver(receiver).contents(habitId.toString()).build();
+                    messageRepository.save(invitation);
+                }
         }
+        );
         return new HabitInvitationPostResponseDto();
 
     }

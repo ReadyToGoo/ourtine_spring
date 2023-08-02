@@ -1,11 +1,14 @@
+
 package ourtine.web.dto.response;
 
 import ourtine.domain.Category;
 import ourtine.domain.Habit;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ourtine.domain.enums.Day;
+
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -52,6 +55,7 @@ public class HabitNotFollowingGetResponseDto {
     private Long followerCount;
 
     private Long followerLimit;
+
 
     public HabitNotFollowingGetResponseDto(Habit habit, List<String> hashtags, Category category, List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto,
                                            boolean isRecruiting){

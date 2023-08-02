@@ -36,7 +36,9 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
     List<User> queryFindHabitFollowers(Long habitId);
 
     // 습관 팔로워 정보 조회
-    @Query("select hf.follower from HabitFollowers hf where hf.habit = :habit and hf.status='ACTIVE' and hf.habit.status = 'ACTIVE'")
+    @Query("select hf.follower from HabitFollowers hf " +
+            "where hf.habit = :habit and hf.status='ACTIVE' " +
+            "and hf.habit.status = 'ACTIVE'")
     List<User> queryFindHabitFollowerIds(Habit habit);
 
     // 참여하고 있는 습관 아이디 조회

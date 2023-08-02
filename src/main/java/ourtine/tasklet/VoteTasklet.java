@@ -8,6 +8,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import ourtine.domain.HabitSession;
 import ourtine.domain.User;
+import ourtine.domain.enums.Status;
 import ourtine.domain.mapping.UserMvp;
 import ourtine.repository.HabitFollowersRepository;
 import ourtine.repository.HabitSessionFollowerRepository;
@@ -60,7 +61,7 @@ public class VoteTasklet implements Tasklet {
                         userMvpRepository.save(userMvp);*/
                     }
                     else {
-                        long[] voteNum = new long[followers.size()]; // 득표 수 저장
+                        long[] voteNum = new long[followers.size()]; // 유저마다 득표 수 저장
                         HashMap<Long, Long> resultMap = new HashMap<>(); // ( 유저 아이디, 득표 수)
                         long result = 0L; // 최다 득표수
 
@@ -71,16 +72,16 @@ public class VoteTasklet implements Tasklet {
                                 result = voteNum[i];
                             }
                         }
-
-                        for (User follower : followers) {
-                            if (resultMap.get(follower.getId()) == result) { // 최다 득표수와 유저의 득표수가 같다면 유저 아이디 저장
-                                UserMvp userMvp = UserMvp.builder().habitSession(session).user(follower).build();
-                                userMvpRepository.save(userMvp);
+                            for (User follower : followers) {
+                                if (resultMap.get(follower.getId()) == result) { // 최다 득표수와 유저의 득표수가 같다면 유저 아이디 저장
+                                    UserMvp userMvp = UserMvp.builder().habitSession(session).user(follower).build();
+                                    userMvpRepository.save(userMvp);
+                                }
                             }
-                        }
+
                     }
                 }
-
+                session.setStatus(Status.INACTIVE);
             });
         }
 

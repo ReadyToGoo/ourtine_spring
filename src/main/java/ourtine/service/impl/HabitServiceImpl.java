@@ -43,10 +43,10 @@ public class HabitServiceImpl implements HabitService {
     private final S3Uploader s3Uploader;
     private final MessageRepository messageRepository;
     private final DayConverter dayConverter;
+    private final UserMvpRepository userMvpRepository;
     // 습관 개설하기
     @Override
     public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto habitCreatePostRequestDto, MultipartFile file, User user) throws IOException {
-        // TODO:  S3 이미지 업로드
         Habit habit;
         Category category = categoryRepository.findByName(habitCreatePostRequestDto.getCategory()).orElseThrow();
 
@@ -121,13 +121,13 @@ public class HabitServiceImpl implements HabitService {
     public Slice<HabitMyFollowingListGetResponseDto> getMyFollowingHabits(User user, Pageable pageable) {
         Day day = dayConverter.dayOfWeek();
         Slice<Long> followingHabitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(user.getId(),pageable);
+        if (followingHabitIds.isEmpty()){} // TODO: 에러
         Slice<Long> habitIdsOfDay = habitDaysRepository.queryFindFollowingHabitsByDay(followingHabitIds.toList(),day,pageable);
         Slice<Habit> habitsOfDay = habitRepository.queryFindHabitsById(habitIdsOfDay.getContent());
 
         return habitsOfDay.map(habit -> new HabitMyFollowingListGetResponseDto(
                 habit,
-                habitSessionFollowerRepository.queryGetHabitSessionFollowerCompleteStatus(user.getId(),habit.getId()),1
-                // TODO: mvp
+                userMvpRepository.findByHabitSessionHabitAndUser(habit,user).size()
                 ));
 
     }
@@ -141,7 +141,6 @@ public class HabitServiceImpl implements HabitService {
         List<String> hashtags= habitHashtagRepository.queryFindHashtagNameByHabit(habitId);
         List<User> followers = habitFollowersRepository.queryFindHabitFollowers(habitId);
         List<HabitFollowersGetResponseDto> habitFollowersResult = new ArrayList<>();
-        // todo 호스트 여부
         for (User follower : followers){
             habitFollowersResult.add(new HabitFollowersGetResponseDto(follower.getId(),habitRepository.existsByHostAndId(user, habitId)
                     ,follower.getNickname(),follower.getImageUrl()));

@@ -10,8 +10,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
+import ourtine.domain.enums.Day;
+import ourtine.repository.HabitDaysRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -32,6 +37,8 @@ public class OurtineScheduler {
     @Autowired
     @Qualifier("VOTE_JOB")
     private Job VoteJob;
+    @Autowired
+    private HabitDaysRepository habitDaysRepository;
 
    /* @Bean
     public Executor taskExecutor(){
@@ -62,7 +69,8 @@ public class OurtineScheduler {
 
     @Scheduled(cron = "0 * * * * *")
     public void startHabitSessionJob() {
-        JobParameters jobParameters = new JobParametersBuilder().addString("habitSessionJob", LocalDateTime.now().toString()).toJobParameters();
+        JobParameters jobParameters = new JobParametersBuilder().addString(
+                "sessionJob", LocalDateTime.now().toString()).toJobParameters();
         try {
             jobLauncher.run(HabitSessionJob,jobParameters);
         } catch (JobExecutionException ex) {

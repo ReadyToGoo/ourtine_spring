@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import ourtine.domain.Category;
 import ourtine.domain.HabitSession;
 import ourtine.domain.User;
+import ourtine.domain.common.BaseEntity;
 import ourtine.domain.enums.Status;
 
 import javax.persistence.*;
@@ -14,7 +15,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserMvp {
+public class UserMvp extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
@@ -24,7 +25,7 @@ public class UserMvp {
     private HabitSession habitSession;
 
     @ManyToOne
-    @JoinColumn(name = "user_id",nullable = false)
+    @JoinColumn(name = "mvp_id",nullable = false)
     private User user;
 
     @Builder

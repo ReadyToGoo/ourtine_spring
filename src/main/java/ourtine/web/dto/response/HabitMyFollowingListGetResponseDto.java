@@ -4,6 +4,7 @@ import ourtine.domain.Habit;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ourtine.domain.enums.Day;
 import ourtine.domain.enums.HabitFollowerStatus;
 
 import java.time.LocalDate;
@@ -26,12 +27,12 @@ public class HabitMyFollowingListGetResponseDto {
     private LocalDate startDate;
 
     private LocalDate endDate;
-    
-    private HabitFollowerStatus habitFollowerStatus;
+
+    private Day day;
 
     private int mvp;
 
-    public HabitMyFollowingListGetResponseDto(Habit habit, HabitFollowerStatus habitFollowerStatus, int mvp){
+    public HabitMyFollowingListGetResponseDto(Habit habit, int mvp){
         this.habitId = habit.getId();
         this.title = habit.getTitle();
         this.imageUrl = habit.getImageUrl();
@@ -39,12 +40,7 @@ public class HabitMyFollowingListGetResponseDto {
         this.endDate = habit.getEndDate();
         this.startTime = habit.getStartTime();
         this.endTime = habit.getEndTime();
-        this.habitFollowerStatus = habitFollowerStatus;
         this.mvp = mvp;
-    }
-
-    public void setHabitFollowerStatus(HabitFollowerStatus habitFollowerStatus) {
-        this.habitFollowerStatus = habitFollowerStatus;
     }
 
 

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Getter
 @Entity
@@ -34,12 +35,16 @@ public class Habit extends BaseEntity {
     @Column(nullable = false)
     private String imageUrl;
 
+    @Column(nullable = false)
     private Long categoryId;
 
     private Long followerCount = 1l;
 
     @Column(nullable = false)
     private Long followerLimit;
+
+    @OneToMany(mappedBy = "id")
+    List<User> followers;
 
    // 습관 시작 시간
     @Column(nullable = false)

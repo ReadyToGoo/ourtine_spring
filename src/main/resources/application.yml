@@ -28,3 +28,14 @@ spring:
       #      root: info
       org.hibernate.SQL: DEBUG
       org.hibernate.type: trace
+cloud:
+  aws:
+    credentials:
+      access-key: ${aws.s3.accesskey}
+      secret-key: ${aws.s3.secretkey}
+    s3:
+      bucket: ${aws.s3.bucket}
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false

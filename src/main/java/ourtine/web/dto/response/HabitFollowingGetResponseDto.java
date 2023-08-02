@@ -1,11 +1,12 @@
-package ourtine.server.web.dto.response;
+
+package ourtine.web.dto.response;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ourtine.domain.Category;
 import ourtine.domain.Habit;
-import ourtine.domain.Hashtag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,9 @@ import java.util.List;
 @NoArgsConstructor
 public class HabitFollowingGetResponseDto {
     private Long id;
+
+
+    private Long hostId;
 
     private String title;
 
@@ -26,23 +30,23 @@ public class HabitFollowingGetResponseDto {
 
     private String imageUrl;
 
-/*  private Long participateRate;
 
-    private Double starRate;*/
+/*  private Long participateRate; // 내 참여율
+*/
 
     private List<HabitFollowersGetResponseDto> followerList = new ArrayList<>();
 
-    private boolean notification;
 
     public HabitFollowingGetResponseDto(Habit habit, List<String> hashtags, Category category,
-                                        List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto, boolean notification){
+                                        List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto){
         this.id = habit.getId();
+        this.hostId = habit.getHost().getId();
+
         this.title = habit.getTitle();
         this.imageUrl = habit.getImageUrl();
         this.detail = habit.getDetail();
         this.category = category.getName();
         this.hashtags = hashtags;
         this.followerList = habitFollowersGetResponseDto;
-        this.notification = notification;
     }
 }

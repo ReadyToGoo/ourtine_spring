@@ -4,6 +4,7 @@ import ourtine.domain.HabitSession;
 import ourtine.domain.User;
 import ourtine.domain.common.BaseEntity;
 import ourtine.domain.enums.CompleteStatus;
+import ourtine.domain.enums.Emotion;
 import ourtine.domain.enums.Status;
 import javax.persistence.*;
 import lombok.Builder;
@@ -26,6 +27,8 @@ public class HabitSessionFollower extends BaseEntity {
     @JoinColumn(name = "follower_id",nullable = false)
     private User follower;
 
+    private String videoUrl;
+
     // 해당 유저가 투표한 mvp 후보.
     private Long mvpVote;
 
@@ -33,10 +36,10 @@ public class HabitSessionFollower extends BaseEntity {
     private Long starRate;
 
     // 감정
-    private Long emoji;
+    private Emotion emotion;
 
     @Enumerated(value = EnumType.STRING)
-    private CompleteStatus completeStatus = CompleteStatus.INCOMPLETE;
+    private CompleteStatus completeStatus = CompleteStatus.ENTERED;
 
     @Enumerated(value = EnumType.STRING)
     private Status status = Status.ACTIVE;
@@ -51,12 +54,15 @@ public class HabitSessionFollower extends BaseEntity {
         this.mvpVote  =mvpVote;
     }
 
-    public void completeSession() {this.completeStatus = CompleteStatus.COMPLETE;};
+    public void uploadVideo(String videoUrl){
+        this.videoUrl = videoUrl;
+        this.completeStatus = CompleteStatus.COMPLETE;
+    }
 
     //회고 작성
-    public void writeReview(Long starRate, Long emoji){
+    public void writeReview(Long starRate, Emotion emotion){
         this.starRate = starRate;
-        this.emoji = emoji;
+        this.emotion = emotion;
     }
 
 }

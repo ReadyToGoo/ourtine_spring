@@ -1,4 +1,4 @@
-package ourtine.server.web.dto.response;
+package ourtine.web.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,6 +13,8 @@ import ourtine.domain.User;
 public class HabitRecommendListResponseDto {
     private Long id;
 
+    private Long hostId;
+
     private String title;
 
     private String imageUrl;
@@ -23,6 +25,7 @@ public class HabitRecommendListResponseDto {
 
     public HabitRecommendListResponseDto(Habit habit, Category category, User host){
         this.id = habit.getId();
+        this.hostId = habit.getHost().getId();
         this.title = habit.getTitle();
         this.imageUrl = habit.getImageUrl();
         this.category = category.getName();

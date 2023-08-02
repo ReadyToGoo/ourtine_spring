@@ -72,8 +72,8 @@ public class User extends BaseEntity {
     @ColumnDefault("'NORMAL_ACTIVE'")
     private UserStatus userStatus;
 
-
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
+
 }

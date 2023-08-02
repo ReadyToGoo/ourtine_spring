@@ -1,4 +1,5 @@
-package ourtine.server.web.dto.response;
+package ourtine.web.dto.response;
+
 
 import ourtine.domain.Habit;
 import lombok.AllArgsConstructor;

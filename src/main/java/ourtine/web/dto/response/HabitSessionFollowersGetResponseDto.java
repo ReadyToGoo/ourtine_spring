@@ -1,4 +1,4 @@
-package ourtine.server.web.dto.response;
+package ourtine.web.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,5 +14,5 @@ public class HabitSessionFollowersGetResponseDto {
 
         private String imageUrl;
 
-        private boolean enterStatus;
+        private Boolean enterStatus;
 }

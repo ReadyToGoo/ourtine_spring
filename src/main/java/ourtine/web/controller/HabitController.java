@@ -10,6 +10,7 @@ import ourtine.domain.common.SliceResponseDto;
 import ourtine.domain.enums.Sort;
 import ourtine.web.dto.request.HabitCreatePostRequestDto;
 import ourtine.service.impl.HabitServiceImpl;
+import ourtine.web.dto.request.HabitInvitationPostRequestDto;
 import ourtine.web.dto.response.*;
 
 import javax.validation.Valid;
@@ -25,7 +26,7 @@ public class HabitController {
     // 습관 개설
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public HabitCreatePostResponseDto createHabit(@RequestPart @Valid HabitCreatePostRequestDto habitCreatePostRequestDto, @RequestPart MultipartFile file, User user) throws IOException {
-        if (file.isEmpty()){} // TODO: 에러 처리
+        if (file.isEmpty()){ } // TODO: 에러 처리
         return habitService.createHabit(habitCreatePostRequestDto,file,user);
         // TODO: 응답 형식 추가해야함
     }
@@ -69,7 +70,8 @@ public class HabitController {
     // 습관 검색하기
     @GetMapping(value = "/search")
     public SliceResponseDto<HabitSearchResponseDto> searchHabits(@RequestParam Sort sort_by,  @RequestParam String keyword, User user, Pageable pageable){
-        return new SliceResponseDto<>(habitService.searchHabits(sort_by,user,keyword,pageable));
+        String word = '%'+keyword+'%';
+        return new SliceResponseDto<>(habitService.searchHabits(sort_by,user,word,pageable));
     }
 
     // 카테고리별 검색
@@ -90,6 +92,10 @@ public class HabitController {
         return habitService.deleteHabit(habit_id, user);
     }
 
+    @PostMapping("/invite")
+    public HabitInvitationPostResponseDto sendInvitation (@RequestBody HabitInvitationPostRequestDto requestDto, User user){
+        return habitService.sendInvitation(user,requestDto);
+    }
 
 }
 

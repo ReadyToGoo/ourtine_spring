@@ -12,5 +12,8 @@ import java.util.List;
 public class HabitInvitationPostRequestDto {
 
     @NotBlank
+    Long habitId ;
+
+    @NotBlank
     List<Long> friends = new ArrayList<>();
 }

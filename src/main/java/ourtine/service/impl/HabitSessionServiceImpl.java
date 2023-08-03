@@ -6,6 +6,7 @@ import ourtine.aws.s3.S3Uploader;
 import ourtine.domain.Habit;
 import ourtine.domain.HabitSession;
 import ourtine.domain.User;
+import ourtine.domain.enums.HabitFollowerStatus;
 import ourtine.domain.mapping.HabitSessionFollower;
 import ourtine.domain.mapping.UserMvp;
 import ourtine.repository.*;
@@ -21,7 +22,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class HabitSessionServiceImpl implements HabitSessionService {
 
     private final HabitRepository habitRepository;
@@ -56,7 +57,7 @@ public class HabitSessionServiceImpl implements HabitSessionService {
         for(User follower : followers){
             // 입장한 유저
             if ( habitSessionFollowerRepository.existsByFollowerIdAndHabitSessionId(follower.getId(),sessionId)){
-                entered.add(new HabitSessionFollowerResponseDto(follower.getId(),user.getNickname(),user.getImageUrl()));
+                entered.add(new HabitSessionFollowerResponseDto(follower.getId(),follower.getNickname(),follower.getImageUrl()));
             }
             // 안 한 유저
             else{
@@ -90,8 +91,9 @@ public class HabitSessionServiceImpl implements HabitSessionService {
         List<HabitSessionFollowerVoteResponseDto> result = new ArrayList<>();
         // TODO: user 정보
         followers.forEach(follower -> {
-            result.add(new HabitSessionFollowerVoteResponseDto(follower.getId(),"닉네임","이미지",follower.getVideoUrl(),
-                    habitSessionFollowerRepository.queryGetHabitSessionFollowerCompleteStatus(follower.getId(),sessionId)));
+            if (follower.getHabitFollowerStatus()== HabitFollowerStatus.COMPLETE) {
+                result.add(new HabitSessionFollowerVoteResponseDto(follower));
+            }
         });
       return  new HabitSessionMvpCandidateGetResponseDto(sessionId,result) ;
     }

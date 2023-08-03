@@ -3,7 +3,14 @@ package ourtine.web.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ourtine.domain.Category;
 import ourtine.domain.Habit;
+import ourtine.domain.User;
+import ourtine.domain.enums.Day;
+
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -11,20 +18,35 @@ import ourtine.domain.Habit;
 public class HabitFindByCategoryGetResponseDto {
     Long id;
 
+    Long hostId;
+
+    String hostName;
+
+    String hostImageUrl;
+
     String title;
 
     String category;
 
-    String hostName;
-
     String imageUrl;
 
-    public HabitFindByCategoryGetResponseDto(Habit habit, String category){
+    private List<Day> days = new ArrayList<>();
+
+    private LocalTime startTime;
+
+    private LocalTime endTime;
+
+    public HabitFindByCategoryGetResponseDto(Habit habit, Category category, List<Day> days){
         this.id = habit.getId();
-        this.title = habit.getTitle();
-        this.category = category;
+        this.hostId = habit.getHost().getId();
         this.hostName = habit.getHost().getNickname();
+        this.hostImageUrl = habit.getHost().getImageUrl();
+        this.title = habit.getTitle();
         this.imageUrl = habit.getImageUrl();
+        this.category = category.getName();
+        this.startTime = habit.getStartTime();
+        this.endTime = habit.getEndTime();
+        this.days = days;
     }
 
 }

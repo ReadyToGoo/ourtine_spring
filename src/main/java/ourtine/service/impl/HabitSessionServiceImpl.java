@@ -52,20 +52,20 @@ public class HabitSessionServiceImpl implements HabitSessionService {
         Habit habit = habitSession.getHabit();
         List<User> followers = habitFollowersRepository.queryFindHabitFollowers(habit.getId());
 
-        List<HabitSessionFollowerResponseDto> entered = new ArrayList<>();
-        List<HabitSessionFollowerResponseDto> notEntered = new ArrayList<>();
+        List<HabitSessionFollowerResponseDto> followersResult = new ArrayList<>();
         for(User follower : followers){
             // 입장한 유저
             if ( habitSessionFollowerRepository.existsByFollowerIdAndHabitSessionId(follower.getId(),sessionId)){
-                entered.add(new HabitSessionFollowerResponseDto(follower.getId(),follower.getNickname(),follower.getImageUrl()));
+                followersResult.add(new HabitSessionFollowerResponseDto(follower.getId(),follower.getNickname(),follower.getImageUrl(),
+                        habitSessionFollowerRepository.findByHabitSessionIdAndFollower(sessionId,follower).get().getHabitFollowerStatus()));
             }
             // 안 한 유저
             else{
-                notEntered.add(new HabitSessionFollowerResponseDto(follower.getId(),follower.getNickname(),follower.getImageUrl()));
+                followersResult.add(new HabitSessionFollowerResponseDto(follower.getId(),follower.getNickname(),follower.getImageUrl(),HabitFollowerStatus.NOT_ENTERED));
             }
         }
 
-        return new HabitSessionGetResponseDto(habitSession.getId(),habit,entered,notEntered);
+        return new HabitSessionGetResponseDto(habitSession.getId(),habit,followersResult);
     }
 
 

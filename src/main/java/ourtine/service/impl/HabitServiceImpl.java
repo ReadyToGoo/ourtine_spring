@@ -127,7 +127,7 @@ public class HabitServiceImpl implements HabitService {
         Day day = dayConverter.dayOfWeek();
         Slice<Long> followingHabitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(user.getId(),pageable);
         if (followingHabitIds.isEmpty()){} // TODO: 에러
-        Slice<Long> habitIdsOfDay = habitDaysRepository.queryFindFollowingHabitsByDay(followingHabitIds.toList(),day,pageable);
+        Slice<Long> habitIdsOfDay = habitDaysRepository.queryFindFollowingHabitsByDay(followingHabitIds.getContent(),day,pageable);
         Slice<Habit> habitsOfDay = habitRepository.queryFindHabitsById(habitIdsOfDay.getContent());
 
         return habitsOfDay.map(habit -> new HabitMyFollowingListGetResponseDto(

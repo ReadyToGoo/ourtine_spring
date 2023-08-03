@@ -1,7 +1,10 @@
 package ourtine.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.Follow;
 import ourtine.domain.User;
 import ourtine.repository.FollowRepository;
@@ -12,14 +15,12 @@ import ourtine.web.dto.request.FollowGetRequestDto;
 import ourtine.web.dto.request.FollowPostRequestDto;
 import ourtine.web.dto.response.*;
 
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class FollowServiceImpl implements FollowService {
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
-
-    public FollowServiceImpl(UserRepository userRepository, FollowRepository followRepository) {
-        this.userRepository = userRepository;
-        this.followRepository = followRepository;
-    }
 
     // 팔로우 여부 조회
     @Override

@@ -35,11 +35,11 @@ public class HabitRecommendResponseDto {
 
     private LocalTime endTime;
 
-    public HabitRecommendResponseDto(Habit habit, Category category, User host, List<Day> days){
+    public HabitRecommendResponseDto(Habit habit, Category category, List<Day> days){
         this.id = habit.getId();
         this.hostId = habit.getHost().getId();
-        this.hostName = host.getNickname();
-        this.hostImageUrl = host.getImageUrl();
+        this.hostName = habit.getHost().getNickname();
+        this.hostImageUrl = habit.getHost().getImageUrl();
         this.title = habit.getTitle();
         this.imageUrl = habit.getImageUrl();
         this.category = category.getName();

@@ -57,5 +57,5 @@ public interface HabitService {
     public Slice<HabitWeeklyLogResponseDto> getHabitWeeklyLog(Long habitId, User user);
 
     // 습관 초대
-    public HabitInvitationPostResponseDto sendInvitation(Long habitId, User user, HabitInvitationPostRequestDto requestDto);
+    public HabitInvitationPostResponseDto sendInvitation(User user, HabitInvitationPostRequestDto requestDto);
 }

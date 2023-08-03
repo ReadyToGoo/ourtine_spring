@@ -46,7 +46,7 @@ public interface HabitSessionFollowerRepository extends JpaRepository<HabitSessi
     // 유저가 참여한 습관 세션의 횟수
     @Query("select count (hsf) from HabitSessionFollower hsf " +
             "where hsf.follower = :user " +
-            "and hsf.habitSession.habit = :habitId " +
+            "and hsf.habitSession.habit.id = :habitId " +
             "and hsf.habitSession.id in :sessionIds" )
     Long queryGetParticipateSessionNumber (User user, Long habitId, List<Long> sessionIds);
 

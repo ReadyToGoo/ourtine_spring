@@ -1,6 +1,7 @@
 package ourtine.web.dto.response;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import ourtine.domain.Habit;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,8 +22,10 @@ public class HabitMyFollowingListGetResponseDto {
 
     private String imageUrl;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:MM:ss", timezone = "Asia/Seoul")
     private LocalTime startTime;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:MM:ss", timezone = "Asia/Seoul")
     private LocalTime endTime;
 
     private LocalDate startDate;

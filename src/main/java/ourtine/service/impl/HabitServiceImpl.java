@@ -30,7 +30,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class HabitServiceImpl implements HabitService {
 
     private final HabitRepository habitRepository;
@@ -54,7 +54,7 @@ public class HabitServiceImpl implements HabitService {
     public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto habitCreatePostRequestDto, MultipartFile file, User user) throws IOException {
         Habit habit;
         Category category = categoryRepository.findByName(habitCreatePostRequestDto.getCategory()).orElseThrow();
-        if (file.isEmpty()){} // 에러 처리
+
         if (habitCreatePostRequestDto.getHabitStatus()== HabitStatus.PUBLIC)
         {
             String imageUrl = s3Uploader.upload(file,"");
@@ -167,14 +167,14 @@ public class HabitServiceImpl implements HabitService {
     }
 
 
-    // 친구 프로필 - 팔로잉 하는 습관 목록
+    // 유저 프로필 - 팔로잉 하는 습관 목록
     @Override
     public HabitUserFollowingListGetResponseDto getUserFollowingHabits(Long userId, User me, Pageable pageable) {
         User user = userRepository.findById(userId).orElseThrow(); // 에러 처리
         HabitUserFollowingListGetResponseDto responseDto = null;
 
         if (followRepository.findBySenderAndReceiverId(me,userId).isPresent()) {
-            // 친구인 유저면
+            // 친구인 유저면과
             Slice<Habit> commonHabits = habitFollowersRepository.queryGetCommonHabitsByUserId(userId, me.getId());
             Slice<Habit> otherHabits = habitFollowersRepository.queryFindOtherHabitsByUserId(userId, me.getId(), pageable);
             SliceResponseDto<HabitFollowingInfoDto> commonHabitsInfo = new SliceResponseDto<>(commonHabits.map(HabitFollowingInfoDto::new));
@@ -183,8 +183,8 @@ public class HabitServiceImpl implements HabitService {
         }
         else {
             // 친구가 아닌 유저면
-            List<Long> habitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(me.getId(),pageable).toList();
-            Slice<Habit> habits = habitRepository.queryFindHabitsById(habitIds);
+            List<Long> habitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(userId,pageable).toList();
+            Slice<Habit> habits = habitRepository.queryFindPublicHabitsById(habitIds);
             SliceResponseDto<HabitFollowingInfoDto> habitsInfo=  new SliceResponseDto<>(habits.map(HabitFollowingInfoDto::new));
             responseDto = new HabitUserFollowingListGetResponseDto(false,habitsInfo,null,null);
         }
@@ -195,9 +195,9 @@ public class HabitServiceImpl implements HabitService {
     // 추천 습관 목록
     @Override
     public Slice<HabitRecommendResponseDto> getRecommendHabits(User user, Pageable pageable) {
-        Slice<Habit> habits = habitRepository.queryGetRecommendHabits(user.getId(),pageable);
+        Slice<Habit> habits = habitRepository.queryGetRecommendHabits(user,pageable);
         Slice<HabitRecommendResponseDto> result = habits.map(habit ->
-                new HabitRecommendResponseDto(habit,categoryRepository.findById(habit.getCategoryId()).get(),habit.getHost(),
+                new HabitRecommendResponseDto(habit,categoryRepository.findById(habit.getCategoryId()).get(),
                         habitDaysRepository.findDaysByHabit(habit)));
         return result;
     }
@@ -255,7 +255,7 @@ public class HabitServiceImpl implements HabitService {
         Category category = categoryRepository.findByName(categoryName).orElseThrow(); // 에러 처리
         Slice<Habit> habits = habitRepository.querySearchHabitByCategory(user.getId(), category.getId(), pageable);
         return habits.map(habit ->
-             new HabitFindByCategoryGetResponseDto(habit, categoryName));
+             new HabitFindByCategoryGetResponseDto(habit, category,habitDaysRepository.findDaysByHabit(habit)));
     }
 
     // 습관 참여 취소 하기
@@ -264,7 +264,7 @@ public class HabitServiceImpl implements HabitService {
         if(habitRepository.findById(habitId).isEmpty()){}
         if(habitFollowersRepository.findByHabitIdAndFollowerId(habitId, user.getId()).isEmpty()){}
 
-        habitFollowersRepository.queryDeleteFollowerById(habitId,user.getId());
+        habitFollowersRepository.queryDeleteFollowerById(habitId,user);
         return new HabitFollowerResponseDto(habitId,user.getId());
     }
 
@@ -279,13 +279,13 @@ public class HabitServiceImpl implements HabitService {
 
     // 습관 초대장
     @Override
-    public HabitInvitationPostResponseDto sendInvitation(Long habitId, User me, HabitInvitationPostRequestDto requestDto){
+    public HabitInvitationPostResponseDto sendInvitation(User me, HabitInvitationPostRequestDto requestDto){
         List<Long> friends = requestDto.getFriends();
         friends.forEach(friend ->{
             User receiver = userRepository.findById(friend).orElseThrow();
                 if (followRepository.findBySenderAndReceiverId(me,friend).isPresent()) {
                     Message invitation = NewMessage.builder().messageType(MessageType.HABITINVITE)
-                            .sender(me).receiver(receiver).contents(habitId.toString()).build();
+                            .sender(me).receiver(receiver).contents(requestDto.getHabitId().toString()).build();
                     messageRepository.save(invitation);
                 }
         }
@@ -330,7 +330,7 @@ public class HabitServiceImpl implements HabitService {
 
             habitHashtagRepository.deleteById(habitId);
 
-            return new HabitDeleteResponseDto();
+            return new HabitDeleteResponseDto(habitId, user.getId());
         }
         else return null;
     }

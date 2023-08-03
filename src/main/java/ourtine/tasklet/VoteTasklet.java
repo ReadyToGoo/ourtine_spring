@@ -76,7 +76,6 @@ public class VoteTasklet implements Tasklet {
                                     userMvpRepository.save(userMvp);
                                 }
                             }
-
                     }
                 }
                 session.setStatus(Status.INACTIVE);

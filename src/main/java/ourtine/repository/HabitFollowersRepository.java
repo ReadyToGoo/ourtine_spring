@@ -89,8 +89,8 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
     // 습관 유저 삭제
     @Modifying
     @Transactional
-    @Query("delete from HabitFollowers where follower.id = :userId and habit.id = :habitId ")
-    void queryDeleteFollowerById (Long userId, Long habitId);
+    @Query("delete from HabitFollowers where follower = :user and habit.id = :habitId ")
+    void queryDeleteFollowerById (Long habitId, User user);
 
     // 습관 아이디로 삭제
     @Transactional

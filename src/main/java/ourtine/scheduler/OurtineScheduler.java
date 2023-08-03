@@ -1,6 +1,7 @@
 package ourtine.scheduler;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,13 +38,6 @@ public class OurtineScheduler {
     @Autowired
     @Qualifier("VOTE_JOB")
     private Job VoteJob;
-    @Autowired
-    private HabitDaysRepository habitDaysRepository;
-
-   /* @Bean
-    public Executor taskExecutor(){
-        return Executors.newScheduledThreadPool(4);
-    }*/
 
     @Scheduled(cron = "0 * * * * *")
     public void startVoteJob() {
@@ -78,5 +72,6 @@ public class OurtineScheduler {
             ex.printStackTrace();
         }
     }
+
 
 }

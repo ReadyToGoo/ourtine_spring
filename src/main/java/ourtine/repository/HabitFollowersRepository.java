@@ -21,28 +21,32 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
     Optional<HabitFollowers> findByFollowerAndHabit(User user, Habit habit);
 
     // 습관 참여 여부
-    Optional<HabitFollowers> findByHabit_IdAndFollower_Id (Long habitId, Long userId);
+    Optional<HabitFollowers> findByHabitIdAndFollowerId(Long habitId, Long userId);
 
     // 습관의 팔로워 수 조회
     @Query("select count (hf) from HabitFollowers hf where hf.habit = :habit " +
             "and hf.status='ACTIVE'" )
-    long countHabitFollowersByHabitId(Habit habit);
+    long countHabitFollowersByHabit(Habit habit);
 
     // 습관 팔로워 정보 조회
-    @Query("select hf.follower from HabitFollowers hf where hf.habit.id = :habitId and hf.status='ACTIVE' and hf.habit.status = 'ACTIVE'")
-    Slice<User> queryFindHabitFollowers(Long habitId);
+    @Query("select hf.follower from HabitFollowers hf " +
+            "where hf.habit.id = :habitId " +
+            "and hf.status='ACTIVE' " +
+            "and hf.habit.status = 'ACTIVE'")
+    List<User> queryFindHabitFollowers(Long habitId);
 
     // 습관 팔로워 정보 조회
-    @Query("select hf.follower.id from HabitFollowers hf where hf.habit = :habit and hf.status='ACTIVE' and hf.habit.status = 'ACTIVE'")
-    List<Long> queryFindHabitFollowerIds(Habit habit);
+    @Query("select hf.follower from HabitFollowers hf " +
+            "where hf.habit = :habit and hf.status='ACTIVE' " +
+            "and hf.habit.status = 'ACTIVE'")
+    List<User> queryFindHabitFollowerIds(Habit habit);
 
     // 참여하고 있는 습관 아이디 조회
-    @Query("select hf.habit.id from HabitFollowers hf where hf.follower.id = :userId and hf.status='ACTIVE' and hf.habit.status = 'ACTIVE'")
+    @Query("select hf.habit.id from HabitFollowers hf " +
+            "where hf.follower.id = :userId " +
+            "and hf.status='ACTIVE' " +
+            "and hf.habit.endDate >= curdate()")
     Slice<Long> queryFindMyFollowingHabitIds(Long userId, Pageable pageable);
-
-    // 참여하고 있는 습관 정보 조회
-    @Query("select hf.habit from HabitFollowers hf where hf.follower.id = :userId and hf.status='ACTIVE'")
-    Slice<Habit> queryFindMyFollowingHabits(Long userId, Pageable pageable);
 
     // 유저1과 유저2의 같이 하는 습관 정보 조회
     @Query("select hf.habit from HabitFollowers hf "+
@@ -85,8 +89,8 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
     // 습관 유저 삭제
     @Modifying
     @Transactional
-    @Query("delete from HabitFollowers where follower.id = :userId and habit.id = :habitId ")
-    void queryDeleteFollowerById (Long userId, Long habitId);
+    @Query("delete from HabitFollowers where follower = :user and habit.id = :habitId ")
+    void queryDeleteFollowerById (Long habitId, User user);
 
     // 습관 아이디로 삭제
     @Transactional

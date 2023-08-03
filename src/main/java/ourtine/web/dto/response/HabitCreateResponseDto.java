@@ -1,4 +1,4 @@
-package ourtine.web.dto.response;
+package ourtine.server.web.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

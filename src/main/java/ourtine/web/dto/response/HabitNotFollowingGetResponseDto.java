@@ -31,9 +31,9 @@ public class HabitNotFollowingGetResponseDto {
 
     private String imageUrl;
 
-    private Long participateRate;
+    private int participateRate;
 
-    private BigDecimal starRate;
+    private double starRate;
 
     private List<HabitFollowersGetResponseDto> followerList = new ArrayList<>();
 
@@ -47,19 +47,21 @@ public class HabitNotFollowingGetResponseDto {
 
     private LocalDate endDate;
 
+    private Boolean isRecruiting;
+
     private Long followerCount;
 
     private Long followerLimit;
 
-    private Boolean isRecruiting;
-
-    public HabitNotFollowingGetResponseDto(Habit habit, List<String> hashtags, Category category, List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto,
+    public HabitNotFollowingGetResponseDto(Habit habit,int participateRate, double starRate, List<String> hashtags, Category category, List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto,
                                            boolean isRecruiting){
         this.id = habit.getId();
         this.hostId = habit.getHost().getId();
         this.title = habit.getTitle();
         this.imageUrl = habit.getImageUrl();
         this.detail = habit.getDetail();
+        this.participateRate = participateRate;
+        this.starRate = starRate;
         this.category = category.getName();
         this.startDate = habit.getStartDate();
         this.endDate = habit.getEndDate();
@@ -67,7 +69,7 @@ public class HabitNotFollowingGetResponseDto {
         this.endTime = habit.getEndTime();
         this.hashtags = hashtags;
         this.followerList = habitFollowersGetResponseDto;
-        this.followerCount = habit.getFollowerCount();
+        this.followerCount = habit.getFollowerLimit() - habit.getFollowerCount();
         this.followerLimit = habit.getFollowerLimit();
         this.isRecruiting = isRecruiting;
     }

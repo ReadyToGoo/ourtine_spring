@@ -7,9 +7,11 @@ import javax.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ourtine.domain.mapping.HabitFollowers;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Getter
 @Entity
@@ -34,12 +36,18 @@ public class Habit extends BaseEntity {
     @Column(nullable = false)
     private String imageUrl;
 
+    @Column(nullable = false)
     private Long categoryId;
 
+    @OneToMany(mappedBy = "habit")
+    private List<HabitFollowers> habitFollowersList;
     private Long followerCount = 1l;
 
     @Column(nullable = false)
     private Long followerLimit;
+
+    @OneToMany(mappedBy = "id")
+    List<User> followers;
 
    // 습관 시작 시간
     @Column(nullable = false)
@@ -80,5 +88,9 @@ public class Habit extends BaseEntity {
 
     public void setFollowerCount(Long followerCount) {
         this.followerCount = followerCount;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }

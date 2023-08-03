@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ourtine.domain.User;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Repository
@@ -25,7 +27,7 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "where h.id in :habitIds " +
             "and h.endDate >= CURDATE() " + // 종료 되지 않은 습관 필터링
             "and h.status = 'ACTIVE' " +
-            "and h.habitStatus = 'PUBLIC'" +
+            "and h.habitStatus = 'PUBLIC' " +
             "order by h.id desc ")
     Slice<Habit> queryFindPublicHabitsById(List<Long> habitIds);
 
@@ -79,14 +81,14 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
     // 참여 - 추천 습관 목록
     // 차단 유저 필터링
     @Query("select h from Habit h " +
-            "where h.host.id not in (select b.blocked.id from Block b where b.blocker.id = :hostId) " +
-            "and h.host.id not in (select b.blocker.id from Block b where b.blocked.id = :hostId) " +
-            "and h.categoryId in (select uc.category.id from UserCategory uc where uc.user.id = :userId and uc.status = 'ACTIVE') " +
-            "and not h.host.id = :userId " + // 내가 만든 습관 제외
+            "where h.host.id not in (select b.blocked.id from Block b where b.blocker = :user) " +
+            "and h.host.id not in (select b.blocker.id from Block b where b.blocked = :user) " +
+            "and h.categoryId in (select uc.category.id from UserCategory uc where uc.user = :user and uc.status = 'ACTIVE') " +
+            "and not h.host = :user " + // 내가 만든 습관 제외
             "and h.followerLimit-h.followerCount>0 " +
             "and h.habitStatus = 'PUBLIC'" +
             "and h.status = 'ACTIVE'" )
-    Slice<Habit> queryGetRecommendHabits(Long userId, Pageable pageable);
+    Slice<Habit> queryGetRecommendHabits(User user, Pageable pageable);
 
     // 습관의 모집 여부 조회
     @Query("select case " +
@@ -97,4 +99,16 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "where h.id = :habitId")
     boolean queryGetHabitRecruitingStatus(Long habitId);
 
+    // 호스트로 습관 갯수 조회
+    Long countByHost(User host);
+
+    // 습관 종료 시간 & 종료 날짜 습관 조회
+    @Query("select h from Habit h " +
+            "where h.endTime = :endTime " +
+            "and h.status = 'ACTIVE'" +
+            "and h.endDate = :endDate")
+    List<Habit> queryFindHabitsByEndTime(LocalTime endTime, LocalDate endDate);
+
+    // 호스트 여부
+    boolean existsByHostAndId(User user,Long habitId);
 }

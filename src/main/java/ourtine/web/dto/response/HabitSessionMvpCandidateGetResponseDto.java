@@ -9,5 +9,5 @@ import java.util.List;
 @AllArgsConstructor
 public class HabitSessionMvpCandidateGetResponseDto {
     private Long sessionId;
-    private List<HabitSessionFollowerGetResponseDto> candidates;
+    private List<HabitSessionFollowerVoteResponseDto> candidates;
 }

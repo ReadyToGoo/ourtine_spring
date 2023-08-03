@@ -16,7 +16,6 @@ public class UploadTestService {
     private final S3Uploader s3Uploader;
     @Transactional
     public String uploadTest(MultipartFile image) throws IOException {
-        System.out.println("UploadTest...");
         if(!image.isEmpty()) {
             String storedFileName = s3Uploader.upload(image,"images");
             return "File name : "+storedFileName;

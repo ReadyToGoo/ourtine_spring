@@ -6,6 +6,6 @@ import ourtine.domain.enums.Emotion;
 public class EmotionConverter implements Converter<String, Emotion> {
     @Override
     public Emotion convert(String source) {
-        return Emotion.valueOf(source);
+        return Emotion.valueOf(source.toUpperCase());
     }
 }

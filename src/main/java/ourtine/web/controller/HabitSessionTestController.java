@@ -67,11 +67,11 @@ public class HabitSessionTestController {
     }
 
     // 습관 회고 쓰기
-    @PostMapping("/habit-sessions/{session_id}/review")
+    @PatchMapping("/habit-sessions/{session_id}/review")
     public HabitSessionReviewPostResponseDto writeReview(@PathVariable Long session_id, @RequestBody HabitSessionReviewPostRequestDto requestDto)
     {
         User dana = userRepository.findById(1l).get();
-        return habitSessionService.writeReview(session_id,requestDto,dana);
+        return habitSessionService. writeReview(session_id,requestDto,dana);
     }
 
 }

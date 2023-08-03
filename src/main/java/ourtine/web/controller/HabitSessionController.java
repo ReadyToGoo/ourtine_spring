@@ -64,10 +64,11 @@ public class HabitSessionController {
     }
 
     // 습관 회고 쓰기
-    @PostMapping("/habit-sessions/{session_id}/review")
+    @PatchMapping("/habit-sessions/{session_id}/review")
     @ApiOperation(value = "습관 세션 - 회고",notes = "진행한 습관에 대한 회고를 기록한다.")
     public HabitSessionReviewPostResponseDto writeReview(@PathVariable Long session_id, @RequestBody HabitSessionReviewPostRequestDto requestDto, User user)
     {return habitSessionService.writeReview(session_id,requestDto,user);
     }
+
 
 }

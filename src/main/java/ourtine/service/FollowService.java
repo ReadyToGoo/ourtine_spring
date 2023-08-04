@@ -19,21 +19,21 @@ public interface FollowService {
 
     // 팔로우 하기
     @Transactional
-    public FollowPostResponseDto follow(FollowPostRequestDto requestDto, User me);
+    public FollowPostResponseDto followUser(FollowPostRequestDto requestDto, User me);
 
     @Modifying
     @Transactional
-    public FollowDeleteResponseDto unFollow(FollowDeleteRequestDto requestDto, User me);
+    public FollowDeleteResponseDto unfollowUser(FollowDeleteRequestDto requestDto, User me);
 
     // 내 팔로잉 목록 보여주기
-    public Slice<FollowingGetResponseDto> getMyFollowing(User me, Pageable pageable);
+    public Slice<FollowingsGetResponseDto> getMyFollowing(User me, Pageable pageable);
 
     // 내 팔로워 목록 보여주기
-    public Slice<FollowerGetResponseDto> getMyFollower(User me, Pageable pageable);
+    public Slice<FollowersGetResponseDto> getMyFollower(User me, Pageable pageable);
 
     // 유저 팔로잉 목록 보여주기
-    public Slice<FollowingGetResponseDto> getFollowing(Long userId,User me,  Pageable pageable);
+    public Slice<FollowingsGetResponseDto> getFollowing(Long userId, User me, Pageable pageable);
 
     // 유저 팔로워 목록 보여주기
-    public Slice<FollowerGetResponseDto> getFollower(Long userId,User me, Pageable pageable);
+    public Slice<FollowersGetResponseDto> getFollower(Long userId, User me, Pageable pageable);
 }

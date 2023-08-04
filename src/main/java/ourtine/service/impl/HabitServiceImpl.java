@@ -265,7 +265,7 @@ public class HabitServiceImpl implements HabitService {
     @Override
     public HabitFollowerResponseDto joinHabit(Long habitId, User user) {
         Habit habit = habitRepository.findById(habitId).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT));
-        //참여하고 있으면
+        //참여하고 있으면 or 인원이 다 찬 상태이면 참여 불가
         if (habitFollowersRepository.findByHabitIdAndFollowerId(habitId,user.getId()).isPresent() ||
                 habit.getFollowerLimit()-habit.getFollowerCount()<1 ){
             throw new BusinessException(ResponseMessage.WRONG_HABIT_JOIN);
@@ -274,6 +274,7 @@ public class HabitServiceImpl implements HabitService {
             List<Day> days = habitDaysRepository.findDaysByHabit(habit);
             List<Long> followingHabits = habitFollowersRepository.queryFindMyFollowingHabitIds(user.getId(),Pageable.unpaged()).getContent();
             List<Long> sortByDay = new ArrayList<>();
+
             // 내가 팔로잉 중인 습관들을 소팅하기 ( 신청하려는 습관의 요일과 겹치는 )
             for (Day day: days){
                 List<Habit> habits = habitDaysRepository.queryFindHabitsByDay(day,followingHabits);
@@ -285,11 +286,14 @@ public class HabitServiceImpl implements HabitService {
             }
 
             boolean canJoin = true;
-            for (Long s : sortByDay){
-                Habit sort = habitRepository.findById(s).get();
-                if(habitRepository.timeSorting(habitId, sort.getStartTime(),sort.getEndTime()).isEmpty()){
-                    canJoin = false;
-                };
+            if (!sortByDay.isEmpty()){
+                // 시간대가 하나라도 겹치면 참여 불가
+                for (Long s : sortByDay) {
+                    Habit sort = habitRepository.findById(s).get();
+                    if (habitRepository.sortByTime(habitId, sort.getStartTime(), sort.getEndTime()).isEmpty()) {
+                        canJoin = false;
+                    }
+                }
             }
                 if(canJoin)
                 {
@@ -299,8 +303,8 @@ public class HabitServiceImpl implements HabitService {
                     habit.setFollowerCount(habitFollowersRepository.countHabitFollowersByHabit(habit));
                     return new HabitFollowerResponseDto(habitId, user.getId());
                 }
-            else
-                throw new BusinessException(ResponseMessage.WRONG_HABIT_TIME);
+                else
+                    throw new BusinessException(ResponseMessage.WRONG_HABIT_TIME);
         }
 
     }

@@ -119,5 +119,5 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "where h.id = :habitId " +
             "and (h.endTime < :startTime " +
             "or h.startTime > :endTime )")
-    List<Habit> timeSorting(Long habitId, LocalTime startTime, LocalTime endTime);
+    List<Habit> sortByTime (Long habitId, LocalTime startTime, LocalTime endTime);
 }

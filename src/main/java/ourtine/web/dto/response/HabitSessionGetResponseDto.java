@@ -25,18 +25,15 @@ public class HabitSessionGetResponseDto {
 
     private LocalTime endTime;
 
-    private List<HabitSessionFollowerResponseDto> entered = new ArrayList<>();
-    private List<HabitSessionFollowerResponseDto> notEntered = new ArrayList<>();
+    private List<HabitSessionFollowerResponseDto> followers = new ArrayList<>();
 
-    public HabitSessionGetResponseDto(Long sessionId, Habit habit, List<HabitSessionFollowerResponseDto> entered,
-                                      List<HabitSessionFollowerResponseDto> notEntered){
+    public HabitSessionGetResponseDto(Long sessionId, Habit habit, List<HabitSessionFollowerResponseDto> followers){
         this.sessionId = sessionId;
         this.habitId = habit.getId();
         this.hostId = habit.getHost().getId();
         this.title = habit.getTitle();
         this.startTime = habit.getStartTime();
         this.endTime = habit.getEndTime();
-        this.entered = entered;
-        this.notEntered = notEntered;
+        this.followers = followers;
     }
 }

@@ -1,12 +1,13 @@
 package ourtine.service.impl;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ourtine.aws.s3.S3Uploader;
 import ourtine.converter.DayConverter;
 import ourtine.domain.*;
-import ourtine.domain.common.SliceResponseDto;
+import ourtine.web.dto.common.SliceResponseDto;
 import ourtine.domain.enums.Day;
 import ourtine.domain.enums.HabitStatus;
 import ourtine.domain.enums.MessageType;
@@ -14,6 +15,8 @@ import ourtine.domain.enums.Sort;
 import ourtine.domain.mapping.HabitDays;
 import ourtine.domain.mapping.HabitFollowers;
 import ourtine.domain.mapping.HabitHashtag;
+import ourtine.exception.BusinessException;
+import ourtine.exception.enums.ErrorMessage;
 import ourtine.repository.*;
 import ourtine.util.CalculatorClass;
 import ourtine.web.dto.request.HabitCreatePostRequestDto;
@@ -57,7 +60,10 @@ public class HabitServiceImpl implements HabitService {
     @Override
     public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto habitCreatePostRequestDto, MultipartFile file, User user) throws IOException {
         Habit habit;
-        Category category = categoryRepository.findByName(habitCreatePostRequestDto.getCategory()).orElseThrow();
+        if (file.isEmpty())
+            {throw new IOException(new BusinessException(ErrorMessage.WRONG_HABIT_FILE) );}
+
+        Category category = categoryRepository.findByName(habitCreatePostRequestDto.getCategory()).orElseThrow(()-> new BusinessException(ErrorMessage.WRONG_HABIT_CATEGORY));
 
         if (habitCreatePostRequestDto.getHabitStatus()== HabitStatus.PUBLIC)
         {
@@ -106,7 +112,7 @@ public class HabitServiceImpl implements HabitService {
         habitCreatePostRequestDto.getHashtags().forEach(name->{
             Hashtag hashtag;
             if (hashtagRepository.existsByName(name)){
-                hashtag = hashtagRepository.findHashtagByName(name).orElseThrow();
+                hashtag = hashtagRepository.findHashtagByName(name).get();
             }
             else {
                 hashtag = Hashtag.builder().name(name).build();
@@ -135,8 +141,7 @@ public class HabitServiceImpl implements HabitService {
     public Slice<HabitMyFollowingListGetResponseDto> getMyFollowingHabits(User user, Pageable pageable) {
         Day day = dayConverter.dayOfWeek();
         Slice<Long> followingHabitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(user.getId(),pageable);
-        if (followingHabitIds.isEmpty()){} // TODO: 에러
-        Slice<Long> habitIdsOfDay = habitDaysRepository.queryFindFollowingHabitsByDay(followingHabitIds.toList(),day,pageable);
+        Slice<Long> habitIdsOfDay = habitDaysRepository.queryFindFollowingHabitsByDay(followingHabitIds.getContent(),day,pageable);
         Slice<Habit> habitsOfDay = habitRepository.queryFindHabitsById(habitIdsOfDay.getContent());
 
         return habitsOfDay.map(habit -> new HabitMyFollowingListGetResponseDto(
@@ -150,8 +155,8 @@ public class HabitServiceImpl implements HabitService {
     @Override
     public HabitGetResponseDto getHabit(Long habitId, User user) {
 
-        Habit habit = habitRepository.findById(habitId).orElseThrow();
-        Category category  = categoryRepository.findById(habit.getCategoryId()).orElseThrow();
+        Habit habit = habitRepository.findById(habitId).orElseThrow(()-> new BusinessException(ErrorMessage.WRONG_HABIT));
+        Category category  = categoryRepository.findById(habit.getCategoryId()).orElseThrow(()-> new BusinessException(ErrorMessage.WRONG_HABIT_CATEGORY));
         List<String> hashtags= habitHashtagRepository.queryFindHashtagNameByHabit(habitId);
         List<User> followers = habitFollowersRepository.queryFindHabitFollowers(habitId);
         List<HabitFollowersGetResponseDto> habitFollowersResult = new ArrayList<>();
@@ -179,32 +184,76 @@ public class HabitServiceImpl implements HabitService {
     // 유저 프로필 - 팔로잉 하는 습관 목록
     @Override
     public HabitUserFollowingListGetResponseDto getUserFollowingHabits(Long userId, User me, Pageable pageable) {
-        User user = userRepository.findById(userId).orElseThrow(); // 에러 처리
         HabitUserFollowingListGetResponseDto responseDto = null;
 
-        if (followRepository.findBySenderAndReceiverId(me,userId).isPresent()) {
-            // 친구인 유저면과
-            Slice<Habit> commonHabits = habitFollowersRepository.queryGetCommonHabitsByUserId(userId, me.getId());
-            Slice<Habit> otherHabits = habitFollowersRepository.queryFindOtherHabitsByUserId(userId, me.getId(), pageable);
-            SliceResponseDto<HabitFollowingInfoDto> commonHabitsInfo = new SliceResponseDto<>(commonHabits.map(HabitFollowingInfoDto::new));
-            SliceResponseDto<HabitFollowingInfoDto> otherHabitsInfo = new SliceResponseDto<>(otherHabits.map(HabitFollowingInfoDto::new));
-            responseDto = new HabitUserFollowingListGetResponseDto(true, null, commonHabitsInfo, otherHabitsInfo);
+        if (userRepository.findById(userId).isPresent()) { // 존재하는 유저면
+            if (followRepository.findBySenderAndReceiverId(me, userId).isPresent()) {
+                // 친구인 유저면
+                Slice<Habit> commonHabits = habitFollowersRepository.queryGetCommonHabitsByUserId(userId, me);
+                Slice<Habit> otherHabits = habitFollowersRepository.queryFindOtherHabitsByUserId(userId, me, pageable);
+                SliceResponseDto<HabitFollowingInfoDto> commonHabitsInfo = new SliceResponseDto<>(commonHabits.map(HabitFollowingInfoDto::new));
+                SliceResponseDto<HabitFollowingInfoDto> otherHabitsInfo = new SliceResponseDto<>(otherHabits.map(HabitFollowingInfoDto::new));
+                responseDto = new HabitUserFollowingListGetResponseDto(userId, true, null, commonHabitsInfo, otherHabitsInfo);
+            } else {
+                // 친구가 아닌 유저면
+                List<Long> habitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(userId, pageable).toList();
+                Slice<Habit> habits = habitRepository.queryFindPublicHabitsById(habitIds, me.getId());
+                SliceResponseDto<HabitFollowingInfoDto> habitsInfo = new SliceResponseDto<>(habits.map(HabitFollowingInfoDto::new));
+                responseDto = new HabitUserFollowingListGetResponseDto(userId, false, habitsInfo, null, null);
+            }
         }
         else {
-            // 친구가 아닌 유저면
-            List<Long> habitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(userId,pageable).toList();
-            Slice<Habit> habits = habitRepository.queryFindPublicHabitsById(habitIds);
-            SliceResponseDto<HabitFollowingInfoDto> habitsInfo=  new SliceResponseDto<>(habits.map(HabitFollowingInfoDto::new));
-            responseDto = new HabitUserFollowingListGetResponseDto(false,habitsInfo,null,null);
-        }
-
+                throw new BusinessException(ErrorMessage.WRONG_USER);
+             }
         return responseDto;
     }
 
+    // 유저 프로필 - 참여했던 습관 목록
+    @Override
+    public Slice<HabitUserFollowedGetResponseDto> getUserFollowedHabits(Long userId, User me, Pageable pageable) {
+        Slice<HabitUserFollowedGetResponseDto> responseDto  = null;
+        if (userRepository.findById(userId).isPresent()){
+            // 친구인 유저면
+            if (followRepository.findBySenderAndReceiverId(me, userId).isPresent()) {
+                List<Long> habitIds = habitFollowersRepository.queryFindMyFollowedHabitIds(userId, pageable).toList();
+                if (habitIds.size()>0){
+                    Slice<Habit> habits = habitRepository.queryFindHabitsById(habitIds); // public + private
+
+                    Slice<HabitUserFollowedGetResponseDto> habitsResult = habits.map(habit ->
+                            {
+                                Category category = categoryRepository.findById(habit.getCategoryId()).orElseThrow(()-> new BusinessException(ErrorMessage.WRONG_HABIT_CATEGORY));
+                                List<String> hashtags = habitHashtagRepository.queryFindHashtagNameByHabit(habit.getId());
+                                return new HabitUserFollowedGetResponseDto(habit, category.getName(), hashtags);
+                            }
+                    );
+                    responseDto = habitsResult;
+                }
+            }
+            else {
+            List<Long> habitIds = habitFollowersRepository.queryFindMyFollowedHabitIds(userId,pageable).toList();
+                if (habitIds.size()>0){
+                    Slice<Habit> habits = habitRepository.queryFindPublicHabitsById(habitIds, me.getId()); // public 습관만
+                    Slice<HabitUserFollowedGetResponseDto> habitsResult = habits.map(habit ->
+                            {
+                                Category category = categoryRepository.findById(habit.getCategoryId()).orElseThrow(()-> new BusinessException(ErrorMessage.WRONG_HABIT_CATEGORY));
+                                List<String> hashtags = habitHashtagRepository.queryFindHashtagNameByHabit(habit.getId());
+                                return new HabitUserFollowedGetResponseDto(habit, category.getName(), hashtags);
+                            }
+                    );
+                    responseDto = habitsResult;
+                }
+            }
+            return responseDto;
+
+        }
+        else {
+            throw new BusinessException(ErrorMessage.WRONG_USER);
+        }
+    }
     // 추천 습관 목록
     @Override
     public Slice<HabitRecommendResponseDto> getRecommendHabits(User user, Pageable pageable) {
-        Slice<Habit> habits = habitRepository.queryGetRecommendHabits(user,pageable);
+        Slice<Habit> habits = habitRepository.queryGetRecommendHabits(user.getId(),pageable);
         Slice<HabitRecommendResponseDto> result = habits.map(habit ->
                 new HabitRecommendResponseDto(habit,categoryRepository.findById(habit.getCategoryId()).get(),
                         habitDaysRepository.findDaysByHabit(habit)));
@@ -214,15 +263,15 @@ public class HabitServiceImpl implements HabitService {
     // 습관 참여하기
     @Override
     public HabitFollowerResponseDto joinHabit(Long habitId, User user) {
-        Habit habit = habitRepository.findById(habitId).orElseThrow();
-        HabitFollowers habitFollower = HabitFollowers.builder().follower(user).habit(habit).build();
+        Habit habit = habitRepository.findById(habitId).orElseThrow(()-> new BusinessException(ErrorMessage.WRONG_HABIT_JOIN));
+
         //참여하고 있으면
         if (habitFollowersRepository.findByHabitIdAndFollowerId(habitId,user.getId()).isPresent() ||
                 habit.getFollowerLimit()-habit.getFollowerCount()<1 ){
-            //에러 처리
-            return null;
+            throw new BusinessException(ErrorMessage.WRONG_HABIT_JOIN);
         }
         else {
+            HabitFollowers habitFollower = HabitFollowers.builder().follower(user).habit(habit).build();
             habitFollowersRepository.save(habitFollower);
             // 습관 참여자 수 업데이트
             habit.setFollowerCount(habitFollowersRepository.countHabitFollowersByHabit(habit));
@@ -254,14 +303,14 @@ public class HabitServiceImpl implements HabitService {
                 habit,
                 habitRepository.queryGetHabitRecruitingStatus(habit.getId()),
                 habitHashtagRepository.queryFindHashtagNameByHabit(habit.getId()),
-                categoryRepository.findById(habit.getCategoryId()).orElseThrow()
+                categoryRepository.findById(habit.getCategoryId()).orElseThrow(()-> new BusinessException(ErrorMessage.WRONG_HABIT_CATEGORY))
         ));
     }
 
     // 카테고리별 검색
     @Override
     public Slice<HabitFindByCategoryGetResponseDto> findHabitsByCategory(String categoryName, User user, Pageable pageable) {
-        Category category = categoryRepository.findByName(categoryName).orElseThrow(); // 에러 처리
+        Category category = categoryRepository.findByName(categoryName).orElseThrow(()-> new BusinessException(ErrorMessage.WRONG_HABIT_CATEGORY));
         Slice<Habit> habits = habitRepository.querySearchHabitByCategory(user.getId(), category.getId(), pageable);
         return habits.map(habit ->
              new HabitFindByCategoryGetResponseDto(habit, category,habitDaysRepository.findDaysByHabit(habit)));
@@ -270,20 +319,28 @@ public class HabitServiceImpl implements HabitService {
     // 습관 참여 취소 하기
     @Override
     public HabitFollowerResponseDto quitHabit(Long habitId, User user) {
-        if(habitRepository.findById(habitId).isEmpty()){}
-        if(habitFollowersRepository.findByHabitIdAndFollowerId(habitId, user.getId()).isEmpty()){}
-
-        habitFollowersRepository.queryDeleteFollowerById(habitId,user);
+        if(habitRepository.findById(habitId).isEmpty()){
+            throw new BusinessException(ErrorMessage.WRONG_HABIT);
+        }
+        if(habitFollowersRepository.findByHabitIdAndFollowerId(habitId, user.getId()).isEmpty()){
+            throw new BusinessException(ErrorMessage.WRONG_HABIT_QUIT);
+        }
+        else
+        {
+            habitFollowersRepository.queryDeleteFollowerById(habitId, user);
+        }
         return new HabitFollowerResponseDto(habitId,user.getId());
     }
 
     // 습관 위클리 로그
     @Override
     public Slice<HabitWeeklyLogResponseDto> getHabitWeeklyLog(Long habitId, User user) {
-        if (habitRepository.findById(habitId).isEmpty()){} // 에러
+        if (habitRepository.findById(habitId).isEmpty()){
+            throw new BusinessException(ErrorMessage.WRONG_HABIT);
+        }
         return habitSessionFollowerRepository.
                 findByFollowerIdAndHabitSessionHabitId(user.getId(),habitId).map(
-                        review-> new HabitWeeklyLogResponseDto(review.getHabitSession().getDate(), review.getEmotion())); // 에러 처리
+                        review-> new HabitWeeklyLogResponseDto(review.getHabitSession().getDate(), review.getEmotion()));
     }
 
     // 습관 초대장
@@ -291,7 +348,7 @@ public class HabitServiceImpl implements HabitService {
     public HabitInvitationPostResponseDto sendInvitation(User me, HabitInvitationPostRequestDto requestDto){
         List<Long> friends = requestDto.getFriends();
         friends.forEach(friend ->{
-            User receiver = userRepository.findById(friend).orElseThrow();
+            User receiver = userRepository.findById(friend).orElseThrow(()-> new BusinessException(ErrorMessage.WRONG_USER));
                 if (followRepository.findBySenderAndReceiverId(me,friend).isPresent()) {
                     Message invitation = NewMessage.builder().messageType(MessageType.HABITINVITE)
                             .sender(me).receiver(receiver).contents(requestDto.getHabitId().toString()).build();
@@ -305,24 +362,25 @@ public class HabitServiceImpl implements HabitService {
 
     // TODO: 습관 삭제
     // 습관 삭제하기
+    @Transactional
+    @Modifying
     @Override
     public HabitDeleteResponseDto deleteHabit(Long habitId, User user){
-        // TODO: 에러 처리
-        Habit habit = habitRepository.findById(habitId).orElseThrow();
+        Habit habit = habitRepository.findById(habitId).orElseThrow(()-> new BusinessException(ErrorMessage.WRONG_HABIT));
         // 습관 개설자와 삭제하려는 유저가 같다면
-        if (habit.getHost().equals(user)) {
+        if (habit.getHost().getId().equals(user.getId())) {
             // 습관-요일 삭제
-            habitDaysRepository.deleteByHabit(habit);
-
-            // 습관-해시태그 삭제
-            habitHashtagRepository.deleteByHabit( habit);
-
+            habitDaysRepository.deleteByHabitId(habit.getId());
 
             // 이 게시물의 해시태그가 사용되는 게시물이 없다면, 해시태그 삭제
-            habitHashtagRepository.queryFindHashtagIdsByHabit(habitId).forEach(
-                    id->{
-                        if(habitHashtagRepository.countHabitHashtagByHashtagId(id)==0){
-                            hashtagRepository.deleteById(id);
+            habitHashtagRepository.findByHabit(habit).forEach(
+                    hh->{
+                        if(habitHashtagRepository.countByHashtag(hh.getHashtag())==1){
+                            habitHashtagRepository.deleteByHabit(habit);
+                            hashtagRepository.delete(hh.getHashtag());
+                        }
+                        else {
+                            habitHashtagRepository.deleteByHabit(habit);
                         }
                     }
             );
@@ -337,7 +395,7 @@ public class HabitServiceImpl implements HabitService {
             // 습관-세션 삭제
             habitSessionRepository.deleteByHabit(habit);
 
-            habitHashtagRepository.deleteById(habitId);
+            habitRepository.delete(habit);
 
             return new HabitDeleteResponseDto(habitId, user.getId());
         }

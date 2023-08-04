@@ -9,6 +9,8 @@ import ourtine.domain.User;
 import ourtine.domain.enums.HabitFollowerStatus;
 import ourtine.domain.mapping.HabitSessionFollower;
 import ourtine.domain.mapping.UserMvp;
+import ourtine.exception.BusinessException;
+import ourtine.exception.enums.ErrorMessage;
 import ourtine.repository.*;
 import ourtine.service.HabitSessionService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import ourtine.web.dto.request.HabitSessionReviewPostRequestDto;
 import ourtine.web.dto.response.*;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.util.*;
 
 @Service
@@ -38,8 +41,11 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     // 습관 세션 입장하기
     @Override
     public HabitSessionEnterPostResponseDto enterHabitSession(Long habitId, User user) {
-        if (habitRepository.findById(habitId).isEmpty()){} // 에러 처리
-        HabitSession habitSession = habitSessionRepository.queryFindTodaySessionByHabitId(habitId).orElseThrow(); // 에러 처기
+        if (habitRepository.findById(habitId).isEmpty()){
+            throw new BusinessException(ErrorMessage.WRONG_HABIT);
+        }
+        HabitSession habitSession = habitSessionRepository.queryFindTodaySessionByHabitId(habitId).orElseThrow(()
+                -> new BusinessException(ErrorMessage.INTERVAL_SERVER_ERROR));
 
         HabitSessionFollower habitSessionFollower = HabitSessionFollower.builder()
                 .follower(user).habitSession(habitSession).build();
@@ -50,32 +56,36 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     // 활성화 된 습관 세션 정보 조회
     @Override
     public HabitSessionGetResponseDto getHabitSession(Long sessionId, User user) {
-        HabitSession habitSession = habitSessionRepository.findById(sessionId).orElseThrow(); //에러처리
+        HabitSession habitSession = habitSessionRepository.findById(sessionId).orElseThrow(
+                () -> new BusinessException(ErrorMessage.WRONG_HABIT_SESSION)
+        );
 
         Habit habit = habitSession.getHabit();
         List<User> followers = habitFollowersRepository.queryFindHabitFollowers(habit.getId());
 
-        List<HabitSessionFollowerResponseDto> entered = new ArrayList<>();
-        List<HabitSessionFollowerResponseDto> notEntered = new ArrayList<>();
+        List<HabitSessionFollowerResponseDto> followersResult = new ArrayList<>();
         for(User follower : followers){
             // 입장한 유저
             if ( habitSessionFollowerRepository.existsByFollowerIdAndHabitSessionId(follower.getId(),sessionId)){
-                entered.add(new HabitSessionFollowerResponseDto(follower.getId(),follower.getNickname(),follower.getImageUrl()));
+                followersResult.add(new HabitSessionFollowerResponseDto(follower.getId(),follower.getNickname(),follower.getImageUrl(),
+                        habitSessionFollowerRepository.findByHabitSessionIdAndFollower(sessionId,follower).get().getHabitFollowerStatus()));
             }
             // 안 한 유저
             else{
-                notEntered.add(new HabitSessionFollowerResponseDto(follower.getId(),follower.getNickname(),follower.getImageUrl()));
+                followersResult.add(new HabitSessionFollowerResponseDto(follower.getId(),follower.getNickname(),follower.getImageUrl(),HabitFollowerStatus.NOT_ENTERED));
             }
         }
 
-        return new HabitSessionGetResponseDto(habitSession.getId(),habit,entered,notEntered);
+        return new HabitSessionGetResponseDto(habitSession.getId(),habit,followersResult);
     }
 
 
     // 습관 인증샷 올리기
     @Override
     public HabitSessionUploadVideoPostResponseDto uploadVideo(Long sessionId, MultipartFile file, User user) throws IOException {
-        if (habitSessionRepository.findById(sessionId).isEmpty()){}
+        if (habitSessionRepository.findById(sessionId).isEmpty()){
+            throw new BusinessException(ErrorMessage.WRONG_HABIT_SESSION);
+        }
         HabitSessionFollower habitSessionFollower = habitSessionFollowerRepository.findByHabitSessionIdAndFollower(sessionId,user).orElseThrow();
         // 영상 업로드
         String videoUrl = s3Uploader.upload(file,"images/habit-sessions");
@@ -87,7 +97,9 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     // 베스트 습관러 후보 조회
     @Override
     public HabitSessionMvpCandidateGetResponseDto getMvpCandidateList(Long sessionId) {
-        if (habitSessionRepository.findById(sessionId).isEmpty()){} // 에러 처리
+        if (habitSessionRepository.findById(sessionId).isEmpty()){
+            throw new BusinessException(ErrorMessage.WRONG_HABIT_SESSION);
+        } //
         List<HabitSessionFollower> followers = habitSessionFollowerRepository.findByHabitSession_Id(sessionId).getContent();
 
         List<HabitSessionFollowerVoteResponseDto> result = new ArrayList<>();
@@ -105,7 +117,9 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     public HabitSessionMvpVotePostResponseDto voteMvp(Long sessionId, User user, HabitSessionMvpVotePostRequestDto habitSessionMvpVotePostRequestDto) {
         HabitSessionFollower mySession = habitSessionFollowerRepository.findByHabitSessionIdAndFollower(sessionId,user).orElseThrow();
         if (!habitSessionFollowerRepository.existsByFollowerIdAndHabitSessionId(
-                habitSessionMvpVotePostRequestDto.getMvpVote(),sessionId)){} // 에러 처리
+                habitSessionMvpVotePostRequestDto.getMvpVote(),sessionId)){
+            throw new BusinessException(ErrorMessage.WRONG_HABIT_SESSION_VOTE);
+        }
 
         mySession.voteMvp(habitSessionMvpVotePostRequestDto.getMvpVote());
 
@@ -115,7 +129,9 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     // 투표 결과 보여주기
     @Override
     public List<HabitSessionMvpGetResponseDto> showMvp(Long sessionId, User user) {
-        if (userMvpRepository.findByHabitSessionId(sessionId).isEmpty()){} // 에러 처리
+        if (userMvpRepository.findByHabitSessionId(sessionId).isEmpty()){
+            // 에러 처리??
+        }
 
         List<UserMvp> mvps = userMvpRepository.findByHabitSessionId(sessionId);
         List<HabitSessionMvpGetResponseDto> habitSessionMvpGetResponseDto = new ArrayList<>();
@@ -127,7 +143,9 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     // 습관 회고 쓰기
     @Override
     public HabitSessionReviewPostResponseDto writeReview(Long sessionId, HabitSessionReviewPostRequestDto requestDto, User user) {
-        if (habitSessionRepository.findById(sessionId).isEmpty()){} //에러 처리
+        if (habitSessionRepository.findById(sessionId).isEmpty()){
+            throw new BusinessException(ErrorMessage.WRONG_HABIT_SESSION);
+        }
         HabitSessionFollower habitSessionFollower = habitSessionFollowerRepository.findByHabitSessionIdAndFollower(sessionId,user).orElseThrow();
         habitSessionFollower.writeReview(requestDto.getStarRate(), requestDto.getEmotion());
         return new HabitSessionReviewPostResponseDto(user.getId(),sessionId);

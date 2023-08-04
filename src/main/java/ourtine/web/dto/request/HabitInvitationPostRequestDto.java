@@ -11,9 +11,9 @@ import java.util.List;
 @AllArgsConstructor
 public class HabitInvitationPostRequestDto {
 
-    @NotBlank
+    @NotBlank (message = "습관 아이디 입력은 필수입니다.")
     Long habitId ;
 
-    @NotBlank
+    @NotBlank (message = "유저 입력은 필수입니다.")
     List<Long> friends = new ArrayList<>();
 }

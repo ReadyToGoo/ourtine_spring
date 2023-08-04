@@ -10,7 +10,7 @@ import ourtine.domain.enums.HabitFollowerStatus;
 import ourtine.domain.mapping.HabitSessionFollower;
 import ourtine.domain.mapping.UserMvp;
 import ourtine.exception.BusinessException;
-import ourtine.exception.enums.ErrorMessage;
+import ourtine.exception.enums.ResponseMessage;
 import ourtine.repository.*;
 import ourtine.service.HabitSessionService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,6 @@ import ourtine.web.dto.request.HabitSessionReviewPostRequestDto;
 import ourtine.web.dto.response.*;
 
 import java.io.IOException;
-import java.net.BindException;
 import java.util.*;
 
 @Service
@@ -42,10 +41,10 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     @Override
     public HabitSessionEnterPostResponseDto enterHabitSession(Long habitId, User user) {
         if (habitRepository.findById(habitId).isEmpty()){
-            throw new BusinessException(ErrorMessage.WRONG_HABIT);
+            throw new BusinessException(ResponseMessage.WRONG_HABIT);
         }
         HabitSession habitSession = habitSessionRepository.queryFindTodaySessionByHabitId(habitId).orElseThrow(()
-                -> new BusinessException(ErrorMessage.INTERVAL_SERVER_ERROR));
+                -> new BusinessException(ResponseMessage.INTERVAL_SERVER_ERROR));
 
         HabitSessionFollower habitSessionFollower = HabitSessionFollower.builder()
                 .follower(user).habitSession(habitSession).build();
@@ -57,7 +56,7 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     @Override
     public HabitSessionGetResponseDto getHabitSession(Long sessionId, User user) {
         HabitSession habitSession = habitSessionRepository.findById(sessionId).orElseThrow(
-                () -> new BusinessException(ErrorMessage.WRONG_HABIT_SESSION)
+                () -> new BusinessException(ResponseMessage.WRONG_HABIT_SESSION)
         );
 
         Habit habit = habitSession.getHabit();
@@ -84,7 +83,7 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     @Override
     public HabitSessionUploadVideoPostResponseDto uploadVideo(Long sessionId, MultipartFile file, User user) throws IOException {
         if (habitSessionRepository.findById(sessionId).isEmpty()){
-            throw new BusinessException(ErrorMessage.WRONG_HABIT_SESSION);
+            throw new BusinessException(ResponseMessage.WRONG_HABIT_SESSION);
         }
         HabitSessionFollower habitSessionFollower = habitSessionFollowerRepository.findByHabitSessionIdAndFollower(sessionId,user).orElseThrow();
         // 영상 업로드
@@ -98,7 +97,7 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     @Override
     public HabitSessionMvpCandidateGetResponseDto getMvpCandidateList(Long sessionId) {
         if (habitSessionRepository.findById(sessionId).isEmpty()){
-            throw new BusinessException(ErrorMessage.WRONG_HABIT_SESSION);
+            throw new BusinessException(ResponseMessage.WRONG_HABIT_SESSION);
         } //
         List<HabitSessionFollower> followers = habitSessionFollowerRepository.findByHabitSession_Id(sessionId).getContent();
 
@@ -118,7 +117,7 @@ public class HabitSessionServiceImpl implements HabitSessionService {
         HabitSessionFollower mySession = habitSessionFollowerRepository.findByHabitSessionIdAndFollower(sessionId,user).orElseThrow();
         if (!habitSessionFollowerRepository.existsByFollowerIdAndHabitSessionId(
                 habitSessionMvpVotePostRequestDto.getMvpVote(),sessionId)){
-            throw new BusinessException(ErrorMessage.WRONG_HABIT_SESSION_VOTE);
+            throw new BusinessException(ResponseMessage.WRONG_HABIT_SESSION_VOTE);
         }
 
         mySession.voteMvp(habitSessionMvpVotePostRequestDto.getMvpVote());
@@ -144,7 +143,7 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     @Override
     public HabitSessionReviewPostResponseDto writeReview(Long sessionId, HabitSessionReviewPostRequestDto requestDto, User user) {
         if (habitSessionRepository.findById(sessionId).isEmpty()){
-            throw new BusinessException(ErrorMessage.WRONG_HABIT_SESSION);
+            throw new BusinessException(ResponseMessage.WRONG_HABIT_SESSION);
         }
         HabitSessionFollower habitSessionFollower = habitSessionFollowerRepository.findByHabitSessionIdAndFollower(sessionId,user).orElseThrow();
         habitSessionFollower.writeReview(requestDto.getStarRate(), requestDto.getEmotion());

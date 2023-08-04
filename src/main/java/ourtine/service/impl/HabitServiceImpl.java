@@ -16,7 +16,7 @@ import ourtine.domain.mapping.HabitDays;
 import ourtine.domain.mapping.HabitFollowers;
 import ourtine.domain.mapping.HabitHashtag;
 import ourtine.exception.BusinessException;
-import ourtine.exception.enums.ErrorMessage;
+import ourtine.exception.enums.ResponseMessage;
 import ourtine.repository.*;
 import ourtine.util.CalculatorClass;
 import ourtine.web.dto.request.HabitCreatePostRequestDto;
@@ -29,6 +29,7 @@ import ourtine.web.dto.response.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -61,9 +62,9 @@ public class HabitServiceImpl implements HabitService {
     public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto habitCreatePostRequestDto, MultipartFile file, User user) throws IOException {
         Habit habit;
         if (file.isEmpty())
-            {throw new IOException(new BusinessException(ErrorMessage.WRONG_HABIT_FILE) );}
+            {throw new IOException(new BusinessException(ResponseMessage.WRONG_HABIT_FILE) );}
 
-        Category category = categoryRepository.findByName(habitCreatePostRequestDto.getCategory()).orElseThrow(()-> new BusinessException(ErrorMessage.WRONG_HABIT_CATEGORY));
+        Category category = categoryRepository.findByName(habitCreatePostRequestDto.getCategory()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
 
         if (habitCreatePostRequestDto.getHabitStatus()== HabitStatus.PUBLIC)
         {
@@ -155,8 +156,8 @@ public class HabitServiceImpl implements HabitService {
     @Override
     public HabitGetResponseDto getHabit(Long habitId, User user) {
 
-        Habit habit = habitRepository.findById(habitId).orElseThrow(()-> new BusinessException(ErrorMessage.WRONG_HABIT));
-        Category category  = categoryRepository.findById(habit.getCategoryId()).orElseThrow(()-> new BusinessException(ErrorMessage.WRONG_HABIT_CATEGORY));
+        Habit habit = habitRepository.findById(habitId).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT));
+        Category category  = categoryRepository.findById(habit.getCategoryId()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
         List<String> hashtags= habitHashtagRepository.queryFindHashtagNameByHabit(habitId);
         List<User> followers = habitFollowersRepository.queryFindHabitFollowers(habitId);
         List<HabitFollowersGetResponseDto> habitFollowersResult = new ArrayList<>();
@@ -203,7 +204,7 @@ public class HabitServiceImpl implements HabitService {
             }
         }
         else {
-                throw new BusinessException(ErrorMessage.WRONG_USER);
+                throw new BusinessException(ResponseMessage.WRONG_USER);
              }
         return responseDto;
     }
@@ -221,7 +222,7 @@ public class HabitServiceImpl implements HabitService {
 
                     Slice<HabitUserFollowedGetResponseDto> habitsResult = habits.map(habit ->
                             {
-                                Category category = categoryRepository.findById(habit.getCategoryId()).orElseThrow(()-> new BusinessException(ErrorMessage.WRONG_HABIT_CATEGORY));
+                                Category category = categoryRepository.findById(habit.getCategoryId()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
                                 List<String> hashtags = habitHashtagRepository.queryFindHashtagNameByHabit(habit.getId());
                                 return new HabitUserFollowedGetResponseDto(habit, category.getName(), hashtags);
                             }
@@ -235,7 +236,7 @@ public class HabitServiceImpl implements HabitService {
                     Slice<Habit> habits = habitRepository.queryFindPublicHabitsById(habitIds, me.getId()); // public 습관만
                     Slice<HabitUserFollowedGetResponseDto> habitsResult = habits.map(habit ->
                             {
-                                Category category = categoryRepository.findById(habit.getCategoryId()).orElseThrow(()-> new BusinessException(ErrorMessage.WRONG_HABIT_CATEGORY));
+                                Category category = categoryRepository.findById(habit.getCategoryId()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
                                 List<String> hashtags = habitHashtagRepository.queryFindHashtagNameByHabit(habit.getId());
                                 return new HabitUserFollowedGetResponseDto(habit, category.getName(), hashtags);
                             }
@@ -247,7 +248,7 @@ public class HabitServiceImpl implements HabitService {
 
         }
         else {
-            throw new BusinessException(ErrorMessage.WRONG_USER);
+            throw new BusinessException(ResponseMessage.WRONG_USER);
         }
     }
     // 추천 습관 목록
@@ -263,19 +264,47 @@ public class HabitServiceImpl implements HabitService {
     // 습관 참여하기
     @Override
     public HabitFollowerResponseDto joinHabit(Long habitId, User user) {
-        Habit habit = habitRepository.findById(habitId).orElseThrow(()-> new BusinessException(ErrorMessage.WRONG_HABIT_JOIN));
-
-        //참여하고 있으면
+        Habit habit = habitRepository.findById(habitId).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT));
+        //참여하고 있으면 or 인원이 다 찬 상태이면 참여 불가
         if (habitFollowersRepository.findByHabitIdAndFollowerId(habitId,user.getId()).isPresent() ||
                 habit.getFollowerLimit()-habit.getFollowerCount()<1 ){
-            throw new BusinessException(ErrorMessage.WRONG_HABIT_JOIN);
+            throw new BusinessException(ResponseMessage.WRONG_HABIT_JOIN);
         }
         else {
-            HabitFollowers habitFollower = HabitFollowers.builder().follower(user).habit(habit).build();
-            habitFollowersRepository.save(habitFollower);
-            // 습관 참여자 수 업데이트
-            habit.setFollowerCount(habitFollowersRepository.countHabitFollowersByHabit(habit));
-            return new HabitFollowerResponseDto(habitId, user.getId());
+            List<Day> days = habitDaysRepository.findDaysByHabit(habit);
+            List<Long> followingHabits = habitFollowersRepository.queryFindMyFollowingHabitIds(user.getId(),Pageable.unpaged()).getContent();
+            List<Long> sortByDay = new ArrayList<>();
+
+            // 내가 팔로잉 중인 습관들을 소팅하기 ( 신청하려는 습관의 요일과 겹치는 )
+            for (Day day: days){
+                List<Habit> habits = habitDaysRepository.queryFindHabitsByDay(day,followingHabits);
+                for (Habit h : habits){
+                    if (!sortByDay.contains(h.getId())){
+                        sortByDay.add(h.getId());
+                    }
+                }
+            }
+
+            boolean canJoin = true;
+            if (!sortByDay.isEmpty()){
+                // 시간대가 하나라도 겹치면 참여 불가
+                for (Long s : sortByDay) {
+                    Habit sort = habitRepository.findById(s).get();
+                    if (habitRepository.sortByTime(habitId, sort.getStartTime(), sort.getEndTime()).isEmpty()) {
+                        canJoin = false;
+                    }
+                }
+            }
+                if(canJoin)
+                {
+                    HabitFollowers habitFollower = HabitFollowers.builder().follower(user).habit(habit).build();
+                    habitFollowersRepository.save(habitFollower);
+                    // 습관 참여자 수 업데이트
+                    habit.setFollowerCount(habitFollowersRepository.countHabitFollowersByHabit(habit));
+                    return new HabitFollowerResponseDto(habitId, user.getId());
+                }
+                else
+                    throw new BusinessException(ResponseMessage.WRONG_HABIT_TIME);
         }
 
     }
@@ -303,14 +332,14 @@ public class HabitServiceImpl implements HabitService {
                 habit,
                 habitRepository.queryGetHabitRecruitingStatus(habit.getId()),
                 habitHashtagRepository.queryFindHashtagNameByHabit(habit.getId()),
-                categoryRepository.findById(habit.getCategoryId()).orElseThrow(()-> new BusinessException(ErrorMessage.WRONG_HABIT_CATEGORY))
+                categoryRepository.findById(habit.getCategoryId()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY))
         ));
     }
 
     // 카테고리별 검색
     @Override
     public Slice<HabitFindByCategoryGetResponseDto> findHabitsByCategory(String categoryName, User user, Pageable pageable) {
-        Category category = categoryRepository.findByName(categoryName).orElseThrow(()-> new BusinessException(ErrorMessage.WRONG_HABIT_CATEGORY));
+        Category category = categoryRepository.findByName(categoryName).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
         Slice<Habit> habits = habitRepository.querySearchHabitByCategory(user.getId(), category.getId(), pageable);
         return habits.map(habit ->
              new HabitFindByCategoryGetResponseDto(habit, category,habitDaysRepository.findDaysByHabit(habit)));
@@ -320,10 +349,10 @@ public class HabitServiceImpl implements HabitService {
     @Override
     public HabitFollowerResponseDto quitHabit(Long habitId, User user) {
         if(habitRepository.findById(habitId).isEmpty()){
-            throw new BusinessException(ErrorMessage.WRONG_HABIT);
+            throw new BusinessException(ResponseMessage.WRONG_HABIT);
         }
         if(habitFollowersRepository.findByHabitIdAndFollowerId(habitId, user.getId()).isEmpty()){
-            throw new BusinessException(ErrorMessage.WRONG_HABIT_QUIT);
+            throw new BusinessException(ResponseMessage.WRONG_HABIT_QUIT);
         }
         else
         {
@@ -336,7 +365,7 @@ public class HabitServiceImpl implements HabitService {
     @Override
     public Slice<HabitWeeklyLogResponseDto> getHabitWeeklyLog(Long habitId, User user) {
         if (habitRepository.findById(habitId).isEmpty()){
-            throw new BusinessException(ErrorMessage.WRONG_HABIT);
+            throw new BusinessException(ResponseMessage.WRONG_HABIT);
         }
         return habitSessionFollowerRepository.
                 findByFollowerIdAndHabitSessionHabitId(user.getId(),habitId).map(
@@ -348,7 +377,7 @@ public class HabitServiceImpl implements HabitService {
     public HabitInvitationPostResponseDto sendInvitation(User me, HabitInvitationPostRequestDto requestDto){
         List<Long> friends = requestDto.getFriends();
         friends.forEach(friend ->{
-            User receiver = userRepository.findById(friend).orElseThrow(()-> new BusinessException(ErrorMessage.WRONG_USER));
+            User receiver = userRepository.findById(friend).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_USER));
                 if (followRepository.findBySenderAndReceiverId(me,friend).isPresent()) {
                     Message invitation = NewMessage.builder().messageType(MessageType.HABITINVITE)
                             .sender(me).receiver(receiver).contents(requestDto.getHabitId().toString()).build();
@@ -360,13 +389,12 @@ public class HabitServiceImpl implements HabitService {
 
     }
 
-    // TODO: 습관 삭제
     // 습관 삭제하기
     @Transactional
     @Modifying
     @Override
     public HabitDeleteResponseDto deleteHabit(Long habitId, User user){
-        Habit habit = habitRepository.findById(habitId).orElseThrow(()-> new BusinessException(ErrorMessage.WRONG_HABIT));
+        Habit habit = habitRepository.findById(habitId).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT));
         // 습관 개설자와 삭제하려는 유저가 같다면
         if (habit.getHost().getId().equals(user.getId())) {
             // 습관-요일 삭제

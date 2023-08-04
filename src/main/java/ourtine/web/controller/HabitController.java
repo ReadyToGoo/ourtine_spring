@@ -6,14 +6,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ourtine.aws.s3.UploadService;
+import ourtine.domain.Habit;
 import ourtine.domain.User;
-import ourtine.domain.common.SliceResponseDto;
+import ourtine.web.dto.common.SliceResponseDto;
 import ourtine.domain.enums.Sort;
 import ourtine.web.dto.request.HabitCreatePostRequestDto;
 import ourtine.service.impl.HabitServiceImpl;
 import ourtine.web.dto.request.HabitInvitationPostRequestDto;
 import ourtine.web.dto.response.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 
@@ -23,6 +26,7 @@ import java.io.IOException;
 public class HabitController {
 
     private final HabitServiceImpl habitService;
+    private final UploadService uploadService;
 
     // 습관 개설
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -46,6 +50,16 @@ public class HabitController {
     public HabitGetResponseDto getHabit(@PathVariable Long habit_id, User user){
         return habitService.getHabit(habit_id,user);
     }
+
+    // 습관 프로필 사진 업로드
+    @ResponseBody   // Long 타입을 리턴하고 싶은 경우 붙여야 함 (Long - 객체)
+    @PatchMapping(value="/habit/{id}/profile",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void uploadHabitProfile(@PathVariable Long id, HttpServletRequest request, @RequestParam(value="image") MultipartFile image) throws IOException {
+        Habit habit = habitService.findById(id);
+        habit.updateImage(uploadService.uploadHabitProfile(image));
+        habitService.saveOrUpdateHabit(habit);
+    }
+
 
     // 습관 위클리 로그
     @GetMapping(value = "/{habit_id}/weekly-log")

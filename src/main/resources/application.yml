@@ -22,6 +22,12 @@ spring:
         hbm2ddl:
           auto: update
         default_batch_fetch_size: 1000
+  servlet:
+    multipart:
+      enabled: true
+      maxFileSize: 20MB
+      maxRequestSize: 30MB
+
 logging:
   level:
     org.hibernate.sql: debug

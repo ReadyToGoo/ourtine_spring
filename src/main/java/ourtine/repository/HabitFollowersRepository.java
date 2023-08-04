@@ -45,38 +45,39 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
     @Query("select hf.habit.id from HabitFollowers hf " +
             "where hf.follower.id = :userId " +
             "and hf.status='ACTIVE' " +
-            "and hf.habit.endDate >= curdate()")
+            "and hf.habit.endDate >= curdate() ")
     Slice<Long> queryFindMyFollowingHabitIds(Long userId, Pageable pageable);
+
+    // 참여했던 습관 아이디 조회
+    @Query("select hf.habit.id from HabitFollowers hf " +
+            "where hf.follower.id = :userId " +
+            "and hf.status='ACTIVE' " +
+            "and hf.habit.endDate < curdate() " )
+    Slice<Long> queryFindMyFollowedHabitIds(Long userId, Pageable pageable);
 
     // 유저1과 유저2의 같이 하는 습관 정보 조회
     @Query("select hf.habit from HabitFollowers hf "+
-            "where hf.habit.id in (select hf.habit.id from HabitFollowers hf where hf.follower.id = :userId1 and hf.status='ACTIVE') " +
-            "and hf.follower.id = :userId2 " +
+            "where hf.habit.id in (select hf.habit.id from HabitFollowers hf where hf.follower.id = :userId and hf.status='ACTIVE') " +
+            "and hf.follower = :me " +
+            "and hf.habit.host not in (select b.blocked from Block b where b.blocker = :me) " + // 호스트가 내가 차단한 유저인지 필터링
+            "and hf.habit.host not in (select b.blocker from Block b where b.blocked = :me) " +
             "and hf.habit.endDate >= CURDATE() " + // 종료 된 습관 필터링
             "and hf.habit.status = 'ACTIVE' " +
             "and hf.status='ACTIVE'" +
             "order by hf.habit.id asc")
-    Slice<Habit> queryGetCommonHabitsByUserId(Long userId1, Long userId2);
-
-    // 유저1과 유저2의 같이 하는 습관 아이디 조회
-    @Query("select hf.habit.id from HabitFollowers hf "+
-            "where hf.habit.id in (select hf.habit.id from HabitFollowers hf where hf.follower.id = :userId2 and hf.status='ACTIVE') " +
-            "and hf.follower.id = :userId1 " +
-            "and hf.habit.endDate >= CURDATE() " + // 종료 된 습관 필터링
-            "and hf.habit.status = 'ACTIVE' " +
-            "and hf.status='ACTIVE'" +
-            "order by hf.habit.id asc")
-    Slice<Long> queryGetCommonHabitIdsByUserId(Long userId1, Long userId2, Pageable pageable);
+    Slice<Habit> queryGetCommonHabitsByUserId(Long userId, User me);
 
     // 유저 1의 습관 중, 유저2와 같이 하지 않는 습관 정보 조회
     @Query("select hf.habit from HabitFollowers hf "+
-            "where hf.habit.id not in (select hf.habit.id from HabitFollowers hf where hf.follower.id = :userId2 and hf.status='ACTIVE') " +
-            "and hf.follower.id = :userId1 " +
+            "where hf.habit.id not in (select hf.habit.id from HabitFollowers hf where hf.follower = :me and hf.status='ACTIVE') " +
+            "and hf.follower.id = :userId " +
+            "and hf.habit.host not in (select b.blocked from Block b where b.blocker = :me) " + // 호스트가 내가 차단한 유저인지 필터링
+            "and hf.habit.host not in (select b.blocker from Block b where b.blocked = :me) " +
             "and hf.habit.endDate >= CURDATE() " + // 종료 되지 않은 습관 필터링
             "and hf.habit.status = 'ACTIVE' " +
             "and hf.status='ACTIVE'" +
             "order by hf.habit.id asc")
-    Slice<Habit> queryFindOtherHabitsByUserId(Long userId1, Long userId2, Pageable pageable);
+    Slice<Habit> queryFindOtherHabitsByUserId(Long userId, User me, Pageable pageable);
 
     // 습관의 모집 여부 조회
     @Query("select case " +

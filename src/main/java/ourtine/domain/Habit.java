@@ -27,7 +27,7 @@ public class Habit extends BaseEntity {
     @Column(nullable = false)
     private String title;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "host_id")
     private User host;
 
@@ -83,6 +83,10 @@ public class Habit extends BaseEntity {
         this.startDate  =startDate;
         this.endDate = endDate;
         this.habitStatus = habitStatus;
+    }
+
+    public void updateImage(String imageUrl) {
+        this.imageUrl=imageUrl;
     }
 
     public void setFollowerCount(Long followerCount) {

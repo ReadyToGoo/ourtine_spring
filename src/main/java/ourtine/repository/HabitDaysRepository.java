@@ -28,14 +28,10 @@ public interface HabitDaysRepository extends JpaRepository<HabitDays,Long> {
             "where hd.habit.id in :habitIds " +
             "and hd.day = :day")
     Slice<Long> queryFindFollowingHabitsByDay(List<Long> habitIds, Day day, Pageable pageable);
-    // 해당 요일에 진행되는 세션 id
-    @Query("select hd.habit.id from HabitDays hd " +
-            "where hd.habit.id in :habitIds " +
-            "and hd.day = :day")
 
     // 습관 아이디로 삭제
     @Transactional
-    void deleteByHabit(Habit habit);
+    void deleteByHabitId(Long habitId);
 
     // 습관 시작 시간 & 요일로 습관 조회
     @Query("select hd.habit from HabitDays hd " +

@@ -2,7 +2,9 @@ package ourtine.service;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.web.multipart.MultipartFile;
+import ourtine.domain.Habit;
 import ourtine.domain.User;
 import ourtine.domain.enums.Sort;
 import ourtine.web.dto.request.HabitCreatePostRequestDto;
@@ -13,6 +15,9 @@ import ourtine.web.dto.response.*;
 import java.io.IOException;
 
 public interface HabitService {
+
+    public Habit findById(Long id);
+    public void saveOrUpdateHabit(Habit habit);
     //습관 개설하기
     @Transactional
     public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto habitCreatePostRequestDto, MultipartFile file, User user) throws IOException;
@@ -28,6 +33,9 @@ public interface HabitService {
     // 유저 프로필 - 팔로잉 하는 습관 목록
     // @Transactional
     public HabitUserFollowingListGetResponseDto getUserFollowingHabits(Long userId, User me, Pageable pageable);
+
+    // 유저 프로필 - 참여했던 습관 목록
+    public Slice<HabitUserFollowedGetResponseDto> getUserFollowedHabits(Long userId, User me, Pageable pageable);
 
     // 추천 습관 목록
     // @Transactional
@@ -49,6 +57,7 @@ public interface HabitService {
     // 카테고리별 습관 검색
     public Slice<HabitFindByCategoryGetResponseDto> findHabitsByCategory(String categoryName, User user, Pageable pageable);
 
+    @Modifying
     @Transactional
     // 습관 삭제
     public HabitDeleteResponseDto deleteHabit(Long habitId, User user);
@@ -58,4 +67,5 @@ public interface HabitService {
 
     // 습관 초대
     public HabitInvitationPostResponseDto sendInvitation(User user, HabitInvitationPostRequestDto requestDto);
+
 }

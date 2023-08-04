@@ -1,4 +1,4 @@
-package ourtine.domain.common;
+package ourtine.web.dto.common;
 
 import lombok.AccessLevel;
 import lombok.Getter;

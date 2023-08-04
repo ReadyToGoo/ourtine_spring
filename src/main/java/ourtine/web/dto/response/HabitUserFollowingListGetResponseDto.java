@@ -2,11 +2,13 @@ package ourtine.web.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import ourtine.domain.common.SliceResponseDto;
+import ourtine.web.dto.common.SliceResponseDto;
 
 @Getter
 @AllArgsConstructor
 public class HabitUserFollowingListGetResponseDto {
+
+    private Long userId;
 
     private Boolean isFriend; // 유저가 친구인지 아닌지 보여주는 필드
 

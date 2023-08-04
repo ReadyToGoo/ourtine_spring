@@ -32,6 +32,9 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     private final S3Uploader s3Uploader;
     private final UserMvpRepository userMvpRepository;
 
+
+
+
     // 습관 세션 입장하기
     @Override
     public HabitSessionEnterPostResponseDto enterHabitSession(Long habitId, User user) {
@@ -74,9 +77,8 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     public HabitSessionUploadVideoPostResponseDto uploadVideo(Long sessionId, MultipartFile file, User user) throws IOException {
         if (habitSessionRepository.findById(sessionId).isEmpty()){}
         HabitSessionFollower habitSessionFollower = habitSessionFollowerRepository.findByHabitSessionIdAndFollower(sessionId,user).orElseThrow();
-
         // 영상 업로드
-        String videoUrl = s3Uploader.upload(file,"");
+        String videoUrl = s3Uploader.upload(file,"images/habit-sessions");
         // 유저의 세션 완료 처리
         habitSessionFollower.uploadVideo(videoUrl);
         return new HabitSessionUploadVideoPostResponseDto(sessionId,user.getId());

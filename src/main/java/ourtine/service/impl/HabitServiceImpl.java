@@ -49,6 +49,10 @@ public class HabitServiceImpl implements HabitService {
     private final FollowRepository followRepository;
     private final CalculatorClass calculatorClass;
 
+    public Habit findById(Long id) {
+        return habitRepository.findById(id).get();
+    }
+
     // 습관 개설하기
     @Override
     public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto habitCreatePostRequestDto, MultipartFile file, User user) throws IOException {
@@ -118,6 +122,11 @@ public class HabitServiceImpl implements HabitService {
         habitFollowersRepository.save(habitFollowers);
 
         return new HabitCreatePostResponseDto(savedHabit.getId(),habitNum);
+    }
+
+    @Override
+    public void saveOrUpdateHabit(Habit habit) {
+        habitRepository.save(habit);
     }
 
 

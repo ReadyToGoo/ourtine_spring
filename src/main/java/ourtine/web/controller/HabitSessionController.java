@@ -1,9 +1,11 @@
 package ourtine.web.controller;
 
+import lombok.RequiredArgsConstructor;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ourtine.domain.User;
+import ourtine.service.UserService;
 import ourtine.service.impl.HabitSessionServiceImpl;
 import ourtine.web.dto.request.HabitSessionMvpVotePostRequestDto;
 import ourtine.web.dto.request.HabitSessionReviewPostRequestDto;
@@ -13,12 +15,14 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class HabitSessionController {
     private final HabitSessionServiceImpl habitSessionService;
+    private final UserService userService;
 
-    public HabitSessionController(HabitSessionServiceImpl habitSessionService) {
-        this.habitSessionService = habitSessionService;
-    }
+//    public HabitSessionController(HabitSessionServiceImpl habitSessionService) {
+//        this.habitSessionService = habitSessionService;
+//    }
 
     // 세션 입장하기
     @PostMapping("/habits/{habit_id}/habit-sessions")
@@ -35,10 +39,11 @@ public class HabitSessionController {
     }
 
     // 습관 인증샷 올리기
-    @PostMapping("/habit-sessions/{session_id}/upload")
+    @PatchMapping("/habit-sessions/{session_id}/upload/{user_id}")
     @ApiOperation(value = "습관 세션 - 습관 인증", notes = "진행한 습관 인증 영상을 올린다.")
-    public HabitSessionUploadVideoPostResponseDto uploadVideo(@PathVariable Long session_id, @RequestPart MultipartFile file, User user) throws IOException {
-        if (file.isEmpty()){} // TODO: 에러 처리
+    public HabitSessionUploadVideoPostResponseDto uploadVideo(@PathVariable Long session_id, @RequestParam(value="image") MultipartFile file, @PathVariable Long user_id) throws IOException {
+        //if (file.isEmpty()){} // TODO: 에러 처리
+        User user = userService.findById(user_id);
         return habitSessionService.uploadVideo(session_id, file, user);
     }
 

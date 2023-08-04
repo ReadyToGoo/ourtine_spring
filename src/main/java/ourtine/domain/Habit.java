@@ -85,6 +85,10 @@ public class Habit extends BaseEntity {
         this.habitStatus = habitStatus;
     }
 
+    public void updateImage(String imageUrl) {
+        this.imageUrl=imageUrl;
+    }
+
     public void setFollowerCount(Long followerCount) {
         this.followerCount = followerCount;
     }

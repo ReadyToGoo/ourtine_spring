@@ -7,11 +7,14 @@ spring:
   output:
     ansi:
       enabled: always
-  #  batch:
-  #    jdbc:
-  #      initialize-schema: always
-  #    job:
-  #      names: myJob
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled:
+      names: HABIT_JOB , SESSION_JOB
+  main:
+    allow-bean-definition-overriding: true
   jpa:
     properties:
       hibernate:
@@ -22,10 +25,17 @@ spring:
         hbm2ddl:
           auto: update
         default_batch_fetch_size: 1000
+  servlet:
+    multipart:
+      enabled: true
+      maxFileSize: 20MB
+      maxRequestSize: 30MB
+
 logging:
   level:
     org.hibernate.sql: debug
     org.hibernate.type : trace
+
 cloud:
   aws:
     credentials:

@@ -25,6 +25,7 @@ public class S3Uploader {
 
     private final AmazonS3Client amazonS3Client;
 
+
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
@@ -33,6 +34,7 @@ public class S3Uploader {
         File uploadFile = convert(multipartFile)
                 .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File 전환 실패"));
         return upload(uploadFile, dirName);
+
     }
 
     private String upload(File uploadFile, String dirName) {

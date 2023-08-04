@@ -113,4 +113,11 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
 
     // 호스트 여부
     boolean existsByHostAndId(User user,Long habitId);
+
+    // 시간대로 조회
+    @Query("select h from Habit h " +
+            "where h.id = :habitId " +
+            "and (h.endTime < :startTime " +
+            "or h.startTime > :endTime )")
+    List<Habit> sortByTime (Long habitId, LocalTime startTime, LocalTime endTime);
 }

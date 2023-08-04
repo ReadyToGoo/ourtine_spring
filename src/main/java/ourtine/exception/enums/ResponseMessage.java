@@ -7,7 +7,12 @@ import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Getter
-public enum ErrorMessage {
+public enum ResponseMessage {
+    /**
+     * 성공
+     */
+    SUCCESS(OK, true,  "요청에 성공하였습니다."),
+
 
     /**
      * 실패
@@ -24,6 +29,7 @@ public enum ErrorMessage {
     WRONG_HABIT_FILE(NOT_FOUND,false,"해당 포스트 파일을 찾을 수 없습니다."),
     WRONG_HABIT_DELETE(NOT_FOUND,false,"해당 습관을 삭제할 수 없습니다."),
     WRONG_HABIT_JOIN(NOT_FOUND,false,"이미 습관에 참여하고 있습니다."),
+    WRONG_HABIT_TIME(NOT_FOUND,false,"참여하고 있는 습관과 시간이 겹칩니다."),
     WRONG_HABIT_QUIT(NOT_FOUND,false,"이미 참여하고 있지 않은 습관입니다."),
 
 
@@ -35,7 +41,7 @@ public enum ErrorMessage {
     private final boolean isSuccess;
     private final String message;
 
-    ErrorMessage(HttpStatus code, boolean isSuccess, String message) {
+    ResponseMessage(HttpStatus code, boolean isSuccess, String message) {
         this.code = code.value();
         this.isSuccess = isSuccess;
         this.message = message;

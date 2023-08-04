@@ -1,14 +1,14 @@
 package ourtine.exception;
 
 import lombok.Getter;
-import ourtine.exception.enums.ErrorMessage;
+import ourtine.exception.enums.ResponseMessage;
 
 @Getter
 public class BusinessException extends RuntimeException{
-    private final ErrorMessage errorMessage;
+    private final ResponseMessage responseMessage;
 
-    public BusinessException(ErrorMessage errorMessage) {
-        super(errorMessage.getMessage());
-        this.errorMessage = errorMessage;
+    public BusinessException(ResponseMessage responseMessage) {
+        super(responseMessage.getMessage());
+        this.responseMessage = responseMessage;
     }
 }

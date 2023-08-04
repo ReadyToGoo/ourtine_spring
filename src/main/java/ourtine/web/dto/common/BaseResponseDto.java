@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-import ourtine.exception.enums.ErrorMessage;
+import ourtine.exception.enums.ResponseMessage;
 
-import static ourtine.exception.enums.SuccessMessage.SUCCESS;
+import static ourtine.exception.enums.ResponseMessage.SUCCESS;
 
 @Getter
 @JsonPropertyOrder({"code", "isSuccess", "message", "result"})
@@ -29,10 +29,10 @@ public class BaseResponseDto<T> {
     }
 
     // 요청에 실패한 경우
-    public BaseResponseDto(ErrorMessage errorMessage) {
-        this.code = errorMessage.getCode();
-        this.isSuccess = errorMessage.isSuccess();
-        this.message = errorMessage.getMessage();
+    public BaseResponseDto(ResponseMessage responseMessage) {
+        this.code = responseMessage.getCode();
+        this.isSuccess = responseMessage.isSuccess();
+        this.message = responseMessage.getMessage();
     }
 
     public BaseResponseDto(int code, Boolean isSuccess, String errorMessage){

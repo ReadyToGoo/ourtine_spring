@@ -68,7 +68,7 @@ public class HabitServiceImpl implements HabitService {
 
         if (habitCreatePostRequestDto.getHabitStatus()== HabitStatus.PUBLIC)
         {
-            String imageUrl = s3Uploader.upload(file,"");
+            String imageUrl = s3Uploader.upload(file,"images/habits");
 
             habit = PublicHabit.builder()
                     .host(user)
@@ -84,7 +84,7 @@ public class HabitServiceImpl implements HabitService {
                     .build();
         }
         else if (habitCreatePostRequestDto.getHabitStatus()==HabitStatus.PRIVATE){
-            String imageUrl = s3Uploader.upload(file,"");
+            String imageUrl = s3Uploader.upload(file,"images/habits");
 
             habit = PrivateHabit.builder()
                     .host(user)

@@ -17,7 +17,7 @@ public class UploadService {
         if (!image.isEmpty()) {
             return s3Uploader.upload(image, "images/users");
         }
-        return "No image";
+        return "";
     }
 
     @Transactional
@@ -25,6 +25,6 @@ public class UploadService {
         if (!image.isEmpty()) {
             return s3Uploader.upload(image, "images/habits");
         }
-        return "No image";
+        return "";
     }
 }

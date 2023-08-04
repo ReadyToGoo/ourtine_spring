@@ -18,7 +18,6 @@ import java.util.Optional;
 @Repository
 public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,Long> {
 
-    Optional<HabitFollowers> findByFollowerAndHabit(User user, Habit habit);
 
     // 습관 참여 여부
     Optional<HabitFollowers> findByHabitIdAndFollowerId(Long habitId, Long userId);

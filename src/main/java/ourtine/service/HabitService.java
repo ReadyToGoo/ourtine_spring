@@ -3,6 +3,7 @@ package ourtine.service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.multipart.MultipartFile;
+import ourtine.domain.Habit;
 import ourtine.domain.User;
 import ourtine.domain.enums.Sort;
 import ourtine.web.dto.request.HabitCreatePostRequestDto;
@@ -13,6 +14,9 @@ import ourtine.web.dto.response.*;
 import java.io.IOException;
 
 public interface HabitService {
+
+    public Habit findById(Long id);
+    public void saveOrUpdateHabit(Habit habit);
     //습관 개설하기
     @Transactional
     public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto habitCreatePostRequestDto, MultipartFile file, User user) throws IOException;

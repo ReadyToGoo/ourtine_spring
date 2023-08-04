@@ -36,7 +36,7 @@ public class FollowServiceImpl implements FollowService {
 
     // 팔로우 하기
     @Override
-    public FollowPostResponseDto follow(FollowPostRequestDto requestDto, User me) {
+    public FollowPostResponseDto followUser(FollowPostRequestDto requestDto, User me) {
         User receiver = userRepository.findById(requestDto.getUserId()).orElseThrow();
         // 이미 팔로우하고 있으면
         if (followRepository.findBySenderAndReceiverId(me, requestDto.getUserId()).isPresent()){
@@ -50,7 +50,7 @@ public class FollowServiceImpl implements FollowService {
 
     // 언팔로우 하기
     @Override
-    public FollowDeleteResponseDto unFollow(FollowDeleteRequestDto requestDto, User me) {
+    public FollowDeleteResponseDto unfollowUser(FollowDeleteRequestDto requestDto, User me) {
         User following = userRepository.findById(requestDto.getUserId()).orElseThrow();
         // 팔로우하고 있지 않으면
         if (followRepository.findBySenderAndReceiverId(me, requestDto.getUserId()).isEmpty()){
@@ -65,40 +65,40 @@ public class FollowServiceImpl implements FollowService {
 
     // 내 팔로잉 목록
     @Override
-    public Slice<FollowingGetResponseDto> getMyFollowing(User me, Pageable pageable) {
+    public Slice<FollowingsGetResponseDto> getMyFollowing(User me, Pageable pageable) {
         Slice<Follow> result = followRepository.findBySenderOrderByCreatedAtDesc(me);
-        Slice<FollowingGetResponseDto> followings = result.map( following ->
-                new FollowingGetResponseDto(following.getReceiver().getId(),following.getReceiver().getNickname(),
+        Slice<FollowingsGetResponseDto> followings = result.map(following ->
+                new FollowingsGetResponseDto(following.getReceiver().getId(),following.getReceiver().getNickname(),
                         following.getReceiver().getImageUrl()));
         return followings;
     }
 
     // 내 팔로워 목록
     @Override
-    public Slice<FollowerGetResponseDto> getMyFollower(User me, Pageable pageable) {
+    public Slice<FollowersGetResponseDto> getMyFollower(User me, Pageable pageable) {
         Slice<Follow> result = followRepository.findByReceiverOrderByCreatedAtDesc(me);
-        Slice<FollowerGetResponseDto> followers = result.map( following ->
-                new FollowerGetResponseDto(following.getSender().getId(),following.getSender().getNickname(),
+        Slice<FollowersGetResponseDto> followers = result.map(following ->
+                new FollowersGetResponseDto(following.getSender().getId(),following.getSender().getNickname(),
                         following.getSender().getImageUrl()));
         return followers;
     }
 
     // 유저 팔로잉 목록
     @Override
-    public Slice<FollowingGetResponseDto> getFollowing(Long userId, User me, Pageable pageable) {
+    public Slice<FollowingsGetResponseDto> getFollowing(Long userId, User me, Pageable pageable) {
         Slice<Follow> result = followRepository.findBySenderIdOrderByCreatedAtDesc(userId);
-        Slice<FollowingGetResponseDto> followings = result.map( following ->
-            new FollowingGetResponseDto(following.getReceiver().getId(),following.getReceiver().getNickname(),
+        Slice<FollowingsGetResponseDto> followings = result.map(following ->
+            new FollowingsGetResponseDto(following.getReceiver().getId(),following.getReceiver().getNickname(),
                     following.getReceiver().getImageUrl()));
         return followings;
     }
 
     // 유저 팔로워 목록
     @Override
-    public Slice<FollowerGetResponseDto> getFollower(Long userId, User me, Pageable pageable) {
+    public Slice<FollowersGetResponseDto> getFollower(Long userId, User me, Pageable pageable) {
         Slice<Follow> result = followRepository.findByReceiverIdOrderByCreatedAtDesc(userId);
-        Slice<FollowerGetResponseDto> followers = result.map( following ->
-                new FollowerGetResponseDto(following.getSender().getId(),following.getSender().getNickname(),
+        Slice<FollowersGetResponseDto> followers = result.map(following ->
+                new FollowersGetResponseDto(following.getSender().getId(),following.getSender().getNickname(),
                         following.getSender().getImageUrl()));
         return followers;
     }

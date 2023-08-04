@@ -2,24 +2,44 @@ package ourtine.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import ourtine.aws.s3.UploadService;
+import ourtine.domain.User;
 import ourtine.web.dto.request.NicknameChangeRequestDto;
 import ourtine.service.UserService;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final UploadService uploadService;
+
+    // 프로필 사진 업로드 추가를 위해 임시로 만든 회원가입 API
+    @PostMapping("/user/signup")
+    public ResponseEntity signUp(@RequestParam(value="image") MultipartFile image) throws IOException {
+        User user = new User();
+        user.updateImage(uploadService.uploadUserProfile(image));
+        userService.saveOrUpdateUser(user);
+        return new ResponseEntity(HttpStatus.OK);
+    }
 
     @PostMapping("/user/{id}/nickname")
     public ResponseEntity ChangeNickname(@PathVariable Long id, @RequestBody @Valid NicknameChangeRequestDto nicknameChangeRequestDto){//형식에 맞게 수정 필요
         userService.changeNickname(id, nicknameChangeRequestDto.getNickname());
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PatchMapping(value="/user/{id}/profile",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity updateUserProfileImage(@PathVariable Long id,  @RequestParam(value="image") MultipartFile image) throws IOException {
+        User user = userService.findById(id);
+        user.updateImage(uploadService.uploadUserProfile(image));
+        userService.saveOrUpdateUser(user);
         return new ResponseEntity(HttpStatus.OK);
     }
 }

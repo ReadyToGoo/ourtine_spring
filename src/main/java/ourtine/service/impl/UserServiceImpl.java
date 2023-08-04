@@ -24,11 +24,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changeNickname(Long userId, String nickname) {
-        System.out.println("닉네임:" + nickname);
         User user = userRepository.findById(userId).get();
-        System.out.println("기존 닉네임:" + user.getNickname());
         user.updateNickname(nickname);
-        System.out.println("업데이트된 유저 닉네임:" + user.getNickname());
         saveOrUpdateUser(user);
     }
 }

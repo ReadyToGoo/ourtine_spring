@@ -52,9 +52,10 @@ public class HabitController {
     }
 
     // 습관 프로필 사진 업로드
-    @ResponseBody   // Long 타입을 리턴하고 싶은 경우 붙여야 함 (Long - 객체)
     @PatchMapping(value="/habit/{id}/profile",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void uploadHabitProfile(@PathVariable Long id, HttpServletRequest request, @RequestParam(value="image") MultipartFile image) throws IOException {
+    @ApiOperation(value = "습관 프로필 사진 변경",notes="습관의 프로필 사진을 변경한다.")
+    public void updateHabitProfileImage(@PathVariable Long id, HttpServletRequest request, @RequestParam(value="image") MultipartFile image) throws IOException {
+        // 자신이 생성한 Habit인지 체크해야 함.
         Habit habit = habitService.findById(id);
         habit.updateImage(uploadService.uploadHabitProfile(image));
         habitService.saveOrUpdateHabit(habit);

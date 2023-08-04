@@ -40,4 +40,10 @@ public interface HabitDaysRepository extends JpaRepository<HabitDays,Long> {
             "and hd.day = :dayName")
     List<Habit> queryFindHabitsByStartTime(LocalTime startTime, Day dayName);
 
+    // 요일로 습관 조회
+    @Query("select hd.habit from HabitDays hd " +
+            "where hd.day = :day " +
+            "and hd.habit.id in :habitIds")
+    List<Habit> queryFindHabitsByDay(Day day,List<Long> habitIds );
+
 }

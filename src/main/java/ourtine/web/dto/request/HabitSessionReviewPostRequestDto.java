@@ -9,8 +9,8 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @AllArgsConstructor
 public class HabitSessionReviewPostRequestDto {
-    @NotBlank
+    @NotBlank(message = "만족도 입력은 필수입니다.")
     Long starRate;
-    @NotBlank
+    @NotBlank(message = "감정 입력은 필수입니다")
     Emotion emotion;
 }

@@ -19,7 +19,7 @@ public class HabitSession extends BaseEntity {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "habit_id",nullable = false)
     private Habit habit;
 

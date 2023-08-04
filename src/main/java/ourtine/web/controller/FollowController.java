@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import ourtine.domain.User;
-import ourtine.domain.common.SliceResponseDto;
+import ourtine.web.dto.common.SliceResponseDto;
 import ourtine.service.impl.FollowServiceImpl;
 import ourtine.web.dto.request.FollowDeleteRequestDto;
 import ourtine.web.dto.request.FollowPostRequestDto;

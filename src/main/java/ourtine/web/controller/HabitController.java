@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ourtine.aws.s3.UploadService;
 import ourtine.domain.Habit;
 import ourtine.domain.User;
-import ourtine.domain.common.SliceResponseDto;
+import ourtine.web.dto.common.SliceResponseDto;
 import ourtine.domain.enums.Sort;
 import ourtine.web.dto.request.HabitCreatePostRequestDto;
 import ourtine.service.impl.HabitServiceImpl;

@@ -27,7 +27,7 @@ public class Habit extends BaseEntity {
     @Column(nullable = false)
     private String title;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "host_id")
     private User host;
 

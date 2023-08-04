@@ -19,11 +19,11 @@ public class HabitSessionFollower extends BaseEntity {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "habitSession_id",nullable = false)
     private HabitSession habitSession;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "follower_id",nullable = false)
     private User follower;
 

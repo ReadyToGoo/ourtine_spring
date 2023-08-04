@@ -1,5 +1,6 @@
 package ourtine.domain.mapping;
 
+import lombok.Getter;
 import ourtine.domain.Habit;
 import ourtine.domain.Hashtag;
 import ourtine.domain.common.BaseEntity;
@@ -7,6 +8,7 @@ import javax.persistence.*;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
 @NoArgsConstructor
 public class HabitHashtag extends BaseEntity {
@@ -15,11 +17,11 @@ public class HabitHashtag extends BaseEntity {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "habit_id",nullable = false)
     private Habit habit;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hashtag_id",nullable = false)
     private Hashtag hashtag;
 

@@ -11,6 +11,7 @@ import ourtine.web.dto.request.HabitSessionMvpVotePostRequestDto;
 import ourtine.web.dto.request.HabitSessionReviewPostRequestDto;
 import ourtine.web.dto.response.*;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
@@ -50,14 +51,14 @@ public class HabitSessionController {
     // 베스트 습관러 후보 조회
     @GetMapping("/habit-sessions/{session_id}/vote")
     @ApiOperation(value = "습관 세션 - 베스트 습관러 투표", notes = "진행한 습관에 대한 베스트 습관러 후보를 조회한다.")
-    public HabitSessionMvpCandidateGetResponseDto getMvpCandidateList(@PathVariable Long session_id){
+    public HabitSessionMvpCandidateGetResponseDto getMvpCandidateList(@PathVariable Long session_id, User user){
         return habitSessionService.getMvpCandidateList(session_id);
     }
 
     // 베스트 습관러 투표하기
     @PostMapping("/habit-sessions/{session_id}/vote")
     @ApiOperation(value = "습관 세션 - 베스트 습관러 투표", notes = "진행한 습관에 대한 베스트 습관러를 투표한다.")
-    public HabitSessionMvpVotePostResponseDto voteMvp(@PathVariable Long session_id,User user,@RequestBody HabitSessionMvpVotePostRequestDto requestDto){
+    public HabitSessionMvpVotePostResponseDto voteMvp(@PathVariable Long session_id,User user,@RequestBody @Valid HabitSessionMvpVotePostRequestDto requestDto){
         return habitSessionService.voteMvp(session_id, user, requestDto);
     }
 
@@ -71,7 +72,7 @@ public class HabitSessionController {
     // 습관 회고 쓰기
     @PatchMapping("/habit-sessions/{session_id}/review")
     @ApiOperation(value = "습관 세션 - 회고",notes = "진행한 습관에 대한 회고를 기록한다.")
-    public HabitSessionReviewPostResponseDto writeReview(@PathVariable Long session_id, @RequestBody HabitSessionReviewPostRequestDto requestDto, User user)
+    public HabitSessionReviewPostResponseDto writeReview(@PathVariable Long session_id, @RequestBody @Valid HabitSessionReviewPostRequestDto requestDto, User user)
     {return habitSessionService.writeReview(session_id,requestDto,user);
     }
 

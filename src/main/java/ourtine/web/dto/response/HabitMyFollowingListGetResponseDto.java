@@ -44,5 +44,4 @@ public class HabitMyFollowingListGetResponseDto {
         this.mvp = mvp;
     }
 
-
 }

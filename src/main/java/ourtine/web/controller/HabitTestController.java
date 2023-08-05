@@ -62,7 +62,7 @@ public class HabitTestController {
     }
 
     // 유저 프로필 - 팔로잉 하는 습관 목록
-    @GetMapping(value = "/{my_id}following/users/{user_id}")
+    @GetMapping(value = "/{my_id}/following/users/{user_id}")
     @ApiOperation(value = "유저 프로필", notes = "특정 유저의 참여중인 습관 목록을 조회한다.")
     public HabitUserFollowingListGetResponseDto getUserFollowingHabits(@PathVariable Long user_id, @PathVariable Long my_id, Pageable pageable){
         User me = userRepository.findById(my_id).orElseThrow();

@@ -28,4 +28,12 @@ public class UserServiceImpl implements UserService {
         user.updateNickname(nickname);
         saveOrUpdateUser(user);
     }
+
+    @Override
+    public void changeGoal(Long userId, String goal) {
+        User user = userRepository.findById(userId).get();
+        user.updateGoal(goal);
+        saveOrUpdateUser(user);
+    }
+
 }

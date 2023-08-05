@@ -81,4 +81,8 @@ public class User extends BaseEntity {
         this.imageUrl = imageUrl;
     }
 
+    public void updateGoal(String goal) {
+        this.goal=goal;
+    }
+
 }

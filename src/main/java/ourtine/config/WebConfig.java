@@ -17,5 +17,6 @@ public class WebConfig implements WebMvcConfigurer {
        registry.addConverter(new EmotionConverter());
        registry.addConverter(new HabitStatusConverter());
        registry.addConverter(new HabitFollowerStatusConverter());
+       registry.addConverter(new CategoryConverter());
     }
 }

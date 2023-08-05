@@ -61,8 +61,11 @@ public class HabitController {
         habitService.saveOrUpdateHabit(habit);
     }
 
+    // 내 프로필 - 위클리 로그
+/*    @GetMapping(value = "")
+    @ApiOperation()*/
 
-    // 습관 위클리 로그
+    // 습관 프로필 - 습관 데일리 로그
     @GetMapping(value = "/{habit_id}/weekly-log")
     @ApiOperation(value = "습관 프로필", notes = "내가 참여하는 특정 습관에 대한 위클리로그를 조회한다.")
     public SliceResponseDto<HabitDailyLogGetResponseDto> getHabitWeeklyLog(@PathVariable Long habit_id, User user){
@@ -70,10 +73,17 @@ public class HabitController {
     }
 
     // 유저 프로필 - 팔로잉 하는 습관 목록
-    @GetMapping(value = "/users/{user_id}")
+    @GetMapping(value = "/following/users/{user_id}")
     @ApiOperation(value = "유저 프로필", notes = "특정 유저 프로필을 조회한다.")
     public HabitUserFollowingListGetResponseDto getUserFollowingHabits(@PathVariable Long user_id, User me, Pageable pageable){
         return habitService.getUserFollowingHabits(user_id, me, pageable);
+    }
+
+    // 유저 프로필 - 참여 했던 습관 목록
+    @GetMapping(value = "/followed/users/{user_id}")
+    @ApiOperation(value = "유저 프로필", notes = "특정 유저의 참여했던 습관 목록을 조회한다.")
+    public SliceResponseDto<HabitUserFollowedGetResponseDto> getUserFollowedHabits(@PathVariable Long user_id,User user, Pageable pageable){
+        return new SliceResponseDto<>(habitService.getUserFollowedHabits(user_id, user, pageable));
     }
 
     // 추천 습관 목록
@@ -119,6 +129,7 @@ public class HabitController {
         return habitService.deleteHabit(habit_id, user);
     }
 
+    // 습관 초대
     @PostMapping("/invite")
     @ApiOperation(value = "습관 개설 - 습관 초대", notes = "유저들에게 습관 초대장을 보낸다.")
     public HabitInvitationPostResponseDto sendInvitation (@RequestBody HabitInvitationPostRequestDto requestDto, User user){

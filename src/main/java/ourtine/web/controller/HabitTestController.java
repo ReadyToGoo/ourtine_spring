@@ -53,7 +53,7 @@ public class HabitTestController {
         return habitService.getHabit(habit_id,user);
     }
 
-    // 습관 위클리 로그
+    // 습관 프로필 - 습관 위클리 로그
     @GetMapping(value = "/{my_id}/{habit_id}/weekly-log")
     @ApiOperation(value = "습관 프로필", notes = "내가 참여하는 특정 습관에 대한 위클리로그를 조회한다.")
     public SliceResponseDto<HabitDailyLogGetResponseDto> getHabitWeeklyLog(@PathVariable Long habit_id, @PathVariable Long my_id){
@@ -126,6 +126,7 @@ public class HabitTestController {
         return habitService.deleteHabit(habit_id, user);
     }
 
+    // 습관 초대장
     @PostMapping("/{my_id}/invite")
     @ApiOperation(value = "습관 개설 - 습관 초대", notes = "유저들에게 습관 초대장을 보낸다.")
     public HabitInvitationPostResponseDto sendInvitation (@RequestBody @Valid HabitInvitationPostRequestDto requestDto, @PathVariable Long my_id){

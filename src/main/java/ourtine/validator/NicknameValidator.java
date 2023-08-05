@@ -21,8 +21,7 @@ public class NicknameValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         NicknameChangeRequestDto nicknameChangeRequestDto = (NicknameChangeRequestDto) target;
-        User user = userRepository.findByNickname(nicknameChangeRequestDto.getNickname()).get();
-        if (user != null) {
+        if (userRepository.existsByNickname(nicknameChangeRequestDto.getNickname())) {
             errors.rejectValue("nickname", "wrong.value", "이미 사용중인 닉네임입니다.");
         }
     }

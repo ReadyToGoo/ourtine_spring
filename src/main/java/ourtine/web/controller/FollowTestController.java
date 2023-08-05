@@ -56,7 +56,7 @@ public class FollowTestController {
         return new SliceResponseDto<>(followService.getFollowing(user_id,dana,pageable));
     }
 
-    @GetMapping("/followings/users/{user_id}")
+    @GetMapping("/followers/users/{user_id}")
     @ApiOperation(value = "유저 팔로워 조회", notes = "유저를 팔로우하는 유저를 조회한다.")
     public SliceResponseDto<FollowersGetResponseDto> getFollowers(@PathVariable Long user_id, User user,Pageable pageable){
         User dana = userRepository.findById(1l).get();

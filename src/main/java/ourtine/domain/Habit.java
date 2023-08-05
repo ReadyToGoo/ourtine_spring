@@ -7,6 +7,7 @@ import javax.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ourtine.domain.mapping.HabitDays;
 import ourtine.domain.mapping.HabitFollowers;
 
 import java.time.LocalDate;
@@ -42,6 +43,9 @@ public class Habit extends BaseEntity {
 
     @OneToMany( mappedBy = "habit")
     private List<HabitFollowers> habitFollowersList = new ArrayList<>();
+
+    @OneToMany( mappedBy = "habit")
+    private List<HabitDays> days = new ArrayList<>();
 
     private Long followerCount = 1l;
 

@@ -42,7 +42,7 @@ public class HabitTestController {
     @ApiOperation(value = "홈 - 습관 참여 리스트", notes = "오늘 내가 진행할 습관들을 조회한다.")
     public SliceResponseDto<HabitMyFollowingListGetResponseDto> getMyFollowingHabits(@PathVariable Long my_id, Pageable pageable){
         User user = userRepository.findById(my_id).orElseThrow();
-        return new SliceResponseDto<>(habitService.getMyFollowingHabits(user,pageable));
+        return new SliceResponseDto<>(habitService.getTodaysMyHabits(user,pageable));
     }
 
     // 습관 프로필 조회
@@ -56,7 +56,7 @@ public class HabitTestController {
     // 습관 위클리 로그
     @GetMapping(value = "/{my_id}/{habit_id}/weekly-log")
     @ApiOperation(value = "습관 프로필", notes = "내가 참여하는 특정 습관에 대한 위클리로그를 조회한다.")
-    public SliceResponseDto<HabitWeeklyLogResponseDto> getHabitWeeklyLog(@PathVariable Long habit_id,@PathVariable Long my_id){
+    public SliceResponseDto<HabitDailyLogGetResponseDto> getHabitWeeklyLog(@PathVariable Long habit_id, @PathVariable Long my_id){
         User user = userRepository.findById(my_id).orElseThrow();
         return new SliceResponseDto<>(habitService.getHabitWeeklyLog(habit_id,user));
     }

@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Getter
 @AllArgsConstructor
-public class HabitWeeklyLogResponseDto {
+public class HabitDailyLogGetResponseDto {
     Date date;
     Emotion emotion;
 }

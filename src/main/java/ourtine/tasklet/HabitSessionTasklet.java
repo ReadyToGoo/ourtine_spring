@@ -33,7 +33,7 @@ public class HabitSessionTasklet implements Tasklet {
     // 습관 시작 시간 15분 전에 습관 세션을 생성한다.
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        Day day  = dayConverter.dayOfWeek();
+        Day day  = dayConverter.curDayOfWeek();
         LocalTime now = LocalTime.now(ZoneId.of("Asia/Seoul"));
         LocalTime createTime = now.plusMinutes(15);
 

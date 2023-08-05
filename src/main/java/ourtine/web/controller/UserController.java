@@ -22,14 +22,14 @@ public class UserController {
     private final UploadService uploadService;
 
     // 프로필 사진 업로드 추가를 위해 임시로 만든 회원가입 API
-/*    @PostMapping("/user/signup")
+    @PostMapping("/user/signup")
     @ApiOperation(value = "(미완)회원 가입",notes="(미완)회원 가입을 한다.")
     public ResponseEntity signUp(@RequestParam(value="image") MultipartFile image) throws IOException {
-        User user =
+        User user = new User();
         user.updateImage(uploadService.uploadUserProfile(image));
         userService.saveOrUpdateUser(user);
         return new ResponseEntity(HttpStatus.OK);
-    }*/
+    }
 
     @PostMapping("/user/{id}/nickname")
     @ApiOperation(value = "닉네임 변경",notes="User의 닉네임을 변경한다.")

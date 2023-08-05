@@ -16,7 +16,7 @@ public final class CalculatorClass {
             // 진행 된 세션이 하나라도 있으면 참여율 산출
             if (habitSessionRepository.queryCountEndSessionsByUser(user)>0){
                 // 유저가 참여한 세션 횟수
-                Long participatedSessions = habitSessionFollowerRepository.queryFindEndSessionsByUser(user);
+                Long participatedSessions = habitSessionFollowerRepository.queryFindEndSessionsByUser(user.getId());
 
                 participateRate = Math.round((float) participatedSessions / habitSessionRepository.queryCountEndSessionsByUser(user)) * 100;
             }

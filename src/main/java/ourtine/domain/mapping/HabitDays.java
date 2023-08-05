@@ -1,6 +1,7 @@
 package ourtine.domain.mapping;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ourtine.domain.Habit;
 import ourtine.domain.common.BaseEntity;
@@ -11,6 +12,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
+@Getter
 @NoArgsConstructor
 @Entity
 public class HabitDays extends BaseEntity {

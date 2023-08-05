@@ -15,10 +15,10 @@ public class Block extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
+     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blocker_id",nullable = false)
     private User blocker;
-    @ManyToOne
+     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blocked_id",nullable = false)
     private User blocked;
 

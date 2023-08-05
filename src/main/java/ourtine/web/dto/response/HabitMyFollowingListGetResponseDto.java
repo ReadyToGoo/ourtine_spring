@@ -11,6 +11,7 @@ import ourtine.domain.enums.HabitFollowerStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -22,19 +23,15 @@ public class HabitMyFollowingListGetResponseDto {
 
     private String imageUrl;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:MM:ss", timezone = "Asia/Seoul")
     private LocalTime startTime;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:MM:ss", timezone = "Asia/Seoul")
     private LocalTime endTime;
 
     private LocalDate startDate;
 
     private LocalDate endDate;
 
-    private Day day;
-
-    private int mvp;
+    private int mvp ;
 
     public HabitMyFollowingListGetResponseDto(Habit habit, int mvp){
         this.habitId = habit.getId();

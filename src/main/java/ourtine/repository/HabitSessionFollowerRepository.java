@@ -20,7 +20,7 @@ public interface HabitSessionFollowerRepository extends JpaRepository<HabitSessi
     boolean existsByFollowerIdAndHabitSessionId (Long userId, Long habitSessionId);
 
     // 입장한 팔로워의 습관 세션 정보
-    Optional<HabitSessionFollower> findByHabitSessionIdAndFollower (Long habitSessionId, User user);
+    Optional<HabitSessionFollower> findByHabitSessionIdAndFollower_Id (Long habitSessionId, Long user);
 
     // 습관 세션의 팔로워 정보
     Slice<HabitSessionFollower> findByHabitSession_Id(Long habitSessionId);

@@ -35,7 +35,8 @@ public enum ResponseMessage {
 
     // HABIT-SESSION
     WRONG_HABIT_SESSION(NOT_FOUND,false,"해당 습관 세션을 찾을 수 없습니다."),
-    WRONG_HABIT_SESSION_VOTE(NOT_FOUND,false,"투표할 수 없는 유저입니다.")
+    WRONG_HABIT_SESSION_VOTE(NOT_FOUND,false,"투표할 수 없는 유저입니다."),
+    WRONG_HABIT_SESSION_FOLLOWER(NOT_FOUND,false,"해당 정보를 찾을 수 없습니다.")
     ;
     private final int code;
     private final boolean isSuccess;

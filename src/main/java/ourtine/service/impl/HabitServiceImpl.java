@@ -139,6 +139,7 @@ public class HabitServiceImpl implements HabitService {
 
     // 홈 - 팔로잉하는 습관 목록 (요일 필터링)
     @Override
+    @Transactional
     public Slice<HabitMyFollowingListGetResponseDto> getTodaysMyHabits(User user, Pageable pageable) {
         Day day = dayConverter.curDayOfWeek();
         Slice<Long> followingHabitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(user.getId(),pageable);

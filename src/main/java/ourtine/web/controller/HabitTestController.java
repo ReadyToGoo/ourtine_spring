@@ -40,7 +40,7 @@ public class HabitTestController {
     // 홈 - 팔로잉하는 습관 목록
     @GetMapping("/{my_id}/me")
     @ApiOperation(value = "홈 - 습관 참여 리스트", notes = "오늘 내가 진행할 습관들을 조회한다.")
-    public SliceResponseDto<HabitMyFollowingListGetResponseDto> getMyFollowingHabits(@PathVariable Long my_id, Pageable pageable){
+    public SliceResponseDto<HabitMyFollowingListGetResponseDto> getMyTodaysMyHabits(@PathVariable Long my_id, Pageable pageable){
         User user = userRepository.findById(my_id).orElseThrow();
         return new SliceResponseDto<>(habitService.getTodaysMyHabits(user,pageable));
     }

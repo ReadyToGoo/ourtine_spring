@@ -10,22 +10,7 @@ import java.time.ZoneId;
 import java.util.Calendar;
 
 @Component
-public class DayConverter implements Converter<String, Day> {
-
-    @Override
-    public Day convert(String source) {
-        Day day = null;
-        switch (source) {
-            case "월" : day = Day.MON;break;
-            case "화" : day = Day.TUE;break;
-            case "수" : day = Day.WED;break;
-            case "목" : day = Day.THU;break;
-            case "금" : day = Day.FRI;break;
-            case "토" : day = Day.SAT;break;
-            case "일" : day = Day.SUN;break;
-        }
-        return day;
-    }
+public class DayConverter{
 
     public Day dayOfWeek(int dayNum){
         switch (dayNum) {

@@ -1,5 +1,8 @@
 package ourtine.domain.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum HabitFollowerStatus {
 
     COMPLETE("인증완료"),
@@ -9,4 +12,5 @@ public enum HabitFollowerStatus {
     private String description;
 
     HabitFollowerStatus(String description){this.description = description;}
+
 }

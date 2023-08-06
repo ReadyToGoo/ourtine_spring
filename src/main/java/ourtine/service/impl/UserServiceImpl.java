@@ -36,4 +36,16 @@ public class UserServiceImpl implements UserService {
         saveOrUpdateUser(user);
     }
 
+    public void changePushAlert(Long userId) {
+        User user = userRepository.findById(userId).get();
+        user.updatePushAlert();
+        saveOrUpdateUser(user);
+    }
+
+    public void changeMarketingPushAlert(Long userId) {
+        User user = userRepository.findById(userId).get();
+        user.updateMarketingPushAlert();
+        saveOrUpdateUser(user);
+    }
+
 }

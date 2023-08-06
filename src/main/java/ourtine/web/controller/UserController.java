@@ -74,10 +74,28 @@ public class UserController {
 
     @PatchMapping(value = "/user/{userId}/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiOperation(value = "유저 프로필 사진 변경", notes = "유저의 프로필 사진을 변경한다.")
-    public ResponseEntity changeUserProfileImage(@PathVariable Long userId, @RequestParam(value = "image") MultipartFile image) throws IOException {
+    public ResponseEntity changeUserProfileImage(@PathVariable Long userId, @RequestBody MultipartFile image) throws IOException {
         User user = userService.findById(userId);
         user.updateImage(uploadService.uploadUserProfile(image));
         userService.saveOrUpdateUser(user);
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    //@GetMapping(value="/user/{userId}/alerts")
+
+
+    @PatchMapping(value= "/user/{userId}/pushAlert")
+    @ApiOperation(value = "유저 푸쉬 알림 변경", notes = "유저의 푸쉬 알림 설정을 변경한다.")
+    public ResponseEntity changeUserPushAlert(@PathVariable Long userId) {
+        userService.changePushAlert(userId);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PatchMapping(value= "/user/{userId}/marketingPushAlert")
+    @ApiOperation(value = "유저 마케팅 푸쉬 알림 변경", notes = "유저의 마케팅 푸쉬 알림 설정을 변경한다.")
+    public ResponseEntity changeUserMarketingPushAlert(@PathVariable Long userId) {
+        userService.changeMarketingPushAlert(userId);
+        return new ResponseEntity(HttpStatus.OK);
+
     }
 }

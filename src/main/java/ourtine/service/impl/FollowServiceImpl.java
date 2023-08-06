@@ -109,10 +109,10 @@ public class FollowServiceImpl implements FollowService {
         userRepository.findById(userId).orElseThrow(
                 ()->new BusinessException(ResponseMessage.WRONG_USER));
         Slice<Follow> result = followRepository.queryFindByReceiverIdOrderByCreatedAtDesc(userId, me.getId());
-        Slice<FollowersGetResponseDto> followers = result.map(following ->
+
+        return result.map(following ->
                 new FollowersGetResponseDto(following.getSender().getId(),following.getSender().getNickname(),
                         following.getSender().getImageUrl()));
-        return followers;
     }
 
 

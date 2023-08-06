@@ -11,11 +11,6 @@ import ourtine.converter.*;
 public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addFormatters(FormatterRegistry registry) {
-       registry.addConverter(new DayConverter());
-       registry.addConverter(new SortConverter());
-       registry.addConverter(new EmotionConverter());
-       registry.addConverter(new HabitStatusConverter());
-       registry.addConverter(new HabitFollowerStatusConverter());
        registry.addConverter(new CategoryListConverter());
        registry.addConverter(new CategoryListsConverter());
     }

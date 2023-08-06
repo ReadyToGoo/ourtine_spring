@@ -20,7 +20,7 @@ public interface HabitSessionFollowerRepository extends JpaRepository<HabitSessi
     boolean existsByFollowerIdAndHabitSessionId (Long userId, Long habitSessionId);
 
     // 입장한 팔로워의 습관 세션 정보
-    Optional<HabitSessionFollower> findByHabitSessionIdAndFollower (Long habitSessionId, User user);
+    Optional<HabitSessionFollower> findByHabitSessionIdAndFollower_Id (Long habitSessionId, Long user);
 
     // 습관 세션의 팔로워 정보
     Slice<HabitSessionFollower> findByHabitSession_Id(Long habitSessionId);
@@ -63,7 +63,14 @@ public interface HabitSessionFollowerRepository extends JpaRepository<HabitSessi
 
     //  내 참여율 - 유저가 참여한 종료된 습관 세션 수 조회
     @Query("select count (hsf) from HabitSessionFollower hsf " +
-            "where hsf.follower = :user " +
+            "where hsf.follower.id = :userId " +
             "and hsf.habitSession.status = 'INACTIVE'")
-    Long queryFindEndSessionsByUser (User user);
+    Long queryFindEndSessionsByUser (Long userId);
+
+    // 이번 주의 세션 인증 영상
+    @Query("select hsf from HabitSessionFollower hsf " +
+            "where hsf.follower.id = :userId " +
+            "and hsf.habitFollowerStatus = 'COMPLETE' " +
+            "and hsf.createdAt >= :startDate")
+    List<HabitSessionFollower> getFollowerSessionInfo(String startDate, Long userId);
 }

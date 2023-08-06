@@ -1,5 +1,6 @@
 package ourtine.domain.mapping;
 
+import lombok.AccessLevel;
 import ourtine.domain.HabitSession;
 import ourtine.domain.User;
 import ourtine.domain.common.BaseEntity;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class HabitSessionFollower extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -36,6 +37,7 @@ public class HabitSessionFollower extends BaseEntity {
     private Long starRate;
 
     // 감정
+    @Enumerated(value = EnumType.STRING)
     private Emotion emotion;
 
     @Enumerated(value = EnumType.STRING)

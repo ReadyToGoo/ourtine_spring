@@ -14,15 +14,10 @@ public enum Sort {
     @JsonCreator
     public static Sort from(String sub) {
         for (Sort sort : Sort.values()) {
-            if (sort.getDescription().equals(sub)) {
+            if (sort.name().equals(sub)) {
                 return sort;
             }
         }
         return null;
-    }
-
-    @JsonValue
-    public String getDescription() {
-        return description;
     }
 }

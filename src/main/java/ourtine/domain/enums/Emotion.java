@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import org.hibernate.type.EnumType;
 
-@AllArgsConstructor
 public enum Emotion  {
     VERY_BAD,
     BAD,

@@ -1,5 +1,6 @@
 package ourtine.web.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import ourtine.domain.Category;
 import ourtine.domain.Habit;
 import lombok.AllArgsConstructor;
@@ -41,13 +42,13 @@ public class HabitNotFollowingGetResponseDto {
     private List<HabitFollowersGetResponseDto> followerList = new ArrayList<>();
 
     private List<Day> days;
-
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "kk:mm:ss", timezone = "Asia/Seoul")
     private LocalTime startTime;
-
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "kk:mm:ss", timezone = "Asia/Seoul")
     private LocalTime endTime;
-
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate startDate;
-
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate endDate;
 
     private Boolean isRecruiting;

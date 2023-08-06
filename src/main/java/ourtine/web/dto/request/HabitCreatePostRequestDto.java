@@ -29,11 +29,11 @@ public class HabitCreatePostRequestDto {
         private String detail;
 
         @NotBlank
-        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "kk:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "kk:mm:ss", timezone = "Asia/Seoul")
         private LocalTime startTime;
 
         @NotBlank
-        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "kk:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "kk:mm:ss", timezone = "Asia/Seoul")
         private LocalTime endTime;
 
         @NotBlank

@@ -413,7 +413,7 @@ public class HabitServiceImpl implements HabitService {
         friends.forEach(friend ->{
             User receiver = userRepository.findById(friend).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_USER));
                 if (followRepository.findBySenderAndReceiverId(me,friend).isPresent()) {
-                    Message invitation = NewMessage.builder().messageType(MessageType.HABITINVITE)
+                    Message invitation = NewMessage.builder().messageType(MessageType.HABIT_INVITE)
                             .sender(me).receiver(receiver).contents(requestDto.getHabitId().toString()).build();
                     messageRepository.save(invitation);
                 }

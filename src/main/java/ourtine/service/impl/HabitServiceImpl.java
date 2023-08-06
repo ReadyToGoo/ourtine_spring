@@ -216,7 +216,7 @@ public class HabitServiceImpl implements HabitService {
         HabitUserFollowingListGetResponseDto responseDto = null;
 
         if (userRepository.findById(userId).isPresent()) { // 존재하는 유저면
-            if (followRepository.findBySenderAndReceiverId(me, userId).isPresent()) {
+            if (followRepository.findBySenderIdAndReceiverId(me.getId(), userId).isPresent()) {
                 // 친구인 유저면
                 Slice<Habit> commonHabits = habitFollowersRepository.queryGetCommonHabitsByUserId(userId, me);
                 Slice<Habit> otherHabits = habitFollowersRepository.queryFindOtherHabitsByUserId(userId, me, pageable);
@@ -243,7 +243,7 @@ public class HabitServiceImpl implements HabitService {
         Slice<HabitUserFollowedGetResponseDto> responseDto  = null;
         if (userRepository.findById(userId).isPresent()){
             // 친구인 유저면
-            if (followRepository.findBySenderAndReceiverId(me, userId).isPresent()) {
+            if (followRepository.findBySenderIdAndReceiverId(me.getId(), userId).isPresent()) {
                 List<Long> habitIds = habitFollowersRepository.queryFindMyFollowedHabitIds(userId, pageable).getContent();
                 if (habitIds.size()>0){
                     Slice<Habit> habits = habitRepository.queryFindHabitsById(habitIds); // public + private
@@ -409,7 +409,7 @@ public class HabitServiceImpl implements HabitService {
         List<Long> friends = requestDto.getFriends();
         friends.forEach(friend ->{
             User receiver = userRepository.findById(friend).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_USER));
-                if (followRepository.findBySenderAndReceiverId(me,friend).isPresent()) {
+                if (followRepository.findBySenderIdAndReceiverId(me.getId(),friend).isPresent()) {
                     Message invitation = NewMessage.builder().messageType(MessageType.HABIT_INVITE)
                             .sender(me).receiver(receiver).contents(requestDto.getHabitId().toString()).build();
                     messageRepository.save(invitation);

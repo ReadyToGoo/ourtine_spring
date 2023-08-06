@@ -38,6 +38,7 @@ public class User extends BaseEntity {
     private List<UserCategory> userCategoryList;
 
     @Enumerated(value = EnumType.STRING)
+    @ColumnDefault("USER")
     private UserRole userRole;
 
     private String goal;
@@ -78,6 +79,10 @@ public class User extends BaseEntity {
 
     public void updateImage(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public void updateGoal(String goal) {
+        this.goal=goal;
     }
 
 }

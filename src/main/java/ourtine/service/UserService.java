@@ -7,4 +7,5 @@ public interface UserService {
     public void saveOrUpdateUser(User user);
 
     public void changeNickname(Long userId, String nickname);
+    public void changeGoal(Long userId, String goal);
 }

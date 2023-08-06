@@ -3,6 +3,7 @@ package ourtine.domain.mapping;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import ourtine.domain.Category;
 import ourtine.domain.User;
 import ourtine.domain.enums.Status;
@@ -23,7 +24,14 @@ public class UserCategory {
      @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id",nullable = false)
     private User user;
+
+    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
+    @ColumnDefault("'ACTIVE'")
     private Status status;
 
+    public UserCategory(User user, Category category) {
+        this.user=user;
+        this.category=category;
+    }
 }

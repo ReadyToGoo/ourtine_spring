@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.web.multipart.MultipartFile;
 import ourtine.domain.Habit;
 import ourtine.domain.User;
+import ourtine.domain.enums.CategoryList;
 import ourtine.domain.enums.Sort;
 import ourtine.web.dto.request.HabitCreatePostRequestDto;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,7 +61,7 @@ public interface HabitService {
     public HabitFollowerResponseDto quitHabit(Long habitId, User user);
 
     // 카테고리별 습관 검색
-    public Slice<HabitFindByCategoryGetResponseDto> findHabitsByCategory(String categoryName, User user, Pageable pageable);
+    public Slice<HabitFindByCategoryGetResponseDto> findHabitsByCategory(CategoryList categoryName, User user, Pageable pageable);
 
     @Modifying
     @Transactional

@@ -18,7 +18,6 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
     @Query("select h from Habit h " +
             "where h.id in :habitIds " +
             "and h.endDate >= CURDATE() " + // 종료 되지 않은 습관 필터링
-            "and h.status = 'ACTIVE'" +
             "order by h.id desc ")
     Slice<Habit> queryFindHabitsById(List<Long> habitIds);
 

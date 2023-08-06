@@ -34,17 +34,18 @@ public class FollowServiceImpl implements FollowService {
             }
             else  return new FollowGetResponseDto(requestDto.getUserId(), false);
         }
-        else return null; // 에러 처리
+        else throw new BusinessException(ResponseMessage.WRONG_USER); // 에러 처리
     }
 
     // 팔로우 하기
     @Override
     @Transactional
     public FollowPostResponseDto followUser(FollowPostRequestDto requestDto, User me) {
-        User receiver = userRepository.findById(requestDto.getUserId()).orElseThrow();
+        User receiver = userRepository.findById(requestDto.getUserId()).orElseThrow(()->
+                new BusinessException(ResponseMessage.WRONG_USER));
         // 이미 팔로우하고 있으면
         if (followRepository.findBySenderIdAndReceiverId(me.getId(), requestDto.getUserId()).isPresent()){
-            // 에러 처리
+            throw new BusinessException(ResponseMessage.WRONG_FOLLOW);
         }
         else {
             followRepository.save(Follow.builder().sender(me).receiver(receiver).build());
@@ -61,7 +62,7 @@ public class FollowServiceImpl implements FollowService {
                 ()->new BusinessException(ResponseMessage.WRONG_USER));
         // 팔로우하고 있지 않으면
         if (followRepository.findBySenderIdAndReceiverId(me.getId(), requestDto.getUserId()).isEmpty()){
-            // 에러 처리
+            throw new BusinessException(ResponseMessage.WRONG_UNFOLLOW);
         }
         else {
             Follow follow = followRepository.findBySenderIdAndReceiverId(me.getId(), requestDto.getUserId()).get();
@@ -93,6 +94,8 @@ public class FollowServiceImpl implements FollowService {
     // 유저 팔로잉 목록
     @Override
     public Slice<FollowingsGetResponseDto> getFollowing(Long userId, User me, Pageable pageable) {
+        userRepository.findById(userId).orElseThrow(
+                ()->new BusinessException(ResponseMessage.WRONG_USER));
         Slice<Follow> result = followRepository.queryFindBySenderIdOrderByCreatedAtDesc(userId, me.getId());
         Slice<FollowingsGetResponseDto> followings = result.map(following ->
             new FollowingsGetResponseDto(following.getReceiver().getId(),following.getReceiver().getNickname(),
@@ -103,6 +106,8 @@ public class FollowServiceImpl implements FollowService {
     // 유저 팔로워 목록
     @Override
     public Slice<FollowersGetResponseDto> getFollower(Long userId, User me, Pageable pageable) {
+        userRepository.findById(userId).orElseThrow(
+                ()->new BusinessException(ResponseMessage.WRONG_USER));
         Slice<Follow> result = followRepository.queryFindByReceiverIdOrderByCreatedAtDesc(userId, me.getId());
         Slice<FollowersGetResponseDto> followers = result.map(following ->
                 new FollowersGetResponseDto(following.getSender().getId(),following.getSender().getNickname(),

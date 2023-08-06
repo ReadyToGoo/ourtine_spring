@@ -13,7 +13,6 @@ public enum ResponseMessage {
      */
     SUCCESS(OK, true,  "요청에 성공하였습니다."),
 
-
     /**
      * 실패
      */
@@ -36,7 +35,12 @@ public enum ResponseMessage {
     // HABIT-SESSION
     WRONG_HABIT_SESSION(NOT_FOUND,false,"해당 습관 세션을 찾을 수 없습니다."),
     WRONG_HABIT_SESSION_VOTE(NOT_FOUND,false,"투표할 수 없는 유저입니다."),
-    WRONG_HABIT_SESSION_FOLLOWER(NOT_FOUND,false,"해당 정보를 찾을 수 없습니다.")
+    WRONG_HABIT_SESSION_FOLLOWER(NOT_FOUND,false,"해당 정보를 찾을 수 없습니다."),
+
+    //FOLLOW
+    WRONG_FOLLOW(NOT_FOUND,false,"이미 팔로우하고 있는 유저입니다."),
+    WRONG_UNFOLLOW(NOT_FOUND,false,"이미 팔로우하고 있지 않은 유저입니다.")
+
     ;
     private final int code;
     private final boolean isSuccess;

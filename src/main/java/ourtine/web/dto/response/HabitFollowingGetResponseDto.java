@@ -5,7 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ourtine.domain.Category;
 import ourtine.domain.Habit;
+import ourtine.domain.enums.CategoryList;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +26,8 @@ public class HabitFollowingGetResponseDto {
 
     private List<String> hashtags = new ArrayList<>();
 
-    private String category;
+    @Enumerated(value = EnumType.STRING)
+    CategoryList category;
 
     private String imageUrl;
 

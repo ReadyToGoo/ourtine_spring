@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ourtine.aws.s3.UploadService;
 import ourtine.domain.Habit;
 import ourtine.domain.User;
+import ourtine.domain.enums.CategoryList;
 import ourtine.web.dto.common.SliceResponseDto;
 import ourtine.domain.enums.Sort;
 import ourtine.web.dto.request.HabitCreatePostRequestDto;
@@ -101,7 +102,7 @@ public class HabitController {
     // 카테고리별 검색
     @GetMapping("/discover")
     @ApiOperation(value = "참여 - 카테고리별 습관 추천", notes = "카테고리로 분류된 습관들을 조회한다.")
-    public SliceResponseDto<HabitFindByCategoryGetResponseDto> findHabitsByCategory(@RequestParam String category, User user, Pageable pageable){
+    public SliceResponseDto<HabitFindByCategoryGetResponseDto> findHabitsByCategory(@RequestParam CategoryList category, User user, Pageable pageable){
         return new SliceResponseDto<>(habitService.findHabitsByCategory(category, user, pageable));
     }
 

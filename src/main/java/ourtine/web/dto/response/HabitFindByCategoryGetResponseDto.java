@@ -6,8 +6,11 @@ import lombok.NoArgsConstructor;
 import ourtine.domain.Category;
 import ourtine.domain.Habit;
 import ourtine.domain.User;
+import ourtine.domain.enums.CategoryList;
 import ourtine.domain.enums.Day;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +29,8 @@ public class HabitFindByCategoryGetResponseDto {
 
     String title;
 
-    String category;
+    @Enumerated(value = EnumType.STRING)
+    CategoryList category;
 
     String imageUrl;
 

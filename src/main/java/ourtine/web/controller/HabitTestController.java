@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ourtine.domain.User;
+import ourtine.domain.enums.CategoryList;
 import ourtine.web.dto.common.SliceResponseDto;
 import ourtine.domain.enums.Sort;
 import ourtine.repository.UserRepository;
@@ -105,7 +106,7 @@ public class HabitTestController {
     // 카테고리별 검색
     @GetMapping("/{my_id}/discover")
     @ApiOperation(value = "참여 - 카테고리별 습관 추천", notes = "카테고리로 분류된 습관들을 조회한다.")
-    public SliceResponseDto<HabitFindByCategoryGetResponseDto> findHabitsByCategory(@RequestParam String category, @PathVariable Long my_id, Pageable pageable){
+    public SliceResponseDto<HabitFindByCategoryGetResponseDto> findHabitsByCategory(@RequestParam CategoryList category, @PathVariable Long my_id, Pageable pageable){
         User user = userRepository.findById(my_id).orElseThrow();
         return new SliceResponseDto<>(habitService.findHabitsByCategory(category, user, pageable));
     }

@@ -1,5 +1,7 @@
 package ourtine.web.dto.request;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -7,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ourtine.domain.enums.CategoryList;
 import ourtine.domain.enums.Day;
 import ourtine.domain.enums.HabitStatus;
 
@@ -45,7 +48,8 @@ public class HabitCreatePostRequestDto {
         private Long followerLimit;
 
         @NotBlank
-        private String category;
+        @Enumerated(value = EnumType.STRING)
+        private CategoryList category;
 
         @NotBlank
         private List<String> hashtags;

@@ -5,8 +5,11 @@ import ourtine.domain.Habit;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ourtine.domain.enums.CategoryList;
 import ourtine.domain.enums.Day;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -27,8 +30,8 @@ public class HabitNotFollowingGetResponseDto {
 
     private List<String> hashtags = new ArrayList<>();
 
-    private String category;
-
+    @Enumerated(value = EnumType.STRING)
+    CategoryList category;
     private String imageUrl;
 
     private int participateRate;

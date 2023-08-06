@@ -6,7 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ourtine.domain.Category;
 import ourtine.domain.Habit;
+import ourtine.domain.enums.CategoryList;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.util.List;
 
 @Getter
@@ -17,8 +20,8 @@ public class HabitSearchResponseDto {
     private String title;
     private Boolean isRecruiting;
     private List<String> hashtags;
-    private String category;
-
+    @Enumerated(value = EnumType.STRING)
+    CategoryList category;
     public HabitSearchResponseDto(Habit habit, Boolean isRecruiting, List<String> hashtags, Category category){
         this.id = habit.getId();
         this.title = habit.getTitle();

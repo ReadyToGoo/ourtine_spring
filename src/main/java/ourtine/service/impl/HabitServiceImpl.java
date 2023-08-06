@@ -7,11 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 import ourtine.aws.s3.S3Uploader;
 import ourtine.converter.DayConverter;
 import ourtine.domain.*;
+import ourtine.domain.enums.*;
 import ourtine.web.dto.common.SliceResponseDto;
-import ourtine.domain.enums.Day;
-import ourtine.domain.enums.HabitStatus;
-import ourtine.domain.enums.MessageType;
-import ourtine.domain.enums.Sort;
 import ourtine.domain.mapping.HabitDays;
 import ourtine.domain.mapping.HabitFollowers;
 import ourtine.domain.mapping.HabitHashtag;
@@ -224,7 +221,7 @@ public class HabitServiceImpl implements HabitService {
                             {
                                 Category category = categoryRepository.findById(habit.getCategoryId()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
                                 List<String> hashtags = habitHashtagRepository.queryFindHashtagNameByHabit(habit.getId());
-                                return new HabitUserFollowedGetResponseDto(habit, category.getName(), hashtags);
+                                return new HabitUserFollowedGetResponseDto(habit, category, hashtags);
                             }
                     );
                     responseDto = habitsResult;
@@ -238,7 +235,7 @@ public class HabitServiceImpl implements HabitService {
                             {
                                 Category category = categoryRepository.findById(habit.getCategoryId()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
                                 List<String> hashtags = habitHashtagRepository.queryFindHashtagNameByHabit(habit.getId());
-                                return new HabitUserFollowedGetResponseDto(habit, category.getName(), hashtags);
+                                return new HabitUserFollowedGetResponseDto(habit, category, hashtags);
                             }
                     );
                     responseDto = habitsResult;
@@ -338,7 +335,7 @@ public class HabitServiceImpl implements HabitService {
 
     // 카테고리별 검색
     @Override
-    public Slice<HabitFindByCategoryGetResponseDto> findHabitsByCategory(String categoryName, User user, Pageable pageable) {
+    public Slice<HabitFindByCategoryGetResponseDto> findHabitsByCategory(CategoryList categoryName, User user, Pageable pageable) {
         Category category = categoryRepository.findByName(categoryName).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
         Slice<Habit> habits = habitRepository.querySearchHabitByCategory(user.getId(), category.getId(), pageable);
         return habits.map(habit ->

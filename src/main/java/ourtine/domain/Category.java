@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ourtine.domain.enums.CategoryList;
 import ourtine.domain.mapping.UserCategory;
 
 import javax.persistence.*;
@@ -19,15 +20,15 @@ public class Category {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    @Enumerated(value = EnumType.STRING)
+    private CategoryList name;
 
     @OneToMany(mappedBy = "category")
     private List<UserCategory> userCategoryList;
 
-    // 운동, 생활습관, 독서, 스터디, 외국어, 취미생활, 돈관리, 커리어
 
     @Builder
-    public Category(String name){
+    public Category(CategoryList name){
         this.name = name;
     }
 

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.Category;
 import ourtine.domain.User;
+import ourtine.domain.enums.CategoryList;
 import ourtine.domain.mapping.UserCategory;
 import ourtine.repository.UserCategoryRepository;
 import ourtine.service.UserCategoryService;

@@ -18,12 +18,12 @@ public class UserCategory {
     private Long id;
 
     @ManyToOne
-    @Column(nullable = false)
+    //@Column(nullable = false)
     @JoinColumn(name = "category_id",nullable = false)
     private Category category;
 
     @ManyToOne
-    @Column(nullable = false)
+    //@Column(nullable = false)
     @JoinColumn(name = "user_id",nullable = false)
     private User user;
 

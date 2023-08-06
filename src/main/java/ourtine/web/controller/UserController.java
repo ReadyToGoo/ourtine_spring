@@ -11,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 import ourtine.aws.s3.UploadService;
 import ourtine.domain.Category;
 import ourtine.domain.User;
+import ourtine.domain.enums.CategoryList;
+import ourtine.service.CategoryService;
 import ourtine.service.UserCategoryService;
 import ourtine.validator.NicknameValidator;
 import ourtine.web.dto.request.GoalChangeRequestDto;
@@ -27,8 +29,9 @@ public class UserController {
     private final UserService userService;
     private final UploadService uploadService;
     private final UserCategoryService userCategoryService;
+    private final CategoryService categoryService;
     private final NicknameValidator nicknameValidator;
-    @InitBinder
+    @InitBinder("targetObject")
     public void initBinder(WebDataBinder binder) {
         binder.addValidators(nicknameValidator);
         //binder.setValidator(new NicknameValidator());
@@ -60,9 +63,12 @@ public class UserController {
 
     @PatchMapping("user/{userId}/category")
     @ApiOperation(value = "관심 카테고리 변경",notes="User의 관심 카테고리 목록을 변경한다.")
-    public ResponseEntity changeCategory(@PathVariable Long userId, @RequestBody List<Category> categories) {
+    public ResponseEntity changeCategory(@PathVariable Long userId, @RequestBody List<CategoryList> categoryLists) {
         User user = userService.findById(userId);
         userCategoryService.deleteUsersAllCategory(userId);
+
+        List<Category> categories = categoryService.findCategories(categoryLists);
+
         userCategoryService.saveCategories(user, categories);
         return new ResponseEntity(HttpStatus.OK);
     }

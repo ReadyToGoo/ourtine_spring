@@ -25,15 +25,23 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
     private static final String API_VERSION = "1.0.0";
     private static final String API_DESCRIPTION = "Ourtine API";
 
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+        super.addResourceHandlers(registry);
+    }
+
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.OAS_30)
                 .consumes(getConsumeContentTypes())
                 .produces(getProduceContentTypes())
-                .useDefaultResponseMessages(false)//기본 응답코드 표시
+                .useDefaultResponseMessages(false) //기본 응답코드 표시
                 .apiInfo(apiInfo()) //Api 정보
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("ourtine.web"))//적용할 패키지명
+                .apis(RequestHandlerSelectors.basePackage("ourtine.web")) //적용할 패키지명
                 .paths(PathSelectors.any()) //패키지 하위에서 적용할 url path 지정
                 .build();
     }

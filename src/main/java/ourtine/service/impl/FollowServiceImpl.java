@@ -48,7 +48,8 @@ public class FollowServiceImpl implements FollowService {
             throw new BusinessException(ResponseMessage.WRONG_FOLLOW);
         }
         else {
-            followRepository.save(Follow.builder().sender(me).receiver(receiver).build());
+            Follow follow = Follow.builder().sender(me).receiver(receiver).build();
+            followRepository.save(follow);
         }
         return new FollowPostResponseDto(requestDto.getUserId());
     }

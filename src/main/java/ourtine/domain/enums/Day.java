@@ -20,12 +20,7 @@ public enum Day {
 
     @JsonCreator
     public static Day from(String sub) {
-        for (Day day : Day.values()) {
-            if (day.getDescription().equals(sub)) {
-                return day;
-            }
-        }
-        return null;
+        return Day.valueOf(sub.toUpperCase());
     }
 
     @JsonValue

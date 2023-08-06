@@ -143,7 +143,6 @@ public class HabitSessionServiceImpl implements HabitSessionService {
 
     // 습관 회고 쓰기
     @Override
-    @Transactional
     public HabitSessionReviewPostResponseDto writeReview(Long sessionId, HabitSessionReviewPostRequestDto requestDto, User user) {
         if (habitSessionRepository.findById(sessionId).isEmpty()){
             throw new BusinessException(ResponseMessage.WRONG_HABIT_SESSION);

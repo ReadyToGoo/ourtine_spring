@@ -31,7 +31,7 @@ public class HabitTestController {
             MediaType.MULTIPART_FORM_DATA_VALUE})
     @ApiOperation(value = "습관 개설 - 습관 개설하기", notes = "습관을 개설한다.")
     public HabitCreatePostResponseDto createHabit(@RequestPart @Valid HabitCreatePostRequestDto habitCreatePostRequestDto,
-                                                  @RequestPart MultipartFile file, Long my_id) throws IOException {
+                                                  @RequestPart MultipartFile file, @PathVariable Long my_id) throws IOException {
         User user = userRepository.findById(my_id).orElseThrow();
         return habitService.createHabit(habitCreatePostRequestDto,file,user);
         // TODO: 응답 형식 추가해야함

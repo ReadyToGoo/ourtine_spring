@@ -21,9 +21,6 @@ public class HabitSessionController {
     private final HabitSessionServiceImpl habitSessionService;
     private final UserService userService;
 
-//    public HabitSessionController(HabitSessionServiceImpl habitSessionService) {
-//        this.habitSessionService = habitSessionService;
-//    }
 
     // 세션 입장하기
     @PostMapping("/habits/{habit_id}/habit-sessions")

@@ -12,5 +12,5 @@ import java.util.List;
 public interface UserMvpRepository extends JpaRepository<UserMvp, Long> {
     List<UserMvp> findByHabitSessionId(Long sessionId);
 
-    List<UserMvp> findByHabitSessionHabitAndUser(Habit habit, User user);
+    List<UserMvp> findByHabitSessionHabitAndUser_Id(Habit habit, Long user_id);
 }

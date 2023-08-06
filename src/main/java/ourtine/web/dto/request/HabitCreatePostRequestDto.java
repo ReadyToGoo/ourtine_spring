@@ -3,6 +3,8 @@ package ourtine.web.dto.request;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -27,15 +29,19 @@ public class HabitCreatePostRequestDto {
         private String detail;
 
         @NotBlank
+        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "kk:mm:ss")
         private LocalTime startTime;
 
         @NotBlank
+        @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "kk:mm:ss")
         private LocalTime endTime;
 
         @NotBlank
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private LocalDate startDate;
 
         @NotBlank
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private LocalDate endDate;
 
         @NotBlank

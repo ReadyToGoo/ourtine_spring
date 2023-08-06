@@ -35,6 +35,7 @@ logging:
   level:
     org.hibernate.sql: debug
     org.hibernate.type : trace
+    web: debug
 
 cloud:
   aws:

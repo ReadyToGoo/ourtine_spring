@@ -25,8 +25,6 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String nickname;
 
-    private String introduce;
-
     @Column(nullable = false)
     private String email;
     private String imageUrl;
@@ -62,11 +60,24 @@ public class User extends BaseEntity {
     @ColumnDefault("false")
     private boolean marketingAgreed;
 
+    @Column(nullable = false)
     @ColumnDefault("0.0")
     private BigDecimal participationRate;
 
+    @Column(nullable = false)
     @ColumnDefault("0")
     private long habitCount;
+
+    // 푸쉬 알림 동의
+    @Column(nullable = false)
+    @ColumnDefault("true")
+    private boolean pushAlert;
+
+    // 마케팅 푸쉬 알림 동의
+    @Column(nullable = false)
+    @ColumnDefault("true")
+    private boolean marketingPushAlert;
+
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
@@ -83,6 +94,14 @@ public class User extends BaseEntity {
 
     public void updateGoal(String goal) {
         this.goal=goal;
+    }
+
+    public void updatePushAlert(){
+        this.pushAlert = !pushAlert;
+    }
+
+    public void updateMarketingPushAlert(){
+        this.marketingPushAlert = !marketingPushAlert;
     }
 
 }

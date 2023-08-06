@@ -43,7 +43,6 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
     // 참여하고 있는 습관 아이디 조회
     @Query("select hf.habit.id from HabitFollowers hf " +
             "where hf.follower.id = :userId " +
-            "and hf.status='ACTIVE' " +
             "and hf.habit.endDate >= curdate() ")
     Slice<Long> queryFindMyFollowingHabitIds(Long userId, Pageable pageable);
 

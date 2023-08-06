@@ -51,7 +51,7 @@ public class HabitServiceImpl implements HabitService {
     private final CalculatorClass calculatorClass;
 
     public Habit findById(Long id) {
-        return habitRepository.findById(id).get();
+        return habitRepository.findById(id).orElseThrow(()->new BusinessException(ResponseMessage.WRONG_HABIT));
     }
 
     // 습관 개설하기

@@ -68,7 +68,6 @@ public class UserController {
         userCategoryService.deleteUsersAllCategory(userId);
 
         List<Category> categories = categoryService.findCategories(categoryLists);
-
         userCategoryService.saveCategories(user, categories);
         return new ResponseEntity(HttpStatus.OK);
     }

@@ -1,6 +1,7 @@
 package ourtine.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ourtine.domain.Habit;
 import ourtine.domain.User;
@@ -12,5 +13,7 @@ import java.util.List;
 public interface UserMvpRepository extends JpaRepository<UserMvp, Long> {
     List<UserMvp> findByHabitSessionId(Long sessionId);
 
-    List<UserMvp> findByHabitSessionHabitAndUser_Id(Habit habit, Long user_id);
+    @Query
+    ("select um from UserMvp um where um.habitSession.habit.id = :habitId and um.user.id = :userId")
+    List<UserMvp> queryFindByHabitIdAndUserId(Long habitId, Long userId);
 }

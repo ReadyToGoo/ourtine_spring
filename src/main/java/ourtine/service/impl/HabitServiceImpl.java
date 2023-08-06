@@ -148,7 +148,7 @@ public class HabitServiceImpl implements HabitService {
 
         return habitsOfDay.map(habit -> new HabitMyFollowingListGetResponseDto(
                 habit,
-                userMvpRepository.findByHabitSessionHabitAndUser(habit,user).size()
+                userMvpRepository.findByHabitSessionHabitAndUser_Id(habit,user.getId()).size()
                 ));
 
     }

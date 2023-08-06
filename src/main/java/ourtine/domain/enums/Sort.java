@@ -13,11 +13,6 @@ public enum Sort {
 
     @JsonCreator
     public static Sort from(String sub) {
-        for (Sort sort : Sort.values()) {
-            if (sort.name().equals(sub)) {
-                return sort;
-            }
-        }
-        return null;
+        return Sort.valueOf(sub.toUpperCase());
     }
 }

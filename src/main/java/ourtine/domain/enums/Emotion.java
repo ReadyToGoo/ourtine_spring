@@ -14,11 +14,6 @@ public enum Emotion  {
 
     @JsonCreator
     public static Emotion from(String sub) {
-        for (Emotion emotion : Emotion.values()) {
-            if (emotion.name().equals(sub)) {
-                return emotion;
-            }
-        }
-        return null;
+        return Emotion.valueOf(sub.toUpperCase());
     }
 }

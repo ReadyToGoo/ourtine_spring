@@ -142,8 +142,9 @@ public class HabitServiceImpl implements HabitService {
     public Slice<HabitMyFollowingListGetResponseDto> getTodaysMyHabits(User user, Pageable pageable) {
         Day day = dayConverter.curDayOfWeek();
         Slice<Long> followingHabitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(user.getId(),pageable);
-        Slice<Long> habitIdsOfDay = habitDaysRepository.queryFindFollowingHabitsByDay(followingHabitIds.getContent(),day,pageable);
-        Slice<Habit> habitsOfDay = habitRepository.queryFindHabitsById(habitIdsOfDay.getContent());
+        Slice<Long> habitIdsOfDay = habitDaysRepository.queryFindFollowingHabitsByDay(followingHabitIds.getContent(),
+                    day,pageable);
+        Slice<Habit> habitsOfDay = habitRepository.queryFindHabitsOrderByStartTime(habitIdsOfDay.getContent());
 
         return habitsOfDay.map(habit -> new HabitMyFollowingListGetResponseDto(
                 habit,

@@ -62,7 +62,7 @@ public class HabitServiceImpl implements HabitService {
     public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto habitCreatePostRequestDto, MultipartFile file, User user) throws IOException {
         Habit habit;
         if (file.isEmpty())
-            {throw new IOException(new BusinessException(ResponseMessage.WRONG_HABIT_FILE) );}
+            {throw new IOException(new BusinessException(ResponseMessage.WRONG_HABIT_FILE));}
 
         Category category = categoryRepository.findByName(habitCreatePostRequestDto.getCategory()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
 
@@ -139,7 +139,6 @@ public class HabitServiceImpl implements HabitService {
 
     // 홈 - 팔로잉하는 습관 목록 (요일 필터링)
     @Override
-    @Transactional
     public Slice<HabitMyFollowingListGetResponseDto> getTodaysMyHabits(User user, Pageable pageable) {
         Day day = dayConverter.curDayOfWeek();
         Slice<Long> followingHabitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(user.getId(),pageable);
@@ -148,7 +147,7 @@ public class HabitServiceImpl implements HabitService {
 
         return habitsOfDay.map(habit -> new HabitMyFollowingListGetResponseDto(
                 habit,
-                userMvpRepository.findByHabitSessionHabitAndUser_Id(habit,user.getId()).size()
+                userMvpRepository.queryFindByHabitIdAndUserId(habit.getId(),user.getId()).size()
                 ));
 
     }

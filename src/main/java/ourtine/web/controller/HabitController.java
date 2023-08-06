@@ -51,11 +51,10 @@ public class HabitController {
         return habitService.getHabit(habit_id,user);
     }
 
-    // 습관 프로필 사진 업로드
+    // 습관 프로필 사진 수정
     @PatchMapping(value="/{id}/profile",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiOperation(value = "습관 프로필 사진 변경",notes="습관의 프로필 사진을 변경한다.")
     public void updateHabitProfileImage(@PathVariable Long id, @RequestParam(value="image") MultipartFile image) throws IOException {
-        // 자신이 생성한 Habit인지 체크해야 함.
         Habit habit = habitService.findById(id);
         habit.updateImage(uploadService.uploadHabitProfile(image));
         habitService.saveOrUpdateHabit(habit);

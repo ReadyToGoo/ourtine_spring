@@ -16,13 +16,8 @@ public enum HabitStatus {
     }
 
     @JsonCreator
-    public static HabitStatus convert(String source){
-        for (HabitStatus day : HabitStatus.values()) {
-            if (day.name().equals(source.toUpperCase())) {
-                return day;
-            }
-        }
-        return null;
+    public static HabitStatus convert(String sub){
+        return HabitStatus.valueOf(sub.toUpperCase());
     }
 
 }

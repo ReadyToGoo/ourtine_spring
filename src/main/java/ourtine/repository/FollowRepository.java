@@ -23,13 +23,15 @@ public interface FollowRepository extends JpaRepository<Follow,Long> {
     @Query("select f from Follow f " +
             "where f.sender.id = :userId " +
             "and f.receiver.id not in (select b.blocked.id from Block b where b.blocker.id = :myId) " +
-            "and f.receiver.id not in (select b.blocker.id from Block b where b.blocked.id = :myId)" )
+            "and f.receiver.id not in (select b.blocker.id from Block b where b.blocked.id = :myId)" +
+            "order by f.createdAt desc " )
     Slice<Follow> queryFindBySenderIdOrderByCreatedAtDesc(Long userId, Long myId);
 
     // 유저의 팔로워
     @Query("select f from Follow f " +
             "where f.receiver.id = :userId " +
             "and f.sender.id not in (select b.blocked.id from Block b where b.blocker.id = :myId) " +
-            "and f.sender.id not in (select b.blocker.id from Block b where b.blocked.id = :myId)"  )
+            "and f.sender.id not in (select b.blocker.id from Block b where b.blocked.id = :myId)"+
+            "order by f.createdAt desc ")
     Slice<Follow> queryFindByReceiverIdOrderByCreatedAtDesc(Long userId, Long myId);
 }

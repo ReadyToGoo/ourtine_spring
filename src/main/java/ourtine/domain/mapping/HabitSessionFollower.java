@@ -1,6 +1,7 @@
 package ourtine.domain.mapping;
 
 import lombok.AccessLevel;
+import org.hibernate.annotations.ColumnDefault;
 import ourtine.domain.HabitSession;
 import ourtine.domain.User;
 import ourtine.domain.common.BaseEntity;
@@ -44,7 +45,7 @@ public class HabitSessionFollower extends BaseEntity {
     private HabitFollowerStatus habitFollowerStatus = HabitFollowerStatus.ENTERED;
 
     @Enumerated(value = EnumType.STRING)
-    private Status status = Status.ACTIVE;
+    private Status status=Status.ACTIVE;
 
     @Builder
     public HabitSessionFollower(HabitSession habitSession,User follower){

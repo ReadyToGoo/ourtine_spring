@@ -1,5 +1,6 @@
 package ourtine.domain.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -16,4 +17,9 @@ public enum CategoryList {
     HOBBY("취미생활"),
     CAREER("커리어");
     private final String description;
+
+    @JsonCreator
+    public static CategoryList from(String sub) {
+        return CategoryList.valueOf(sub);
+    }
 }

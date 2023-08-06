@@ -27,8 +27,7 @@ public class UserCategory {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    @ColumnDefault("'ACTIVE'")
-    private Status status;
+    private Status status=Status.ACTIVE;
 
     public UserCategory(User user, Category category) {
         this.user=user;

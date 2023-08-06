@@ -14,6 +14,14 @@ import java.util.List;
 @Repository
 public interface HabitRepository extends JpaRepository<Habit,Long> {
 
+    // 아이디로 습관 정보 조회 ( 시작 시간 순 )
+    @Query("select h from Habit h " +
+            "where h.id in :habitIds " +
+            "and h.endDate >= CURDATE() " + // 종료 되지 않은 습관 필터링
+            "and h.status = 'ACTIVE'" +
+            "order by h.startTime asc ")
+    Slice<Habit> queryFindHabitsOrderByStartTime(List<Long> habitIds);
+
     // 아이디로 습관 정보 조회 (PUBLIC + PRIVATE)
     @Query("select h from Habit h " +
             "where h.id in :habitIds " +

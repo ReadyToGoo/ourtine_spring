@@ -8,6 +8,7 @@ import ourtine.domain.mapping.HabitSessionFollower;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class HabitSessionFollowerVoteResponseDto {
     private Long id;
 

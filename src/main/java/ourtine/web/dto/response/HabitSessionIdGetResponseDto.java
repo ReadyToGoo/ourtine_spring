@@ -7,5 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class HabitInvitationPostResponseDto {
+public class HabitSessionIdGetResponseDto {
+    private Long sessionId;
 }

@@ -55,7 +55,7 @@ public class HabitSessionTestController {
     }
 
     // 베스트 습관러 투표하기
-    @PostMapping("/{my_id}/habit-sessions/{session_id}/vote")
+    @PatchMapping("/{my_id}/habit-sessions/{session_id}/vote")
     @ApiOperation(value = "습관 세션 - 베스트 습관러 투표", notes = "진행한 습관에 대한 베스트 습관러를 투표한다.")
     public HabitSessionMvpVotePostResponseDto voteMvp(@PathVariable Long session_id,@PathVariable Long my_id,@RequestBody @Valid HabitSessionMvpVotePostRequestDto requestDto){
         User user = userRepository.findById(my_id).orElseThrow();

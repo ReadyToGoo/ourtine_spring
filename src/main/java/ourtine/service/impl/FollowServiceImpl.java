@@ -27,12 +27,12 @@ public class FollowServiceImpl implements FollowService {
 
     // 팔로우 여부 조회
     @Override
-    public FollowGetResponseDto getFollowStatus(FollowGetRequestDto requestDto, User me) {
-        if (userRepository.findById(requestDto.getUserId()).isPresent()){
-            if (followRepository.findBySenderIdAndReceiverId(me.getId(), requestDto.getUserId()).isPresent()) {
-                return new FollowGetResponseDto(requestDto.getUserId(), true);
+    public FollowGetResponseDto getFollowStatus(Long userId, Long myId) {
+        if (userRepository.findById(userId).isPresent()){
+            if (followRepository.findBySenderIdAndReceiverId(myId, userId).isPresent()) {
+                return new FollowGetResponseDto(userId, true);
             }
-            else  return new FollowGetResponseDto(requestDto.getUserId(), false);
+            else  return new FollowGetResponseDto(userId, false);
         }
         else throw new BusinessException(ResponseMessage.WRONG_USER); // 에러 처리
     }
@@ -116,6 +116,14 @@ public class FollowServiceImpl implements FollowService {
                         following.getSender().getImageUrl()));
     }
 
+    @Override
+    public Long getFollowingCount(Long userId, User me, Pageable pageable) {
+        return Long.valueOf(getFollowing(userId, me, pageable).getSize());
+    }
 
+    @Override
+    public Long getFollowerCount(Long userId, User me, Pageable pageable) {
+        return Long.valueOf(getFollower(userId, me, pageable).getSize());
+    }
 
 }

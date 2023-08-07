@@ -10,6 +10,7 @@ import ourtine.domain.mapping.UserCategory;
 import ourtine.repository.UserCategoryRepository;
 import ourtine.service.UserCategoryService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,6 +24,17 @@ public class UserCategoryServiceImpl implements UserCategoryService {
             userCategoryRepository.delete(userCategory);
         }
     }
+
+    @Override
+    public List<Category> findUsersAllCategory(Long userId) {
+        List<Category> categories = new ArrayList<>();
+        List<UserCategory> byUserId = userCategoryRepository.findByUserId(userId);
+        for (UserCategory userCategory : byUserId) {
+            categories.add(userCategory.getCategory());
+        }
+        return categories;
+    }
+
     @Override
     public void saveCategories(User user, List<Category> categoryList) {
         for (Category category : categoryList) {

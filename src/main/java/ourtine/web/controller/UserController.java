@@ -2,6 +2,9 @@ package ourtine.web.controller;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,13 +16,16 @@ import ourtine.domain.Category;
 import ourtine.domain.User;
 import ourtine.domain.enums.CategoryList;
 import ourtine.service.CategoryService;
+import ourtine.service.FollowService;
 import ourtine.service.UserCategoryService;
 import ourtine.validator.NicknameValidator;
 import ourtine.web.dto.common.BaseResponseDto;
+import ourtine.web.dto.request.FollowGetRequestDto;
 import ourtine.web.dto.request.GoalChangeRequestDto;
 import ourtine.web.dto.request.NicknameChangeRequestDto;
 import ourtine.service.UserService;
 import ourtine.web.dto.response.UserAlertResponseDto;
+import ourtine.web.dto.response.UserProfileDto;
 import ourtine.web.dto.response.UserUpdateResponseDto;
 
 import javax.validation.Valid;
@@ -33,6 +39,7 @@ public class UserController {
     private final UploadService uploadService;
     private final UserCategoryService userCategoryService;
     private final CategoryService categoryService;
+    private final FollowService followService;
     private final NicknameValidator nicknameValidator;
     @InitBinder("targetObject")
     public void initBinder(WebDataBinder binder) {
@@ -49,6 +56,25 @@ public class UserController {
         userService.saveOrUpdateUser(user);
         return new ResponseEntity(HttpStatus.OK);
     }
+
+//    @GetMapping("user/{userId}/myPage")
+//    public BaseResponseDto<UserProfileDto> myPage(@PathVariable Long userId) {
+//
+//
+//    }
+
+    @GetMapping("user/{userId}/profile/{myId}")
+    public BaseResponseDto<UserProfileDto> getUserProfile(@PathVariable Long userId, @PathVariable Long myId) {
+        User user = userService.findById(myId);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id"));
+        List<Category> categories = userCategoryService.findUsersAllCategory(user.getId());
+        Boolean isFollow = followService.getFollowStatus(userId, myId).getIsFollow();
+        Long followerCount = followService.getFollowerCount(userId, user, pageable);
+        Long followingCount = followService.getFollowingCount(userId, user, pageable);
+        UserProfileDto userProfileDto = new UserProfileDto(user,categories, isFollow, followerCount, followingCount);
+        return new BaseResponseDto<>(userProfileDto);
+    }
+
 
     @PatchMapping("/user/{userId}/nickname")
     @ApiOperation(value = "닉네임 변경",notes="User의 닉네임을 변경한다.")

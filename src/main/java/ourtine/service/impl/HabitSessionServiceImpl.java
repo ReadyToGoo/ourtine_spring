@@ -1,5 +1,6 @@
 package ourtine.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ourtine.aws.s3.S3Uploader;
@@ -25,6 +26,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class HabitSessionServiceImpl implements HabitSessionService {
 
     private final HabitRepository habitRepository;
@@ -147,6 +149,8 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     @Override
     @Transactional
     public HabitSessionReviewPostResponseDto writeReview(Long sessionId, HabitSessionReviewPostRequestDto requestDto, User user) {
+        log.info("별점:{}",requestDto.getStarRate().toString());
+        log.info("감정:{}",requestDto.getEmotion().name());
         if (habitSessionRepository.findById(sessionId).isEmpty()){
             throw new BusinessException(ResponseMessage.WRONG_HABIT_SESSION);
         }

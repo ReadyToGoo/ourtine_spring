@@ -1,6 +1,8 @@
 package ourtine.domain;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +34,7 @@ public class User extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private Provider provider;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<UserCategory> userCategoryList;
 

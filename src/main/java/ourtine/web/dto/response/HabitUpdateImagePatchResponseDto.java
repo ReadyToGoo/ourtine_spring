@@ -5,10 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class FollowingsGetResponseDto {
-    private Long userId;
-    private String nickname;
-    private String profileImage;
+@NoArgsConstructor
+public class HabitUpdateImagePatchResponseDto {
+    Long habitId;
 }

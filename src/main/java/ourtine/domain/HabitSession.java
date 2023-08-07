@@ -1,5 +1,6 @@
 package ourtine.domain;
 
+import org.hibernate.annotations.ColumnDefault;
 import ourtine.domain.common.BaseEntity;
 import ourtine.domain.enums.Status;
 import javax.persistence.*;
@@ -28,7 +29,7 @@ public class HabitSession extends BaseEntity {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private Status status = Status.ACTIVE;
+    private Status status =Status.ACTIVE;
 
     @Builder
     public HabitSession(Habit habit, Date date){

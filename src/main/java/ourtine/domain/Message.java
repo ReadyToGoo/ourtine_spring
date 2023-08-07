@@ -1,6 +1,7 @@
 package ourtine.domain;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import ourtine.domain.common.BaseEntity;
 import javax.persistence.*;
 
@@ -33,7 +34,7 @@ public class Message extends BaseEntity {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private Status status = Status.ACTIVE;
+    private Status status=Status.ACTIVE ;
 
     public Message(MessageType messageType,User sender, User receiver, String contents){
         this.messageType =messageType;

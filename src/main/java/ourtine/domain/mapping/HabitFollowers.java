@@ -1,6 +1,7 @@
 package ourtine.domain.mapping;
 
 import lombok.Getter;
+import org.hibernate.annotations.ColumnDefault;
 import ourtine.domain.Habit;
 import ourtine.domain.User;
 import ourtine.domain.common.BaseEntity;
@@ -27,7 +28,7 @@ public class HabitFollowers extends BaseEntity {
 
 
     @Enumerated(value = EnumType.STRING)
-    private Status status = Status.ACTIVE;
+    private Status status =Status.ACTIVE ;
 
     @Builder
     public HabitFollowers(Habit habit, User follower ){

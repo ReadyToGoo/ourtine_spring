@@ -4,6 +4,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -24,43 +25,41 @@ import java.util.List;
 @AllArgsConstructor
 public class HabitCreatePostRequestDto {
         @NotBlank(message = "습관명을 입력해주세요")
-        @Size(min= 1, max = 25, message = "길이는 ")
         private String title; // 제목
 
         @NotBlank
-        @Size(min= 1, max = 25, message = "길이는")
         private String detail;
 
-        @NotBlank
+        @NotNull
         @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "kk:mm:ss", timezone = "Asia/Seoul")
         private LocalTime startTime;
 
-        @NotBlank
+        @NotNull
         @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "kk:mm:ss", timezone = "Asia/Seoul")
         private LocalTime endTime;
 
-        @NotBlank
+        @NotNull
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private LocalDate startDate;
 
-        @NotBlank
+        @NotNull
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private LocalDate endDate;
 
-        @NotBlank
+        @NotEmpty
         private List<Day> days;
 
-        @NotBlank
+        @NotNull
         private Long followerLimit;
 
-        @NotBlank
+        @NotNull
         @Enumerated(value = EnumType.STRING)
         private CategoryList category;
 
-        @NotBlank
+        @NotEmpty
         private List<String> hashtags;
 
-        @NotBlank
+        @NotNull
         private HabitStatus habitStatus;
 
 

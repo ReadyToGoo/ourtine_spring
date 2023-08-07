@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import ourtine.domain.common.BaseEntity;
 import ourtine.domain.enums.Status;
 
@@ -27,7 +28,7 @@ public class Follow extends BaseEntity {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private Status status;
+    private Status status=Status.ACTIVE;
 
     @Builder
     public Follow(User sender, User receiver){

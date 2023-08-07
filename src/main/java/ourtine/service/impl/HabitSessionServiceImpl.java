@@ -83,6 +83,7 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     @Override
     @Transactional
     public HabitSessionUploadVideoPostResponseDto uploadVideo(Long sessionId, MultipartFile file, User user) throws IOException {
+        if (file.isEmpty()){throw new BusinessException(ResponseMessage.WRONG_HABIT_FILE);}
         if (habitSessionRepository.findById(sessionId).isEmpty()){
             throw new BusinessException(ResponseMessage.WRONG_HABIT_SESSION);
         }
@@ -143,7 +144,6 @@ public class HabitSessionServiceImpl implements HabitSessionService {
 
     // 습관 회고 쓰기
     @Override
-    @Transactional
     public HabitSessionReviewPostResponseDto writeReview(Long sessionId, HabitSessionReviewPostRequestDto requestDto, User user) {
         if (habitSessionRepository.findById(sessionId).isEmpty()){
             throw new BusinessException(ResponseMessage.WRONG_HABIT_SESSION);

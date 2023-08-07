@@ -42,7 +42,6 @@ public class HabitSessionController {
     @PatchMapping("/habit-sessions/{session_id}/upload/{user_id}")
     @ApiOperation(value = "습관 세션 - 습관 인증", notes = "진행한 습관 인증 영상을 올린다.")
     public BaseResponseDto<HabitSessionUploadVideoPostResponseDto> uploadVideo(@PathVariable Long session_id, @RequestParam(value="image") MultipartFile file, @PathVariable Long user_id) throws IOException {
-        //if (file.isEmpty()){} // TODO: 에러 처리
         User user = userService.findById(user_id);
         return new BaseResponseDto<>(habitSessionService.uploadVideo(session_id, file, user));
     }

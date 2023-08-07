@@ -39,10 +39,9 @@ public class HabitSessionTestController {
     }
 
     // 습관 인증샷 올리기
-    @PostMapping("/{my_id}/habit-sessions/{session_id}/upload")
+    @PatchMapping("/{my_id}/habit-sessions/{session_id}/upload")
     @ApiOperation(value = "습관 세션 - 습관 인증", notes = "진행한 습관 인증 영상을 올린다.")
     public HabitSessionUploadVideoPostResponseDto uploadVideo(@PathVariable Long session_id, @RequestPart MultipartFile file, @PathVariable Long my_id) throws IOException {
-        if (file.isEmpty()){} // TODO: 에러 처리
         User user = userRepository.findById(my_id).orElseThrow();
         return habitSessionService.uploadVideo(session_id, file, user);
     }

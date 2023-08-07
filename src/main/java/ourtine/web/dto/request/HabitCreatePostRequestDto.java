@@ -25,11 +25,9 @@ import java.util.List;
 @AllArgsConstructor
 public class HabitCreatePostRequestDto {
         @NotBlank(message = "습관명을 입력해주세요")
-        @Size(min= 1, max = 25, message = "길이는 ")
         private String title; // 제목
 
         @NotBlank
-        @Size(min= 1, max = 25, message = "길이는")
         private String detail;
 
         @NotNull

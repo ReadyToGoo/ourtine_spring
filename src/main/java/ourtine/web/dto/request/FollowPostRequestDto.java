@@ -16,6 +16,5 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class FollowPostRequestDto {
     @NotNull(message = "유저 입력은 필수입니다.")
-    @JsonProperty("userId")
     private Long userId;
 }

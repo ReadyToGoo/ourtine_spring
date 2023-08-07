@@ -25,7 +25,7 @@ public class HabitTasklet implements Tasklet {
 
     }
 
-    // 습관 종료 시간 15분 후에 습관을 비활성화 시킨다.
+    // 습관 종료 시간 5분 후에 습관을 비활성화 시킨다.
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         LocalDate endDate = LocalDate.now(ZoneId.of("Asia/Seoul"));

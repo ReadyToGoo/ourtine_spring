@@ -15,8 +15,7 @@ import ourtine.web.dto.response.*;
 public interface FollowService {
 
     // 팔로우 여부
-    public FollowGetResponseDto getFollowStatus(FollowGetRequestDto requestDto,User me);
-
+    public FollowGetResponseDto getFollowStatus(Long userId, Long myId);
     // 팔로우 하기
     @Transactional
     public FollowPostResponseDto followUser(FollowPostRequestDto requestDto, User me);
@@ -36,4 +35,9 @@ public interface FollowService {
 
     // 유저 팔로워 목록 보여주기
     public Slice<FollowersGetResponseDto> getFollower(Long userId, User me, Pageable pageable);
-}
+
+    public Long getFollowingCount(Long userId, User me, Pageable pageable);
+
+    public Long getFollowerCount(Long userId, User me, Pageable pageable);
+
+    }

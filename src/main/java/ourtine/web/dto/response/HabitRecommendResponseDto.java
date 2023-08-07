@@ -18,6 +18,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class HabitRecommendResponseDto {
     private Long id;
 

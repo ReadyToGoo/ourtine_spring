@@ -25,21 +25,17 @@ public class HabitMyFollowingListGetResponseDto {
     private LocalTime startTime;
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "kk:mm:ss", timezone = "Asia/Seoul")
     private LocalTime endTime;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private LocalDate startDate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private LocalDate endDate;
-
+    private HabitFollowerStatus status;
     private int mvp ;
 
-    public HabitMyFollowingListGetResponseDto(Habit habit, int mvp){
+    public HabitMyFollowingListGetResponseDto(Habit habit, int mvp, boolean status){
         this.habitId = habit.getId();
         this.title = habit.getTitle();
         this.imageUrl = habit.getImageUrl();
-        this.startDate = habit.getStartDate();
-        this.endDate = habit.getEndDate();
         this.startTime = habit.getStartTime();
         this.endTime = habit.getEndTime();
+        if (status) this.status = HabitFollowerStatus.ENTERED;
+        else this.status = HabitFollowerStatus.NOT_ENTERED;
         this.mvp = mvp;
     }
 

@@ -11,6 +11,8 @@ public interface UserCategoryService {
 
     public void deleteUsersAllCategory(Long userId);
 
+    public List<String> findUsersAllCategory(Long userId);
+
     public void saveCategories(User user, List<Category> categoryList);
 
 }

@@ -14,7 +14,9 @@ public class HabitFollowingInfoDto {
 
     private String imageUrl;
 
-    public HabitFollowingInfoDto(Habit habit){
+    private int participateRate;
+
+    public HabitFollowingInfoDto(Habit habit, int participateRate){
         this.id = habit.getId();
         this.title = habit.getTitle();
         this.imageUrl = habit.getImageUrl();

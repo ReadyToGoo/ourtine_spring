@@ -44,6 +44,7 @@ public final class CalculatorClass {
         int participateRate = 0;
         // 진행 된 세션이 하나라도 있으면 참여율 산출
         if (habitSessionRepository.queryFindEndSessionIdsByHabitId(habitId).size()>0){
+
             // 해당 습관의 종료된 세션 목록
             List<Long> sessionIds = habitSessionRepository.queryFindEndSessionIdsByHabitId(habitId);
 

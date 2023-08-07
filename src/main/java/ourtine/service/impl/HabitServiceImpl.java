@@ -215,21 +215,33 @@ public class HabitServiceImpl implements HabitService {
     // 유저 프로필 - 팔로잉 하는 습관 목록
     @Override
     public HabitUserFollowingListGetResponseDto getUserFollowingHabits(Long userId, User me, Pageable pageable) {
-        HabitUserFollowingListGetResponseDto responseDto = null;
+        HabitUserFollowingListGetResponseDto responseDto;
 
         if (userRepository.findById(userId).isPresent()) { // 존재하는 유저면
             if (followRepository.findBySenderIdAndReceiverId(me.getId(), userId).isPresent()) {
                 // 친구인 유저면
                 Slice<Habit> commonHabits = habitFollowersRepository.queryGetCommonHabitsByUserId(userId, me);
                 Slice<Habit> otherHabits = habitFollowersRepository.queryFindOtherHabitsByUserId(userId, me, pageable);
-                SliceResponseDto<HabitFollowingInfoDto> commonHabitsInfo = new SliceResponseDto<>(commonHabits.map(HabitFollowingInfoDto::new));
-                SliceResponseDto<HabitFollowingInfoDto> otherHabitsInfo = new SliceResponseDto<>(otherHabits.map(HabitFollowingInfoDto::new));
+                SliceResponseDto<HabitFollowingInfoDto> commonHabitsInfo = new SliceResponseDto<>(commonHabits.map(habit ->{
+                    List<User> followers = habitFollowersRepository.queryFindHabitFollowers(habit.getId());
+                    return new HabitFollowingInfoDto(habit,calculatorClass.habitParticipateRate(habit.getId(), followers,habitSessionRepository,
+                            habitSessionFollowerRepository));
+                }));
+                SliceResponseDto<HabitFollowingInfoDto> otherHabitsInfo = new SliceResponseDto<>(otherHabits.map(habit -> {
+                            List<User> followers = habitFollowersRepository.queryFindHabitFollowers(habit.getId());
+                            return new HabitFollowingInfoDto(habit, calculatorClass.habitParticipateRate(habit.getId(), followers, habitSessionRepository,
+                                    habitSessionFollowerRepository));
+                        }));
                 responseDto = new HabitUserFollowingListGetResponseDto(userId, true, null, commonHabitsInfo, otherHabitsInfo);
             } else {
                 // 친구가 아닌 유저면
                 List<Long> habitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(userId, pageable).getContent();
                 Slice<Habit> habits = habitRepository.queryFindPublicHabitsById(habitIds, me.getId());
-                SliceResponseDto<HabitFollowingInfoDto> habitsInfo = new SliceResponseDto<>(habits.map(HabitFollowingInfoDto::new));
+                SliceResponseDto<HabitFollowingInfoDto> habitsInfo = new SliceResponseDto<>(habits.map(habit -> {
+                    List<User> followers = habitFollowersRepository.queryFindHabitFollowers(habit.getId());
+                    return new HabitFollowingInfoDto(habit,calculatorClass.habitParticipateRate(habit.getId(), followers,habitSessionRepository,
+                            habitSessionFollowerRepository));
+                }));
                 responseDto = new HabitUserFollowingListGetResponseDto(userId, false, habitsInfo, null, null);
             }
         }

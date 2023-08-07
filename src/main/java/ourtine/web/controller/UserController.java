@@ -19,6 +19,7 @@ import ourtine.web.dto.common.BaseResponseDto;
 import ourtine.web.dto.request.GoalChangeRequestDto;
 import ourtine.web.dto.request.NicknameChangeRequestDto;
 import ourtine.service.UserService;
+import ourtine.web.dto.response.UserAlertResponseDto;
 import ourtine.web.dto.response.UserUpdateResponseDto;
 
 import javax.validation.Valid;
@@ -83,7 +84,13 @@ public class UserController {
         return new BaseResponseDto<>(new UserUpdateResponseDto(userId));
     }
 
-    //@GetMapping(value="/user/{userId}/alerts")
+    @GetMapping(value = "/user/{userId}/alerts")
+    @ApiOperation(value = "유저의 푸쉬 알림 설정들 조회", notes = "유저의 푸쉬 알림, 마케팅 푸쉬 알림 설정 값을 조회한다.")
+    public BaseResponseDto<UserAlertResponseDto> getUserPushAlerts(@PathVariable Long userId) {
+        User user = userService.findById(userId);
+        UserAlertResponseDto userAlertResponseDto = new UserAlertResponseDto(user.isPushAlert(), user.isMarketingPushAlert());
+        return new BaseResponseDto<>(userAlertResponseDto);
+    }
 
     @PatchMapping(value= "/user/{userId}/pushAlert")
     @ApiOperation(value = "유저 푸쉬 알림 변경", notes = "유저의 푸쉬 알림 설정을 변경한다.")

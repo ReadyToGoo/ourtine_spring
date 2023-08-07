@@ -419,7 +419,7 @@ public class HabitServiceImpl implements HabitService {
                 }
         }
         );
-        return new HabitInvitationPostResponseDto();
+        return new HabitInvitationPostResponseDto(requestDto.getHabitId());
 
     }
 

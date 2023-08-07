@@ -15,9 +15,11 @@ import ourtine.domain.enums.CategoryList;
 import ourtine.service.CategoryService;
 import ourtine.service.UserCategoryService;
 import ourtine.validator.NicknameValidator;
+import ourtine.web.dto.common.BaseResponseDto;
 import ourtine.web.dto.request.GoalChangeRequestDto;
 import ourtine.web.dto.request.NicknameChangeRequestDto;
 import ourtine.service.UserService;
+import ourtine.web.dto.response.UserUpdateResponseDto;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -49,53 +51,51 @@ public class UserController {
 
     @PatchMapping("/user/{userId}/nickname")
     @ApiOperation(value = "닉네임 변경",notes="User의 닉네임을 변경한다.")
-    public ResponseEntity changeNickname(@PathVariable Long userId, @RequestBody @Valid NicknameChangeRequestDto nicknameChangeRequestDto){//형식에 맞게 수정 필요
+    public BaseResponseDto<UserUpdateResponseDto> changeNickname(@PathVariable Long userId, @RequestBody @Valid NicknameChangeRequestDto nicknameChangeRequestDto){//형식에 맞게 수정 필요
         userService.changeNickname(userId, nicknameChangeRequestDto.getNickname());
-        return new ResponseEntity(HttpStatus.OK);
+        return new BaseResponseDto<>(new UserUpdateResponseDto(userId));
     }
 
     @PatchMapping("/user/{userId}/goal")
     @ApiOperation(value = "다짐 변경",notes="User의 다짐을 변경한다.")
-    public ResponseEntity changeGoal(@PathVariable Long userId, @RequestBody @Valid GoalChangeRequestDto goalChangeRequestDto) {
+    public BaseResponseDto<UserUpdateResponseDto> changeGoal(@PathVariable Long userId, @RequestBody @Valid GoalChangeRequestDto goalChangeRequestDto) {
         userService.changeGoal(userId, goalChangeRequestDto.getGoal());
-        return new ResponseEntity(HttpStatus.OK);
+        return new BaseResponseDto<>(new UserUpdateResponseDto(userId));
     }
 
     @PatchMapping("user/{userId}/category")
     @ApiOperation(value = "관심 카테고리 변경",notes="User의 관심 카테고리 목록을 변경한다.")
-    public ResponseEntity changeCategory(@PathVariable Long userId, @RequestBody List<CategoryList> categoryLists) {
+    public BaseResponseDto<UserUpdateResponseDto> changeCategory(@PathVariable Long userId, @RequestBody List<CategoryList> categoryLists) {
         User user = userService.findById(userId);
         userCategoryService.deleteUsersAllCategory(userId);
 
         List<Category> categories = categoryService.findCategories(categoryLists);
         userCategoryService.saveCategories(user, categories);
-        return new ResponseEntity(HttpStatus.OK);
+        return new BaseResponseDto<>(new UserUpdateResponseDto(userId));
     }
 
     @PatchMapping(value = "/user/{userId}/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiOperation(value = "유저 프로필 사진 변경", notes = "유저의 프로필 사진을 변경한다.")
-    public ResponseEntity changeUserProfileImage(@PathVariable Long userId, @RequestBody MultipartFile image) throws IOException {
+    public BaseResponseDto<UserUpdateResponseDto> changeUserProfileImage(@PathVariable Long userId, @RequestBody MultipartFile image) throws IOException {
         User user = userService.findById(userId);
         user.updateImage(uploadService.uploadUserProfile(image));
         userService.saveOrUpdateUser(user);
-        return new ResponseEntity(HttpStatus.OK);
+        return new BaseResponseDto<>(new UserUpdateResponseDto(userId));
     }
 
     //@GetMapping(value="/user/{userId}/alerts")
 
-
     @PatchMapping(value= "/user/{userId}/pushAlert")
     @ApiOperation(value = "유저 푸쉬 알림 변경", notes = "유저의 푸쉬 알림 설정을 변경한다.")
-    public ResponseEntity changeUserPushAlert(@PathVariable Long userId) {
+    public BaseResponseDto<UserUpdateResponseDto> changeUserPushAlert(@PathVariable Long userId) {
         userService.changePushAlert(userId);
-        return new ResponseEntity(HttpStatus.OK);
+        return new BaseResponseDto<>(new UserUpdateResponseDto(userId));
     }
 
     @PatchMapping(value= "/user/{userId}/marketingPushAlert")
     @ApiOperation(value = "유저 마케팅 푸쉬 알림 변경", notes = "유저의 마케팅 푸쉬 알림 설정을 변경한다.")
-    public ResponseEntity changeUserMarketingPushAlert(@PathVariable Long userId) {
+    public BaseResponseDto<UserUpdateResponseDto> changeUserMarketingPushAlert(@PathVariable Long userId) {
         userService.changeMarketingPushAlert(userId);
-        return new ResponseEntity(HttpStatus.OK);
-
+        return new BaseResponseDto<>(new UserUpdateResponseDto(userId));
     }
 }

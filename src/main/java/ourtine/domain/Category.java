@@ -1,5 +1,6 @@
 package ourtine.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class Category {
     @Enumerated(value = EnumType.STRING)
     private CategoryList name;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "category")
     private List<UserCategory> userCategoryList;
 

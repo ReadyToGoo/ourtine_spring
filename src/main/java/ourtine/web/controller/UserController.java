@@ -64,14 +64,16 @@ public class UserController {
 //    }
 
     @GetMapping("user/{userId}/profile/{myId}")
+    @ApiOperation(value = "유저프로필 조회", notes = "특정 유저의 유저프로필을 조회한다.")
     public BaseResponseDto<UserProfileDto> getUserProfile(@PathVariable Long userId, @PathVariable Long myId) {
-        User user = userService.findById(myId);
+        User me = userService.findById(myId);
+        User user = userService.findById(userId);
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id"));
-        List<Category> categories = userCategoryService.findUsersAllCategory(user.getId());
+        List<String> categories = userCategoryService.findUsersAllCategory(me.getId());
         Boolean isFollow = followService.getFollowStatus(userId, myId).getIsFollow();
-        Long followerCount = followService.getFollowerCount(userId, user, pageable);
-        Long followingCount = followService.getFollowingCount(userId, user, pageable);
-        UserProfileDto userProfileDto = new UserProfileDto(user,categories, isFollow, followerCount, followingCount);
+        Long followerCount = followService.getFollowerCount(userId, me, pageable);
+        Long followingCount = followService.getFollowingCount(userId, me, pageable);
+        UserProfileDto userProfileDto = new UserProfileDto(user, categories, isFollow, followerCount, followingCount);
         return new BaseResponseDto<>(userProfileDto);
     }
 

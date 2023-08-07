@@ -10,19 +10,20 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
+//@AllArgsConstructor
 public class UserProfileDto {
     private String nickname;
     private String imageUrl;
     private String goal;
-    private List<Category> userCategoryList;
+    //private List<Category> userCategoryList;
+    private List<String> userCategoryList;
     private BigDecimal participationRate;
     private long habitCount;
     private boolean isFollowing;
     private long followerCount;
     private long followingCount;
 
-    public UserProfileDto(User user, List<Category> userCategoryList, boolean isFollowing, Long followerCount, Long followingCount) {
+    public UserProfileDto(User user, List<String> userCategoryList, boolean isFollowing, Long followerCount, Long followingCount) {
         this.nickname = user.getNickname();
         this.imageUrl = user.getImageUrl();
         this.goal = user.getGoal();

@@ -26,11 +26,11 @@ public class UserCategoryServiceImpl implements UserCategoryService {
     }
 
     @Override
-    public List<Category> findUsersAllCategory(Long userId) {
-        List<Category> categories = new ArrayList<>();
+    public List<String> findUsersAllCategory(Long userId) {
+        List<String> categories = new ArrayList<>();
         List<UserCategory> byUserId = userCategoryRepository.findByUserId(userId);
         for (UserCategory userCategory : byUserId) {
-            categories.add(userCategory.getCategory());
+            categories.add(userCategory.getCategory().getName().getDescription());
         }
         return categories;
     }

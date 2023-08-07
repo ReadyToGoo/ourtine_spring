@@ -40,7 +40,7 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "and (h.title like :keyword " +
             "or h.id in :habitIds)" +
             "and h.habitStatus = 'PUBLIC'" +
-            "order by h.createdAt desc")
+            "order by h.id desc")
     Slice<Habit> queryFindHabitOrderByCreatedAt(Long userId, String keyword, List<Long> habitIds,Pageable pageable);
 
     //검색 - 습관 시작일 순
@@ -52,7 +52,7 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "or h.id in :habitIds)" +
             "and h.startDate >= CURDATE()" +
             "and h.habitStatus = 'PUBLIC' " +
-            "order by h.createdAt asc")
+            "order by h.createdAt desc")
     Slice<Habit> queryFindHabitOrderByStartDate(Long userId, String keyword, List<Long> habitIds, Pageable pageable);
 
     // 검색 - 모집중 ( 임박한 순으로 )
@@ -64,7 +64,7 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "or h.id in :habitIds)" +
             "and h.followerLimit-h.followerCount>0" +
             "and h.habitStatus = 'PUBLIC'" +
-            "order by h.followerLimit-h.followerCount asc")
+            "order by h.followerLimit-h.followerCount asc " )
     Slice<Habit> querySearchFindOrderByFollowerCount(Long userId, String keyword, List<Long> habitIds, Pageable pageable);
 
     // 참여 - 카테고리

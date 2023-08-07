@@ -2,6 +2,8 @@ package ourtine.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -15,6 +17,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Configuration
@@ -66,5 +69,11 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
         Set<String> produces = new HashSet<>();
         produces.add("application/json;charset=UTF-8");
         return produces;
+    }
+
+    // Pageable 파라미터 설정
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        argumentResolvers.add( new PageableHandlerMethodArgumentResolver());
     }
 }

@@ -36,9 +36,13 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     private final S3Uploader s3Uploader;
     private final UserMvpRepository userMvpRepository;
 
-
-
-
+    // 세션 아이디 불러오기
+    @Override
+    public HabitSessionIdGetResponseDto getSessionId(Long habitId, User user) {
+        HabitSession habitSession = habitSessionRepository.queryFindTodaySessionByHabitId(habitId).orElseThrow(()
+                -> new BusinessException(ResponseMessage.INTERVAL_SERVER_ERROR));
+        return new HabitSessionIdGetResponseDto(habitSession.getId());
+    }
     // 습관 세션 입장하기
     @Override
     public HabitSessionEnterPostResponseDto enterHabitSession(Long habitId, User user) {
@@ -47,12 +51,14 @@ public class HabitSessionServiceImpl implements HabitSessionService {
         }
         HabitSession habitSession = habitSessionRepository.queryFindTodaySessionByHabitId(habitId).orElseThrow(()
                 -> new BusinessException(ResponseMessage.INTERVAL_SERVER_ERROR));
+            HabitSessionFollower habitSessionFollower = HabitSessionFollower.builder()
+                    .follower(user).habitSession(habitSession).build();
+            habitSessionFollowerRepository.save(habitSessionFollower);
 
-        HabitSessionFollower habitSessionFollower = HabitSessionFollower.builder()
-                .follower(user).habitSession(habitSession).build();
-        habitSessionFollowerRepository.save(habitSessionFollower);
         return new HabitSessionEnterPostResponseDto(habitSession,user);
     }
+
+
 
     // 활성화 된 습관 세션 정보 조회
     @Override
@@ -85,7 +91,7 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     @Override
     @Transactional
     public HabitSessionUploadVideoPostResponseDto uploadVideo(Long sessionId, MultipartFile file, User user) throws IOException {
-        if (file.isEmpty()){throw new BusinessException(ResponseMessage.WRONG_HABIT_FILE);}
+        if (file.isEmpty()){throw new IOException(new BusinessException(ResponseMessage.WRONG_HABIT_FILE));}
         if (habitSessionRepository.findById(sessionId).isEmpty()){
             throw new BusinessException(ResponseMessage.WRONG_HABIT_SESSION);
         }

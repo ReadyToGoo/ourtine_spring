@@ -17,7 +17,10 @@ import java.util.Optional;
 public interface HabitSessionFollowerRepository extends JpaRepository<HabitSessionFollower,Long> {
 
     // 팔로워의 습관 세션 입장 여부
-    boolean existsByFollowerIdAndHabitSessionId (Long userId, Long habitSessionId);
+    boolean existsByFollowerIdAndHabitSessionHabitId (Long follower_id, Long habitSession_habit_id);
+
+    // 팔로워의 습관 세션 입장 여부
+    boolean existsByFollowerIdAndHabitSessionId (Long follower_id, Long habitSession_id);
 
     // 입장한 팔로워의 습관 세션 정보
     Optional<HabitSessionFollower> findByHabitSession_IdAndFollowerId (Long habitSessionId, Long user);

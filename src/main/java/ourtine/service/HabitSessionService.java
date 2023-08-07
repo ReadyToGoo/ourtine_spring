@@ -13,11 +13,9 @@ import java.util.List;
 
 @Service
 public interface HabitSessionService {
-
-    // @Transactional
+    public HabitSessionIdGetResponseDto getSessionId(Long habitId, User user);
     public HabitSessionGetResponseDto getHabitSession(Long habitId, User user);
 
-    // @Transactional
     public HabitSessionEnterPostResponseDto enterHabitSession(Long sessionId, User user);
 
     @Transactional
@@ -26,7 +24,6 @@ public interface HabitSessionService {
     @Transactional
     public HabitSessionMvpVotePostResponseDto voteMvp(Long sessionId, User user, HabitSessionMvpVotePostRequestDto habitSessionMvpVotePostRequestDto);
 
-    // @Transactional
     public HabitSessionMvpCandidateGetResponseDto getMvpCandidateList(Long sessionId);
 
     public List<HabitSessionMvpGetResponseDto> showMvp(Long sessionId, User user);

@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FollowGetResponseDto {
-    Long userId;
-    Boolean isFollow;
+public class HabitSessionIdGetResponseDto {
+    private Long sessionId;
 }

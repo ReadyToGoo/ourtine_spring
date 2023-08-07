@@ -145,10 +145,13 @@ public class HabitServiceImpl implements HabitService {
                     day,pageable);
         Slice<Habit> habitsOfDay = habitRepository.queryFindHabitsOrderByStartTime(habitIdsOfDay.getContent());
 
-        return habitsOfDay.map(habit -> new HabitMyFollowingListGetResponseDto(
-                habit,
-                userMvpRepository.queryFindByHabitIdAndUserId(habit.getId(),user.getId()).size()
-                ));
+        return habitsOfDay.map(habit ->
+            new HabitMyFollowingListGetResponseDto(
+                    habit,
+                    userMvpRepository.queryFindByHabitIdAndUserId(habit.getId(), user.getId()).size(),
+                    habitSessionFollowerRepository.existsByFollowerIdAndHabitSessionHabitId(user.getId(),habit.getId() )
+            )
+        );
 
     }
 
@@ -417,7 +420,7 @@ public class HabitServiceImpl implements HabitService {
                 }
         }
         );
-        return new HabitInvitationPostResponseDto();
+        return new HabitInvitationPostResponseDto(requestDto.getHabitId());
 
     }
 

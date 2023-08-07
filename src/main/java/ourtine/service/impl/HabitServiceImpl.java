@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ourtine.exception.enums.ResponseMessage.WRONG_HABIT_DELETE;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -434,29 +436,29 @@ public class HabitServiceImpl implements HabitService {
             habitHashtagRepository.findByHabit(habit).forEach(
                     hh->{
                         if(habitHashtagRepository.countByHashtag(hh.getHashtag())==1){
-                            habitHashtagRepository.deleteByHabit(habit);
-                            hashtagRepository.delete(hh.getHashtag());
+                            habitHashtagRepository.deleteByHabitId(habit.getId());
+                            hashtagRepository.deleteById(hh.getHashtag().getId());
                         }
                         else {
-                            habitHashtagRepository.deleteByHabit(habit);
+                            habitHashtagRepository.deleteByHabitId(habit.getId());
                         }
                     }
             );
             
             // 습관-팔로워 삭제
-            habitFollowersRepository.deleteByHabit(habit);
+            habitFollowersRepository.deleteByHabitId(habit.getId());
 
             // 습관-세션-팔로워 삭제
-            habitSessionFollowerRepository.deleteByHabitSession_Habit(habit);
+            habitSessionFollowerRepository.deleteByHabitSession_Habit_Id(habit.getId());
 
             // 습관-세션 삭제
-            habitSessionRepository.deleteByHabit(habit);
+            habitSessionRepository.deleteByHabitId(habit.getId());
 
-            habitRepository.delete(habit);
+            habitRepository.deleteById(habit.getId());
 
             return new HabitDeleteResponseDto(habitId, user.getId());
         }
-        else return null;
+        else throw new BusinessException(WRONG_HABIT_DELETE);
     }
 
 }

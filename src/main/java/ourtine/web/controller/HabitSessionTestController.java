@@ -2,6 +2,7 @@ package ourtine.web.controller;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ourtine.domain.User;
@@ -19,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/test")
+@Slf4j
 public class HabitSessionTestController {
     private final HabitSessionServiceImpl habitSessionService;
     private final UserRepository userRepository;
@@ -60,6 +62,7 @@ public class HabitSessionTestController {
     @ApiOperation(value = "습관 세션 - 베스트 습관러 투표", notes = "진행한 습관에 대한 베스트 습관러를 투표한다.")
     public BaseResponseDto<HabitSessionMvpVotePostResponseDto> voteMvp(@PathVariable Long session_id,@PathVariable Long my_id,@RequestBody @Valid HabitSessionMvpVotePostRequestDto requestDto){
         User user = userRepository.findById(my_id).orElseThrow();
+        log.info("투표",requestDto.getMvpVote());
         return new BaseResponseDto<>(habitSessionService.voteMvp(session_id, user, requestDto));
     }
 
@@ -77,6 +80,8 @@ public class HabitSessionTestController {
     public BaseResponseDto<HabitSessionReviewPostResponseDto> writeReview(@PathVariable Long session_id, @RequestBody @Valid HabitSessionReviewPostRequestDto requestDto, @PathVariable Long my_id)
     {
         User user = userRepository.findById(my_id).orElseThrow();
+        log.info("별점",requestDto.getStarRate());
+        log.info("감정",requestDto.getEmotion());
         return new BaseResponseDto<>(habitSessionService.writeReview(session_id,requestDto,user));
     }
 

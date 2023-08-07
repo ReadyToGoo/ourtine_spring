@@ -124,7 +124,6 @@ public class HabitSessionServiceImpl implements HabitSessionService {
                 habitSessionMvpVotePostRequestDto.getMvpVote(),sessionId)){
             throw new BusinessException(ResponseMessage.WRONG_HABIT_SESSION_VOTE);
         }
-
         mySession.voteMvp(habitSessionMvpVotePostRequestDto.getMvpVote());
 
         return new HabitSessionMvpVotePostResponseDto(habitSessionMvpVotePostRequestDto.getMvpVote());

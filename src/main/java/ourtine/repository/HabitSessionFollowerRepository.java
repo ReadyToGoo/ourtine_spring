@@ -59,7 +59,7 @@ public interface HabitSessionFollowerRepository extends JpaRepository<HabitSessi
 
     // 습관 아이디로 삭제
     @Transactional
-    void deleteByHabitSession_Habit(Habit habit);
+    void deleteByHabitSession_Habit_Id(Long habitId);
 
     //  내 참여율 - 유저가 참여한 종료된 습관 세션 수 조회
     @Query("select count (hsf) from HabitSessionFollower hsf " +

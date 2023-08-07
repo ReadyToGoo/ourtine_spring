@@ -99,7 +99,7 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
 
     // 습관 아이디로 삭제
     @Transactional
-    void deleteByHabit(Habit habit);
+    void deleteByHabitId(Long habitId);
 
 }
 

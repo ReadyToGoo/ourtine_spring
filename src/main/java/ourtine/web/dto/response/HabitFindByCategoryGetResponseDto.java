@@ -20,20 +20,20 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HabitFindByCategoryGetResponseDto {
-    Long id;
+    private Long id;
 
-    Long hostId;
+    private Long hostId;
 
-    String hostName;
+    private String hostName;
 
-    String hostImageUrl;
+    private String hostImageUrl;
 
-    String title;
+    private String title;
 
     @Enumerated(value = EnumType.STRING)
-    CategoryList category;
+    private CategoryList category;
 
-    String imageUrl;
+    private String imageUrl;
 
     private List<Day> days = new ArrayList<>();
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "kk:mm:ss", timezone = "Asia/Seoul")

@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FollowPostResponseDto {
-    Long userId;
+    private Long userId;
 }

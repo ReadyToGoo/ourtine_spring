@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HabitDeleteResponseDto {
-    Long habitId;
-    Long userId;
+    private Long habitId;
+    private Long userId;
 }

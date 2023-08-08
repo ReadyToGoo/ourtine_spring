@@ -18,8 +18,8 @@ import java.util.List;
 public class HabitInvitationPostRequestDto {
 
     @NotNull(message = "습관 아이디 입력은 필수입니다.")
-    Long habitId ;
+    private Long habitId ;
 
     @NotEmpty(message = "유저 입력은 필수입니다.")
-    List<Long> friends ;
+    private List<Long> friends ;
 }

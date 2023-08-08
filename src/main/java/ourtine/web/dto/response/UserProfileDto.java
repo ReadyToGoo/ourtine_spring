@@ -17,7 +17,7 @@ public class UserProfileDto {
     private String goal;
     //private List<Category> userCategoryList;
     private List<String> userCategoryList;
-    private BigDecimal participationRate;
+    private Integer participationRate;
     private long habitCount;
     private boolean isFollowing;
     private long followerCount;

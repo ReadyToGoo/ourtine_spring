@@ -18,9 +18,10 @@ public class HabitFollowingInfoDto {
 
     private int participateRate;
 
-    public HabitFollowingInfoDto(Habit habit, int participateRate){
+    public HabitFollowingInfoDto(Habit habit){
         this.id = habit.getId();
         this.title = habit.getTitle();
         this.imageUrl = habit.getImageUrl();
+        this.participateRate = habit.getParticipateRate();
     }
 }

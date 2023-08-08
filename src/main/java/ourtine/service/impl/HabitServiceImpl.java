@@ -238,24 +238,15 @@ public class HabitServiceImpl implements HabitService {
                 Slice<Habit> otherHabits = habitFollowersRepository.queryFindOtherHabitsByUserId(userId, me, pageable);
                 SliceResponseDto<HabitFollowingInfoDto> commonHabitsInfo = new SliceResponseDto<>(commonHabits.map(habit ->{
                     List<User> followers = habitFollowersRepository.queryFindHabitFollowers(habit.getId());
-                    return new HabitFollowingInfoDto(habit,calculatorClass.habitParticipateRate(habit.getId(), followers,habitSessionRepository,
-                            habitSessionFollowerRepository));
+                    return new HabitFollowingInfoDto(habit);
                 }));
-                SliceResponseDto<HabitFollowingInfoDto> otherHabitsInfo = new SliceResponseDto<>(otherHabits.map(habit -> {
-                            List<User> followers = habitFollowersRepository.queryFindHabitFollowers(habit.getId());
-                            return new HabitFollowingInfoDto(habit, calculatorClass.habitParticipateRate(habit.getId(), followers, habitSessionRepository,
-                                    habitSessionFollowerRepository));
-                        }));
+                SliceResponseDto<HabitFollowingInfoDto> otherHabitsInfo = new SliceResponseDto<>(otherHabits.map(HabitFollowingInfoDto::new));
                 responseDto = new HabitUserFollowingListGetResponseDto(userId, true, null, commonHabitsInfo, otherHabitsInfo);
             } else {
                 // 친구가 아닌 유저면
                 List<Long> habitIds = habitFollowersRepository.queryFindMyFollowingHabitIds(userId, pageable).getContent();
                 Slice<Habit> habits = habitRepository.queryFindPublicHabitsById(habitIds, me.getId());
-                SliceResponseDto<HabitFollowingInfoDto> habitsInfo = new SliceResponseDto<>(habits.map(habit -> {
-                    List<User> followers = habitFollowersRepository.queryFindHabitFollowers(habit.getId());
-                    return new HabitFollowingInfoDto(habit,calculatorClass.habitParticipateRate(habit.getId(), followers,habitSessionRepository,
-                            habitSessionFollowerRepository));
-                }));
+                SliceResponseDto<HabitFollowingInfoDto> habitsInfo = new SliceResponseDto<>(habits.map(HabitFollowingInfoDto::new));
                 responseDto = new HabitUserFollowingListGetResponseDto(userId, false, habitsInfo, null, null);
             }
         }

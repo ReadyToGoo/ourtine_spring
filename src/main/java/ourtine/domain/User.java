@@ -13,8 +13,6 @@ import ourtine.domain.enums.UserRole;
 import ourtine.domain.enums.UserStatus;
 import ourtine.domain.mapping.HabitFollowers;
 import ourtine.domain.mapping.UserCategory;
-
-import java.math.BigDecimal;
 import java.util.List;
 
 @Getter

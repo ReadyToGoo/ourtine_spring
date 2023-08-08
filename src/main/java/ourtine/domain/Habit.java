@@ -1,6 +1,5 @@
 package ourtine.domain;
 
-import org.hibernate.annotations.ColumnDefault;
 import ourtine.domain.common.BaseEntity;
 import ourtine.domain.enums.HabitStatus;
 import ourtine.domain.enums.Status;
@@ -10,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ourtine.domain.mapping.HabitDays;
 import ourtine.domain.mapping.HabitFollowers;
+import software.amazon.ion.Decimal;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -53,16 +53,23 @@ public class Habit extends BaseEntity {
     @Column(nullable = false)
     private Long followerLimit;
 
-   // 습관 시작 시간
     @Column(nullable = false)
     private LocalTime startTime;
+
     @Column(nullable = false)
     private LocalTime endTime;
 
     @Column(nullable = false)
     private LocalDate startDate;
+
     @Column(nullable = false)
     private LocalDate endDate;
+
+    @Column(nullable = false)
+    private Integer participateRate = 0;
+
+    @Column(nullable = false)
+    private Decimal starRate = Decimal.valueOf(0.0);
 
     // 공개/비공개 여부
     @Column(nullable = false)
@@ -101,4 +108,8 @@ public class Habit extends BaseEntity {
     public void setStatus(Status status) {
         this.status = status;
     }
+
+    public void updateParticipateRate(Integer participateRate){this.participateRate = participateRate;}
+
+    public void updateStarRate(Decimal starRate){this.starRate=starRate;}
 }

@@ -62,7 +62,7 @@ public class OurtineScheduler {
     }
 
     @Scheduled(cron = "0 * * * * *")
-    public void startHabitSessionJob() {
+    public void startSessionJob() {
         JobParameters jobParameters = new JobParametersBuilder().addString(
                 "sessionJob", LocalDateTime.now().toString()).toJobParameters();
         try {

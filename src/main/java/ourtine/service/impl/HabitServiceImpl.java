@@ -26,8 +26,11 @@ import ourtine.web.dto.request.HabitInvitationPostRequestDto;
 import ourtine.web.dto.response.*;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static ourtine.exception.enums.ResponseMessage.WRONG_HABIT_DELETE;
 
@@ -58,44 +61,44 @@ public class HabitServiceImpl implements HabitService {
 
     // 습관 개설하기
     @Override
-    public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto habitCreatePostRequestDto, MultipartFile file, User user) throws IOException {
+    public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto requestDto, MultipartFile file, User user) throws IOException {
         Habit habit;
         if (file.isEmpty())
             {throw new IOException(new BusinessException(ResponseMessage.WRONG_HABIT_FILE));}
 
-        Category category = categoryRepository.findByName(habitCreatePostRequestDto.getCategory()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
+        Category category = categoryRepository.findByName(requestDto.getCategory()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
 
-        if (habitCreatePostRequestDto.getHabitStatus()== HabitStatus.PUBLIC)
+        if (requestDto.getHabitStatus()== HabitStatus.PUBLIC)
         {
             String imageUrl = s3Uploader.upload(file,"images/habits");
 
             habit = PublicHabit.builder()
                     .host(user)
-                    .title(habitCreatePostRequestDto.getTitle())
-                    .detail(habitCreatePostRequestDto.getDetail())
+                    .title(requestDto.getTitle())
+                    .detail(requestDto.getDetail())
                     .imageUrl(imageUrl)
                     .categoryId(category.getId())
-                    .startTime(habitCreatePostRequestDto.getStartTime())
-                    .endTime(habitCreatePostRequestDto.getEndTime())
-                    .startDate(habitCreatePostRequestDto.getStartDate())
-                    .endDate(habitCreatePostRequestDto.getEndDate())
-                    .followerLimit(habitCreatePostRequestDto.getFollowerLimit())
+                    .startTime(requestDto.getStartTime())
+                    .endTime(requestDto.getEndTime())
+                    .startDate(requestDto.getStartDate())
+                    .endDate(requestDto.getEndDate())
+                    .followerLimit(requestDto.getFollowerLimit())
                     .build();
         }
-        else if (habitCreatePostRequestDto.getHabitStatus()==HabitStatus.PRIVATE){
+        else if (requestDto.getHabitStatus()==HabitStatus.PRIVATE){
             String imageUrl = s3Uploader.upload(file,"images/habits");
 
             habit = PrivateHabit.builder()
                     .host(user)
-                    .title(habitCreatePostRequestDto.getTitle())
-                    .detail(habitCreatePostRequestDto.getDetail())
+                    .title(requestDto.getTitle())
+                    .detail(requestDto.getDetail())
                     .imageUrl(imageUrl)
                     .categoryId(category.getId())
-                    .startTime(habitCreatePostRequestDto.getStartTime())
-                    .endTime(habitCreatePostRequestDto.getEndTime())
-                    .startDate(habitCreatePostRequestDto.getStartDate())
-                    .endDate(habitCreatePostRequestDto.getEndDate())
-                    .followerLimit(habitCreatePostRequestDto.getFollowerLimit())
+                    .startTime(requestDto.getStartTime())
+                    .endTime(requestDto.getEndTime())
+                    .startDate(requestDto.getStartDate())
+                    .endDate(requestDto.getEndDate())
+                    .followerLimit(requestDto.getFollowerLimit())
                     .build();
         }
         else return null;
@@ -103,13 +106,22 @@ public class HabitServiceImpl implements HabitService {
         Habit savedHabit = habitRepository.save(habit);
         Long habitNum = habitRepository.countByHost(user);
 
-        habitCreatePostRequestDto.getDays().forEach(day ->{
+        // 습관 시작 시간이 습관 세션 생성 예정 시간보다 빠르다면
+        // 세션 바로 생성
+        if (Objects.equals(requestDto.getStartDate(), LocalDate.now()) &&
+                requestDto.getStartTime().isBefore(LocalTime.now().plusMinutes(15)) )
+        {
+            HabitSession habitSession = HabitSession.builder().habit(savedHabit).date(java.sql.Date.valueOf(requestDto.getStartDate())).build();
+            habitSessionRepository.save(habitSession);
+        }
+
+        requestDto.getDays().forEach(day ->{
             HabitDays habitDays = HabitDays.builder().habit(savedHabit).day(day).build();
             habitDaysRepository.save(habitDays);
         });
 
         // 해시태그 DB에 저장
-        habitCreatePostRequestDto.getHashtags().forEach(name->{
+        requestDto.getHashtags().forEach(name->{
             Hashtag hashtag;
             if (hashtagRepository.existsByName(name)){
                 hashtag = hashtagRepository.findHashtagByName(name).get();
@@ -170,14 +182,13 @@ public class HabitServiceImpl implements HabitService {
 
         // 참여하고 있으면
         if(habitFollowersRepository.findByHabitIdAndFollowerId(habitId, user.getId()).isPresent()){
-            int participateRate = calculatorClass.myHabitParticipateRate(habitId,user,habitSessionRepository,habitSessionFollowerRepository);
+            int participateRate = calculatorClass.myHabitParticipateRate(habitId,user,habitSessionRepository,habitSessionFollowerRepository,habitFollowersRepository);
             return new HabitGetResponseDto(true,null,new HabitFollowingGetResponseDto(habit,hashtags,category,participateRate,habitFollowersResult));
         }
         // 참여 안 하고 있으면
         else {
-            int participateRate = calculatorClass.habitParticipateRate(habitId,followers,habitSessionRepository,habitSessionFollowerRepository);
-            double starRate = calculatorClass.starRate(habitId,followers,habitSessionRepository,habitSessionFollowerRepository);
-            return new HabitGetResponseDto(false, new HabitNotFollowingGetResponseDto(habit,participateRate, starRate, hashtags, category, habitFollowersResult,
+            double starRate = calculatorClass.habitStarRate(habitId,followers,habitSessionRepository,habitSessionFollowerRepository,habitFollowersRepository);
+            return new HabitGetResponseDto(false, new HabitNotFollowingGetResponseDto(habit, starRate,hashtags, category, habitFollowersResult,
                     habitRepository.queryGetHabitRecruitingStatus(habitId)), null);
         }
 
@@ -280,9 +291,9 @@ public class HabitServiceImpl implements HabitService {
                         habitDaysRepository.findDaysByHabit(habit)));
         return result;
     }
-    @Transactional
     // 습관 참여하기
     @Override
+    @Transactional
     public HabitFollowerResponseDto joinHabit(Long habitId, User user) {
         Habit habit = habitRepository.findById(habitId).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT));
         //참여하고 있으면 or 인원이 다 찬 상태이면 참여 불가

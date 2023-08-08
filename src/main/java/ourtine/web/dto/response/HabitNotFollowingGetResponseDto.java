@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ourtine.domain.enums.CategoryList;
 import ourtine.domain.enums.Day;
+import software.amazon.ion.Decimal;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -37,7 +38,7 @@ public class HabitNotFollowingGetResponseDto {
 
     private int participateRate;
 
-    private double starRate;
+    private Decimal starRate;
 
     private List<HabitFollowersGetResponseDto> followerList = new ArrayList<>();
 
@@ -57,15 +58,15 @@ public class HabitNotFollowingGetResponseDto {
 
     private Long followerLimit;
 
-    public HabitNotFollowingGetResponseDto(Habit habit,int participateRate, double starRate, List<String> hashtags, Category category, List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto,
+    public HabitNotFollowingGetResponseDto(Habit habit, double starRate, List<String> hashtags, Category category, List<HabitFollowersGetResponseDto> habitFollowersGetResponseDto,
                                            boolean isRecruiting){
         this.id = habit.getId();
         this.hostId = habit.getHost().getId();
         this.title = habit.getTitle();
         this.imageUrl = habit.getImageUrl();
         this.detail = habit.getDetail();
-        this.participateRate = participateRate;
-        this.starRate = starRate;
+        this.participateRate = habit.getParticipateRate();
+        this.starRate = Decimal.valueOf(starRate);
         this.category = category.getName();
         this.startDate = habit.getStartDate();
         this.endDate = habit.getEndDate();

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import ourtine.domain.User;
 
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,14 +41,15 @@ public interface HabitSessionRepository extends JpaRepository<HabitSession,Long>
     // 참여율 - 습관 아이디로 종료된 습관 세션 조회
     @Query("select hs.id from HabitSession hs " +
             "where hs.habit.id = :habitId " +
-            "and hs.status = 'INACTIVE'")
-    List<Long> queryFindEndSessionIdsByHabitId (Long habitId);
+            "and hs.status = 'INACTIVE'" +
+            "and hs.date >= :date")
+    List<Long> queryFindEndSessionIdsByHabitId (Long habitId,Date date);
 
-    // 내 참여율 - 유저가 참여한 종료된 습관 세션 수 조회
-    @Query("select count (hs) from HabitSession hs " +
-            "where hs.habit in (select hf.habit from HabitFollowers hf where hf.follower = :user) " +
-            "and hs.status = 'INACTIVE'")
-    Long queryCountEndSessionsByUser (User user);
+    // 참여율 - 종료된 세션 찾기
+    @Query("select hs.id from HabitSession hs " +
+            "where hs.habit.id = :habitId " +
+            "and hs.status = 'INACTIVE'" )
+    List<Long> queryFindEndSessionIdsByHabitId (Long habitId);
 
     // 습관 아이디로 삭제
     @Transactional

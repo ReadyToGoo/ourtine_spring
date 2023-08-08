@@ -16,6 +16,7 @@ import ourtine.repository.*;
 import ourtine.service.HabitSessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ourtine.util.CalculatorClass;
 import ourtine.web.dto.request.HabitSessionMvpVotePostRequestDto;
 import ourtine.web.dto.request.HabitSessionReviewPostRequestDto;
 import ourtine.web.dto.response.*;
@@ -35,6 +36,7 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     private final HabitSessionRepository habitSessionRepository;
     private final S3Uploader s3Uploader;
     private final UserMvpRepository userMvpRepository;
+    private final CalculatorClass calculatorClass;
 
     // 세션 아이디 불러오기
     @Override
@@ -140,10 +142,6 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     // 투표 결과 보여주기
     @Override
     public List<HabitSessionMvpGetResponseDto> showMvp(Long sessionId, User user) {
-        if (userMvpRepository.findByHabitSessionId(sessionId).isEmpty()){
-            // 에러 처리??
-        }
-
         List<UserMvp> mvps = userMvpRepository.findByHabitSessionId(sessionId);
         List<HabitSessionMvpGetResponseDto> habitSessionMvpGetResponseDto = new ArrayList<>();
         mvps.forEach(mvp->{ habitSessionMvpGetResponseDto.add(

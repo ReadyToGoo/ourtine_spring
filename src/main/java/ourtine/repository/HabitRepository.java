@@ -107,8 +107,8 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
     @Query("select h from Habit h " +
             "where h.endTime = :endTime " +
             "and h.status = 'ACTIVE'" +
-            "and h.endDate = :endDate")
-    List<Habit> queryFindHabitsByEndTime(LocalTime endTime, LocalDate endDate);
+            "and h.endDate = curdate()")
+    List<Habit> queryFindHabitsByEndTime(LocalTime endTime);
 
     // 호스트 여부
     boolean existsByHostAndId(User user,Long habitId);

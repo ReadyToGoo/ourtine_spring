@@ -1,7 +1,10 @@
 package ourtine.tasklet;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepContribution;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
@@ -11,6 +14,7 @@ import ourtine.domain.User;
 import ourtine.domain.enums.Status;
 import ourtine.domain.mapping.UserMvp;
 import ourtine.repository.*;
+import ourtine.util.CalculatorClass;
 
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -19,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
-public class VoteTasklet implements Tasklet {
+public class VoteTasklet implements Tasklet, StepExecutionListener {
 
     private final UserMvpRepository userMvpRepository;
 
@@ -27,6 +31,8 @@ public class VoteTasklet implements Tasklet {
     private final HabitSessionRepository habitSessionRepository;
     private final HabitSessionFollowerRepository habitSessionFollowerRepository;
     private final UserRepository userRepository;
+    private CalculatorClass calculatorClass;
+    private List<HabitSession> sessions;
 
 
     @Autowired
@@ -37,14 +43,15 @@ public class VoteTasklet implements Tasklet {
         this.habitSessionFollowerRepository = habitSessionFollowerRepository;
         this.userRepository = userRepository;
     }
-
+    @Override
+    public void beforeStep(StepExecution stepExecution) {
+        LocalTime time = LocalTime.now(ZoneId.of("Asia/Seoul")).minusMinutes(1);
+        sessions = habitSessionRepository.queryFindActiveSession(time);
+    }
 
     // 습관 시간 종료 후 투표 집계
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        LocalTime time = LocalTime.now(ZoneId.of("Asia/Seoul")).minusMinutes(1);
-        List<HabitSession> sessions = habitSessionRepository.queryFindActiveSession(time);
-
         // 투표 진행
         if (sessions.size()>0) {
             sessions.forEach(session -> {
@@ -78,11 +85,28 @@ public class VoteTasklet implements Tasklet {
                             }
                     }
                 }
+                // 세션 비활성화
                 session.setStatus(Status.INACTIVE);
             });
         }
-
-
         return RepeatStatus.FINISHED;
+    }
+
+    @Override
+    public ExitStatus afterStep(StepExecution stepExecution) {
+        if (sessions.size()>0) {
+            sessions.forEach(session -> {
+                // 유저 참여도 업데이트
+                List<User> followers = habitFollowersRepository.queryFindHabitFollowerIds(session.getHabit());
+                for(User follower : followers){
+                    follower.updateParticipationRate(calculatorClass.myParticipateRate(follower,habitSessionRepository,habitSessionFollowerRepository,habitFollowersRepository));
+                }
+                // 습관 참여도 업데이트
+                session.getHabit().updateParticipateRate(calculatorClass.habitParticipateRate(session.getHabit().getId(),
+                        followers,habitSessionRepository,habitSessionFollowerRepository,habitFollowersRepository));
+                    });
+        }
+
+        return ExitStatus.COMPLETED;
     }
 }

@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FollowGetResponseDto {
-    Long userId;
-    Boolean isFollow;
+    private Long userId;
+    private Boolean isFollow;
 }

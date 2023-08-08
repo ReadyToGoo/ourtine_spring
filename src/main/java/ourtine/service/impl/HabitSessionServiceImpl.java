@@ -155,8 +155,6 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     @Override
     @Transactional
     public HabitSessionReviewPostResponseDto writeReview(Long sessionId, HabitSessionReviewPostRequestDto requestDto, User user) {
-        log.info("별점:{}",requestDto.getStarRate().toString());
-        log.info("감정:{}",requestDto.getEmotion().name());
         if (habitSessionRepository.findById(sessionId).isEmpty()){
             throw new BusinessException(ResponseMessage.WRONG_HABIT_SESSION);
         }

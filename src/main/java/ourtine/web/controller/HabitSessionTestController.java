@@ -72,7 +72,6 @@ public class HabitSessionTestController {
     @ApiOperation(value = "습관 세션 - 베스트 습관러 투표", notes = "진행한 습관에 대한 베스트 습관러를 투표한다.")
     public BaseResponseDto<HabitSessionMvpVotePostResponseDto> voteMvp(@PathVariable Long session_id,@PathVariable Long my_id,@RequestBody @Valid HabitSessionMvpVotePostRequestDto requestDto){
         User user = userRepository.findById(my_id).orElseThrow(()->new BusinessException(ResponseMessage.WRONG_USER));
-        log.info("투표:{}",requestDto.getMvpVote());
         return new BaseResponseDto<>(habitSessionService.voteMvp(session_id, user, requestDto));
     }
 

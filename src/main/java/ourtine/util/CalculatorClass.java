@@ -35,8 +35,8 @@ public final class CalculatorClass {
     public int myParticipateRate(User user,
                                  HabitSessionRepository habitSessionRepository, HabitSessionFollowerRepository habitSessionFollowerRepository,
                                  HabitFollowersRepository habitFollowersRepository){
-            int participateRate = 0;
-            List<Long> habitIds = habitFollowersRepository.queryFindMyHabitIds(user.getId(), Pageable.unpaged()).getContent();
+        int participateRate = 0;
+        List<Long> habitIds = habitFollowersRepository.queryFindMyHabitIds(user.getId(), Pageable.unpaged()).getContent();
         if (habitIds.size()>0){
             int participateRateSum = 0;
             for (Long habitId : habitIds) {
@@ -45,7 +45,7 @@ public final class CalculatorClass {
             }
             participateRate = Math.round((float) participateRateSum / habitIds.size()) ;
         }
-            return participateRate;
+        return participateRate;
 
     }
 

@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 public class HabitSessionReviewPostRequestDto {
 
     @NotNull(message = "만족도 입력은 필수입니다.")
-    Long starRate;
+    private Long starRate;
     @NotNull(message = "감정 입력은 필수입니다")
-    Emotion emotion;
+    private Emotion emotion;
 }

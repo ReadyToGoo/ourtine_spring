@@ -9,6 +9,6 @@ import java.util.Date;
 @Getter
 @AllArgsConstructor
 public class HabitDailyLogGetResponseDto {
-    Date date;
-    Emotion emotion;
+    private Date date;
+    private Emotion emotion;
 }

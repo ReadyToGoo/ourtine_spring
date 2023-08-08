@@ -12,9 +12,6 @@ import ourtine.domain.mapping.HabitSessionFollower;
 public class HabitSessionFollowerVoteResponseDto {
     private Long id;
 
-/*    private String nickname;
-
-    private String profileImg;*/
 
     private String videoUrl;
 

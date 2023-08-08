@@ -21,7 +21,7 @@ public class HabitUserFollowedGetResponseDto {
     private String imageUrl;
 
     @Enumerated(value = EnumType.STRING)
-    CategoryList category;
+    private CategoryList category;
     private List<String> hashtags = new ArrayList<>();
 
     public HabitUserFollowedGetResponseDto(Habit habit, Category category , List<String> hashtags){

@@ -14,5 +14,5 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class FollowDeleteRequestDto {
     @NotNull(message = "유저 입력은 필수입니다.")
-    Long userId;
+    private Long userId;
 }

@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HabitSessionReviewPostResponseDto {
-    Long userId;
-    Long sessionId;
+    private Long userId;
+    private Long sessionId;
 }

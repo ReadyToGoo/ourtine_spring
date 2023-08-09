@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,18 +16,13 @@ import ourtine.aws.s3.UploadService;
 import ourtine.domain.Category;
 import ourtine.domain.User;
 import ourtine.domain.enums.CategoryList;
-import ourtine.service.CategoryService;
-import ourtine.service.FollowService;
-import ourtine.service.UserCategoryService;
+import ourtine.service.*;
 import ourtine.validator.NicknameValidator;
 import ourtine.web.dto.common.BaseResponseDto;
 import ourtine.web.dto.request.FollowGetRequestDto;
 import ourtine.web.dto.request.GoalChangeRequestDto;
 import ourtine.web.dto.request.NicknameChangeRequestDto;
-import ourtine.service.UserService;
-import ourtine.web.dto.response.UserAlertResponseDto;
-import ourtine.web.dto.response.UserProfileDto;
-import ourtine.web.dto.response.UserUpdateResponseDto;
+import ourtine.web.dto.response.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -37,6 +33,7 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final UploadService uploadService;
+    private final HabitService habitService;
     private final UserCategoryService userCategoryService;
     private final CategoryService categoryService;
     private final FollowService followService;
@@ -57,11 +54,15 @@ public class UserController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-//    @GetMapping("user/{userId}/myPage")
-//    public BaseResponseDto<UserProfileDto> myPage(@PathVariable Long userId) {
-//
-//
-//    }
+    @GetMapping("user/{myId}/myPage")
+    public BaseResponseDto<MyPageResponseDto> getMyPage(@PathVariable Long myId) {
+        User me = userService.findById(myId);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id"));
+        Long myFollowerCount = followService.getMyFollowerCount(me, pageable);
+        Long myFollowingCount = followService.getMyFollowingCount(me, pageable);
+        MyPageResponseDto myPageResponseDto = new MyPageResponseDto(me, myFollowerCount, myFollowingCount, habitService.getMyWeeklyLog(me));
+        return new BaseResponseDto<>(myPageResponseDto);
+    }
 
     @GetMapping("user/{userId}/profile/{myId}")
     @ApiOperation(value = "유저프로필 조회", notes = "특정 유저의 유저프로필을 조회한다.")

@@ -9,6 +9,7 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.HabitSession;
 import ourtine.domain.User;
 import ourtine.domain.enums.Status;
@@ -51,6 +52,7 @@ public class VoteTasklet implements Tasklet, StepExecutionListener {
 
     // 습관 시간 종료 후 투표 집계
     @Override
+    @Transactional
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         // 투표 진행
         if (sessions.size()>0) {
@@ -93,6 +95,7 @@ public class VoteTasklet implements Tasklet, StepExecutionListener {
     }
 
     @Override
+    @Transactional
     public ExitStatus afterStep(StepExecution stepExecution) {
         if (sessions.size()>0) {
             sessions.forEach(session -> {

@@ -43,12 +43,14 @@ public class UserServiceImpl implements UserService {
         saveOrUpdateUser(user);
     }
 
+    @Override
     public void changePushAlert(Long userId) {
         User user = userRepository.findById(userId).get();
         user.updatePushAlert();
         saveOrUpdateUser(user);
     }
 
+    @Override
     public void changeMarketingPushAlert(Long userId) {
         User user = userRepository.findById(userId).get();
         user.updateMarketingPushAlert();

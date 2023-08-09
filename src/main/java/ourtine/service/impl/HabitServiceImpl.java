@@ -27,8 +27,10 @@ import ourtine.web.dto.response.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -216,7 +218,7 @@ public class HabitServiceImpl implements HabitService {
     // 내 프로필 - 위클리 로그
     @Override
     public List<HabitWeeklyLogGetResponseDto> getMyWeeklyLog(User user) {
-        String monday = dayConverter.getCurMonday();
+        LocalDateTime monday = dayConverter.getCurMonday();
         List<HabitSessionFollower> habitSessionFollowers = habitSessionFollowerRepository.getFollowerSessionInfo(monday, user.getId());
         List<HabitWeeklyLogGetResponseDto> responseDto = new ArrayList<>();
         habitSessionFollowers.forEach(follower -> {

@@ -17,12 +17,7 @@ import java.util.Optional;
 @Repository
 public interface HabitSessionRepository extends JpaRepository<HabitSession,Long> {
 
-    // 습관 아이디로 오늘 진행되는 습관 세션 아이디조회
-    @Query("select hs.id from HabitSession hs " +
-            "where hs.habit.id = :habitId " +
-            "and hs.date = CURDATE()" +
-            "and hs.status = 'ACTIVE'")
-    Long queryFindTodaySessionIdByHabitId(Long habitId);
+    Optional<HabitSession> findByHabit_Id(Long habitId);
 
     // 현재 진행중인 습관 아이디 조회
     @Query("select hs from HabitSession hs " +

@@ -1,6 +1,5 @@
 package ourtine.converter;
 
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import ourtine.domain.enums.Day;
 
@@ -8,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
+import java.util.Date;
 
 @Component
 public class DayConverter{
@@ -34,12 +34,12 @@ public class DayConverter{
         return dayOfWeek(dayNum);
     }
     // 이번주 월요일 날짜 구하기
-    public String getCurMonday(){
+    public LocalDateTime getCurMonday(){
 
-        java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("yyyy-MM.-d");
+        java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("yyyy-MM-dd");
         Calendar c = Calendar.getInstance();
         c.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
-        return formatter.format(c.getTime());
+        return c.getTime().toInstant().atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime();
 
     }
 

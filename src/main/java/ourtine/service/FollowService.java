@@ -25,16 +25,16 @@ public interface FollowService {
     public FollowDeleteResponseDto unfollowUser(FollowDeleteRequestDto requestDto, User me);
 
     // 내 팔로잉 목록 보여주기
-    public Slice<FollowingsGetResponseDto> getMyFollowing(User me, Pageable pageable);
+    public Slice<UserSimpleProfileResponseDto> getMyFollowing(User me, Pageable pageable);
 
     // 내 팔로워 목록 보여주기
-    public Slice<FollowersGetResponseDto> getMyFollower(User me, Pageable pageable);
+    public Slice<UserSimpleProfileResponseDto> getMyFollower(User me, Pageable pageable);
 
     // 유저 팔로잉 목록 보여주기
-    public Slice<FollowingsGetResponseDto> getFollowing(Long userId, User me, Pageable pageable);
+    public Slice<UserSimpleProfileResponseDto> getFollowing(Long userId, User me, Pageable pageable);
 
     // 유저 팔로워 목록 보여주기
-    public Slice<FollowersGetResponseDto> getFollower(Long userId, User me, Pageable pageable);
+    public Slice<UserSimpleProfileResponseDto> getFollower(Long userId, User me, Pageable pageable);
 
     // 내 팔로잉 수 조회
     public Long getMyFollowingCount(User me, Pageable pageable);

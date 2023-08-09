@@ -19,6 +19,7 @@ import ourtine.domain.enums.CategoryList;
 import ourtine.service.*;
 import ourtine.validator.NicknameValidator;
 import ourtine.web.dto.common.BaseResponseDto;
+import ourtine.web.dto.common.SliceResponseDto;
 import ourtine.web.dto.request.FollowGetRequestDto;
 import ourtine.web.dto.request.GoalChangeRequestDto;
 import ourtine.web.dto.request.NicknameChangeRequestDto;
@@ -55,6 +56,7 @@ public class UserController {
     }
 
     @GetMapping("user/{myId}/myPage")
+    @ApiOperation(value = "마이페이지 조회", notes = "마이페이지를 조회한다.")
     public BaseResponseDto<MyPageResponseDto> getMyPage(@PathVariable Long myId) {
         User me = userService.findById(myId);
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id"));
@@ -133,5 +135,13 @@ public class UserController {
     public BaseResponseDto<UserUpdateResponseDto> changeUserMarketingPushAlert(@PathVariable Long userId) {
         userService.changeMarketingPushAlert(userId);
         return new BaseResponseDto<>(new UserUpdateResponseDto(userId));
+    }
+
+    // 닉네임으로 검색 API
+    @GetMapping("/user/{myId}/search")
+    @ApiOperation(value = "유저 닉네임 검색", notes = "유저의 닉네임으로 프로필을 조회한다.")
+    public BaseResponseDto<SliceResponseDto<UserSimpleProfileResponseDto>> searchByNickname(@PathVariable Long myId, @RequestParam String keyword, Pageable pageable) {
+        User me = userService.findById(myId);
+        return new BaseResponseDto<>(new SliceResponseDto<>(userService.searchByNickname(me, keyword, pageable)));
     }
 }

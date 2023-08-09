@@ -74,45 +74,45 @@ public class FollowServiceImpl implements FollowService {
 
     // 내 팔로잉 목록
     @Override
-    public Slice<FollowingsGetResponseDto> getMyFollowing(User me, Pageable pageable) {
+    public Slice<UserSimpleProfileResponseDto> getMyFollowing(User me, Pageable pageable) {
         Slice<Follow> result = followRepository.findBySenderIdOrderByCreatedAtDesc(me.getId());
-        Slice<FollowingsGetResponseDto> followings = result.map(following ->
-                new FollowingsGetResponseDto(following.getReceiver().getId(),following.getReceiver().getNickname(),
+        Slice<UserSimpleProfileResponseDto> followings = result.map(following ->
+                new UserSimpleProfileResponseDto(following.getReceiver().getId(),following.getReceiver().getNickname(),
                         following.getReceiver().getImageUrl()));
         return followings;
     }
 
     // 내 팔로워 목록
     @Override
-    public Slice<FollowersGetResponseDto> getMyFollower(User me, Pageable pageable) {
+    public Slice<UserSimpleProfileResponseDto> getMyFollower(User me, Pageable pageable) {
         Slice<Follow> result = followRepository.findByReceiverIdOrderByCreatedAtDesc(me.getId());
-        Slice<FollowersGetResponseDto> followers = result.map(following ->
-                new FollowersGetResponseDto(following.getSender().getId(),following.getSender().getNickname(),
+        Slice<UserSimpleProfileResponseDto> followers = result.map(following ->
+                new UserSimpleProfileResponseDto(following.getSender().getId(),following.getSender().getNickname(),
                         following.getSender().getImageUrl()));
         return followers;
     }
 
     // 유저 팔로잉 목록
     @Override
-    public Slice<FollowingsGetResponseDto> getFollowing(Long userId, User me, Pageable pageable) {
+    public Slice<UserSimpleProfileResponseDto> getFollowing(Long userId, User me, Pageable pageable) {
         userRepository.findById(userId).orElseThrow(
                 ()->new BusinessException(ResponseMessage.WRONG_USER));
         Slice<Follow> result = followRepository.queryFindBySenderIdOrderByCreatedAtDesc(userId, me.getId());
-        Slice<FollowingsGetResponseDto> followings = result.map(following ->
-            new FollowingsGetResponseDto(following.getReceiver().getId(),following.getReceiver().getNickname(),
+        Slice<UserSimpleProfileResponseDto> followings = result.map(following ->
+            new UserSimpleProfileResponseDto(following.getReceiver().getId(),following.getReceiver().getNickname(),
                     following.getReceiver().getImageUrl()));
         return followings;
     }
 
     // 유저 팔로워 목록
     @Override
-    public Slice<FollowersGetResponseDto> getFollower(Long userId, User me, Pageable pageable) {
+    public Slice<UserSimpleProfileResponseDto> getFollower(Long userId, User me, Pageable pageable) {
         userRepository.findById(userId).orElseThrow(
                 ()->new BusinessException(ResponseMessage.WRONG_USER));
         Slice<Follow> result = followRepository.queryFindByReceiverIdOrderByCreatedAtDesc(userId, me.getId());
 
         return result.map(following ->
-                new FollowersGetResponseDto(following.getSender().getId(),following.getSender().getNickname(),
+                new UserSimpleProfileResponseDto(following.getSender().getId(),following.getSender().getNickname(),
                         following.getSender().getImageUrl()));
     }
 

@@ -2,7 +2,9 @@ package ourtine.domain.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.annotations.ApiModel;
 
+@ApiModel
 public enum HabitStatus {
 
     PUBLIC("공개"),

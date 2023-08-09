@@ -179,7 +179,7 @@ public class HabitServiceImpl implements HabitService {
         List<User> followers = habitFollowersRepository.queryFindHabitFollowers(habitId);
         List<HabitFollowersGetResponseDto> habitFollowersResult = new ArrayList<>();
         for (User follower : followers){
-            habitFollowersResult.add(new HabitFollowersGetResponseDto(follower.getId(),habitRepository.existsByHostAndId(user, habitId)
+            habitFollowersResult.add(new HabitFollowersGetResponseDto(follower.getId(),habitRepository.existsByHostIdAndId(user.getId(), habitId)
                     ,follower.getNickname(),follower.getImageUrl()));
         }
 

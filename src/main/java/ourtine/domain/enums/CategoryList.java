@@ -1,11 +1,13 @@
 package ourtine.domain.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
+@ApiModel
 public enum CategoryList {
 
     EXERCISE("운동"),

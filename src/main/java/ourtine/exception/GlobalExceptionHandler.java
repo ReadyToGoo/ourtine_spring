@@ -27,8 +27,6 @@ public class GlobalExceptionHandler {
         BindingResult bindingResult = e.getBindingResult();
 
         String firstErrorMessage = bindingResult.getFieldErrors().get(0).getDefaultMessage();
-
-        // 로그에 에러들 출력
         List<String> errorList = bindingResult.getFieldErrors().stream().map(err -> err.getDefaultMessage()).collect(Collectors.toList());
         System.out.println("errorList = " + errorList);
         String errorMsg = String.join(" | ", errorList);

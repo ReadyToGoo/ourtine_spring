@@ -13,8 +13,6 @@ import ourtine.domain.enums.UserRole;
 import ourtine.domain.enums.UserStatus;
 import ourtine.domain.mapping.HabitFollowers;
 import ourtine.domain.mapping.UserCategory;
-
-import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -63,9 +61,8 @@ public class User extends BaseEntity {
     @ColumnDefault("false")
     private boolean marketingAgreed;
 
-    @Column(nullable = false)
-    @ColumnDefault("0.0")
-    private BigDecimal participationRate;
+    @ColumnDefault("0")
+    private Integer participationRate;
 
     @Column(nullable = false)
     @ColumnDefault("0")
@@ -98,6 +95,9 @@ public class User extends BaseEntity {
     public void updateGoal(String goal) {
         this.goal=goal;
     }
+
+    public void updateParticipationRate(Integer participationRate ){
+        this.participationRate = participationRate;}
 
     public void updatePushAlert(){
         this.pushAlert = !pushAlert;

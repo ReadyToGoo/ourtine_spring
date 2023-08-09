@@ -26,8 +26,13 @@ import ourtine.web.dto.request.HabitInvitationPostRequestDto;
 import ourtine.web.dto.response.*;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static ourtine.exception.enums.ResponseMessage.WRONG_HABIT_DELETE;
 
 @Service
 @RequiredArgsConstructor
@@ -56,44 +61,44 @@ public class HabitServiceImpl implements HabitService {
 
     // 습관 개설하기
     @Override
-    public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto habitCreatePostRequestDto, MultipartFile file, User user) throws IOException {
+    public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto requestDto, MultipartFile file, User user) throws IOException {
         Habit habit;
         if (file.isEmpty())
             {throw new IOException(new BusinessException(ResponseMessage.WRONG_HABIT_FILE));}
 
-        Category category = categoryRepository.findByName(habitCreatePostRequestDto.getCategory()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
+        Category category = categoryRepository.findByName(requestDto.getCategory()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
 
-        if (habitCreatePostRequestDto.getHabitStatus()== HabitStatus.PUBLIC)
+        if (requestDto.getHabitStatus()== HabitStatus.PUBLIC)
         {
             String imageUrl = s3Uploader.upload(file,"images/habits");
 
             habit = PublicHabit.builder()
                     .host(user)
-                    .title(habitCreatePostRequestDto.getTitle())
-                    .detail(habitCreatePostRequestDto.getDetail())
+                    .title(requestDto.getTitle())
+                    .detail(requestDto.getDetail())
                     .imageUrl(imageUrl)
                     .categoryId(category.getId())
-                    .startTime(habitCreatePostRequestDto.getStartTime())
-                    .endTime(habitCreatePostRequestDto.getEndTime())
-                    .startDate(habitCreatePostRequestDto.getStartDate())
-                    .endDate(habitCreatePostRequestDto.getEndDate())
-                    .followerLimit(habitCreatePostRequestDto.getFollowerLimit())
+                    .startTime(requestDto.getStartTime())
+                    .endTime(requestDto.getEndTime())
+                    .startDate(requestDto.getStartDate())
+                    .endDate(requestDto.getEndDate())
+                    .followerLimit(requestDto.getFollowerLimit())
                     .build();
         }
-        else if (habitCreatePostRequestDto.getHabitStatus()==HabitStatus.PRIVATE){
+        else if (requestDto.getHabitStatus()==HabitStatus.PRIVATE){
             String imageUrl = s3Uploader.upload(file,"images/habits");
 
             habit = PrivateHabit.builder()
                     .host(user)
-                    .title(habitCreatePostRequestDto.getTitle())
-                    .detail(habitCreatePostRequestDto.getDetail())
+                    .title(requestDto.getTitle())
+                    .detail(requestDto.getDetail())
                     .imageUrl(imageUrl)
                     .categoryId(category.getId())
-                    .startTime(habitCreatePostRequestDto.getStartTime())
-                    .endTime(habitCreatePostRequestDto.getEndTime())
-                    .startDate(habitCreatePostRequestDto.getStartDate())
-                    .endDate(habitCreatePostRequestDto.getEndDate())
-                    .followerLimit(habitCreatePostRequestDto.getFollowerLimit())
+                    .startTime(requestDto.getStartTime())
+                    .endTime(requestDto.getEndTime())
+                    .startDate(requestDto.getStartDate())
+                    .endDate(requestDto.getEndDate())
+                    .followerLimit(requestDto.getFollowerLimit())
                     .build();
         }
         else return null;
@@ -101,13 +106,22 @@ public class HabitServiceImpl implements HabitService {
         Habit savedHabit = habitRepository.save(habit);
         Long habitNum = habitRepository.countByHost(user);
 
-        habitCreatePostRequestDto.getDays().forEach(day ->{
+        // 습관 시작 시간이 습관 세션 생성 예정 시간보다 빠르다면
+        // 세션 바로 생성
+        if (Objects.equals(requestDto.getStartDate(), LocalDate.now()) &&
+                requestDto.getStartTime().isBefore(LocalTime.now().plusMinutes(15)) )
+        {
+            HabitSession habitSession = HabitSession.builder().habit(savedHabit).date(java.sql.Date.valueOf(requestDto.getStartDate())).build();
+            habitSessionRepository.save(habitSession);
+        }
+
+        requestDto.getDays().forEach(day ->{
             HabitDays habitDays = HabitDays.builder().habit(savedHabit).day(day).build();
             habitDaysRepository.save(habitDays);
         });
 
         // 해시태그 DB에 저장
-        habitCreatePostRequestDto.getHashtags().forEach(name->{
+        requestDto.getHashtags().forEach(name->{
             Hashtag hashtag;
             if (hashtagRepository.existsByName(name)){
                 hashtag = hashtagRepository.findHashtagByName(name).get();
@@ -143,10 +157,13 @@ public class HabitServiceImpl implements HabitService {
                     day,pageable);
         Slice<Habit> habitsOfDay = habitRepository.queryFindHabitsOrderByStartTime(habitIdsOfDay.getContent());
 
-        return habitsOfDay.map(habit -> new HabitMyFollowingListGetResponseDto(
-                habit,
-                userMvpRepository.queryFindByHabitIdAndUserId(habit.getId(),user.getId()).size()
-                ));
+        return habitsOfDay.map(habit ->
+            new HabitMyFollowingListGetResponseDto(
+                    habit,
+                    userMvpRepository.queryFindByHabitIdAndUserId(habit.getId(), user.getId()).size(),
+                    habitSessionFollowerRepository.existsByFollowerIdAndHabitSessionHabitId(user.getId(),habit.getId() )
+            )
+        );
 
     }
 
@@ -166,14 +183,13 @@ public class HabitServiceImpl implements HabitService {
 
         // 참여하고 있으면
         if(habitFollowersRepository.findByHabitIdAndFollowerId(habitId, user.getId()).isPresent()){
-            int participateRate = calculatorClass.myHabitParticipateRate(habitId,user,habitSessionRepository,habitSessionFollowerRepository);
+            int participateRate = calculatorClass.myHabitParticipateRate(habitId,user,habitSessionRepository,habitSessionFollowerRepository,habitFollowersRepository);
             return new HabitGetResponseDto(true,null,new HabitFollowingGetResponseDto(habit,hashtags,category,participateRate,habitFollowersResult));
         }
         // 참여 안 하고 있으면
         else {
-            int participateRate = calculatorClass.habitParticipateRate(habitId,followers,habitSessionRepository,habitSessionFollowerRepository);
-            double starRate = calculatorClass.starRate(habitId,followers,habitSessionRepository,habitSessionFollowerRepository);
-            return new HabitGetResponseDto(false, new HabitNotFollowingGetResponseDto(habit,participateRate, starRate, hashtags, category, habitFollowersResult,
+            double starRate = calculatorClass.habitStarRate(habitId,followers,habitSessionRepository,habitSessionFollowerRepository,habitFollowersRepository);
+            return new HabitGetResponseDto(false, new HabitNotFollowingGetResponseDto(habit, starRate,hashtags, category, habitFollowersResult,
                     habitRepository.queryGetHabitRecruitingStatus(habitId)), null);
         }
 
@@ -213,14 +229,17 @@ public class HabitServiceImpl implements HabitService {
     // 유저 프로필 - 팔로잉 하는 습관 목록
     @Override
     public HabitUserFollowingListGetResponseDto getUserFollowingHabits(Long userId, User me, Pageable pageable) {
-        HabitUserFollowingListGetResponseDto responseDto = null;
+        HabitUserFollowingListGetResponseDto responseDto;
 
         if (userRepository.findById(userId).isPresent()) { // 존재하는 유저면
             if (followRepository.findBySenderIdAndReceiverId(me.getId(), userId).isPresent()) {
                 // 친구인 유저면
                 Slice<Habit> commonHabits = habitFollowersRepository.queryGetCommonHabitsByUserId(userId, me);
                 Slice<Habit> otherHabits = habitFollowersRepository.queryFindOtherHabitsByUserId(userId, me, pageable);
-                SliceResponseDto<HabitFollowingInfoDto> commonHabitsInfo = new SliceResponseDto<>(commonHabits.map(HabitFollowingInfoDto::new));
+                SliceResponseDto<HabitFollowingInfoDto> commonHabitsInfo = new SliceResponseDto<>(commonHabits.map(habit ->{
+                    List<User> followers = habitFollowersRepository.queryFindHabitFollowers(habit.getId());
+                    return new HabitFollowingInfoDto(habit);
+                }));
                 SliceResponseDto<HabitFollowingInfoDto> otherHabitsInfo = new SliceResponseDto<>(otherHabits.map(HabitFollowingInfoDto::new));
                 responseDto = new HabitUserFollowingListGetResponseDto(userId, true, null, commonHabitsInfo, otherHabitsInfo);
             } else {
@@ -240,38 +259,26 @@ public class HabitServiceImpl implements HabitService {
     // 유저 프로필 - 참여했던 습관 목록
     @Override
     public Slice<HabitUserFollowedGetResponseDto> getUserFollowedHabits(Long userId, User me, Pageable pageable) {
-        Slice<HabitUserFollowedGetResponseDto> responseDto  = null;
+        Slice<HabitUserFollowedGetResponseDto> responseDto ;
+        Slice<Habit> habits;
         if (userRepository.findById(userId).isPresent()){
             // 친구인 유저면
             if (followRepository.findBySenderIdAndReceiverId(me.getId(), userId).isPresent()) {
                 List<Long> habitIds = habitFollowersRepository.queryFindMyFollowedHabitIds(userId, pageable).getContent();
-                if (habitIds.size()>0){
-                    Slice<Habit> habits = habitRepository.queryFindHabitsById(habitIds); // public + private
-
-                    responseDto = habits.map(habit ->
-                            {
-                                Category category = categoryRepository.findById(habit.getCategoryId()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
-                                List<String> hashtags = habitHashtagRepository.queryFindHashtagNameByHabit(habit.getId());
-                                return new HabitUserFollowedGetResponseDto(habit, category, hashtags);
-                            }
-                    );
-                }
+                    habits = habitRepository.queryFindHabitsById(habitIds); // public + private
             }
             // 친구가 아니면
             else {
             List<Long> habitIds = habitFollowersRepository.queryFindMyFollowedHabitIds(userId,pageable).getContent();
-                if (habitIds.size()>0){
-                    Slice<Habit> habits = habitRepository.queryFindPublicHabitsById(habitIds, me.getId()); // public 습관만
-                    Slice<HabitUserFollowedGetResponseDto> habitsResult = habits.map(habit ->
-                            {
-                                Category category = categoryRepository.findById(habit.getCategoryId()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
-                                List<String> hashtags = habitHashtagRepository.queryFindHashtagNameByHabit(habit.getId());
-                                return new HabitUserFollowedGetResponseDto(habit, category, hashtags);
-                            }
-                    );
-                    responseDto = habitsResult;
-                }
+                    habits = habitRepository.queryFindPublicHabitsById(habitIds, me.getId()); // public 습관만
             }
+            responseDto = habits.map(habit ->
+                    {
+                        Category category = categoryRepository.findById(habit.getCategoryId()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
+                        List<String> hashtags = habitHashtagRepository.queryFindHashtagNameByHabit(habit.getId());
+                        return new HabitUserFollowedGetResponseDto(habit, category, hashtags);
+                    }
+            );
             return responseDto;
 
         }
@@ -288,9 +295,9 @@ public class HabitServiceImpl implements HabitService {
                         habitDaysRepository.findDaysByHabit(habit)));
         return result;
     }
-    @Transactional
     // 습관 참여하기
     @Override
+    @Transactional
     public HabitFollowerResponseDto joinHabit(Long habitId, User user) {
         Habit habit = habitRepository.findById(habitId).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT));
         //참여하고 있으면 or 인원이 다 찬 상태이면 참여 불가
@@ -404,6 +411,7 @@ public class HabitServiceImpl implements HabitService {
 
     // 습관 초대장
     @Override
+    @Transactional
     public HabitInvitationPostResponseDto sendInvitation(User me, HabitInvitationPostRequestDto requestDto){
         List<Long> friends = requestDto.getFriends();
         friends.forEach(friend ->{
@@ -415,7 +423,7 @@ public class HabitServiceImpl implements HabitService {
                 }
         }
         );
-        return new HabitInvitationPostResponseDto();
+        return new HabitInvitationPostResponseDto(requestDto.getHabitId());
 
     }
 
@@ -434,29 +442,29 @@ public class HabitServiceImpl implements HabitService {
             habitHashtagRepository.findByHabit(habit).forEach(
                     hh->{
                         if(habitHashtagRepository.countByHashtag(hh.getHashtag())==1){
-                            habitHashtagRepository.deleteByHabit(habit);
-                            hashtagRepository.delete(hh.getHashtag());
+                            habitHashtagRepository.deleteByHabitId(habit.getId());
+                            hashtagRepository.deleteById(hh.getHashtag().getId());
                         }
                         else {
-                            habitHashtagRepository.deleteByHabit(habit);
+                            habitHashtagRepository.deleteByHabitId(habit.getId());
                         }
                     }
             );
             
             // 습관-팔로워 삭제
-            habitFollowersRepository.deleteByHabit(habit);
+            habitFollowersRepository.deleteByHabitId(habit.getId());
 
             // 습관-세션-팔로워 삭제
-            habitSessionFollowerRepository.deleteByHabitSession_Habit(habit);
+            habitSessionFollowerRepository.deleteByHabitSession_Habit_Id(habit.getId());
 
             // 습관-세션 삭제
-            habitSessionRepository.deleteByHabit(habit);
+            habitSessionRepository.deleteByHabitId(habit.getId());
 
-            habitRepository.delete(habit);
+            habitRepository.deleteById(habit.getId());
 
             return new HabitDeleteResponseDto(habitId, user.getId());
         }
-        else return null;
+        else throw new BusinessException(WRONG_HABIT_DELETE);
     }
 
 }

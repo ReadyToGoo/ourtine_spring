@@ -36,8 +36,16 @@ public interface FollowService {
     // 유저 팔로워 목록 보여주기
     public Slice<FollowersGetResponseDto> getFollower(Long userId, User me, Pageable pageable);
 
+    // 내 팔로잉 수 조회
+    public Long getMyFollowingCount(User me, Pageable pageable);
+
+    // 내 팔로워 수 조회
+    public Long getMyFollowerCount(User me, Pageable pageable);
+
+    // 유저 팔로잉 수 조회
     public Long getFollowingCount(Long userId, User me, Pageable pageable);
 
+    // 유저 팔로워 수 조회
     public Long getFollowerCount(Long userId, User me, Pageable pageable);
 
     }

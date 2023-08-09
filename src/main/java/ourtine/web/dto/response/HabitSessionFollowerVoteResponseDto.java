@@ -8,12 +8,10 @@ import ourtine.domain.mapping.HabitSessionFollower;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class HabitSessionFollowerVoteResponseDto {
     private Long id;
 
-/*    private String nickname;
-
-    private String profileImg;*/
 
     private String videoUrl;
 

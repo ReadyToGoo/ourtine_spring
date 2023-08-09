@@ -26,10 +26,14 @@ public class OurtineBatchConfig {
     private JobBuilderFactory jobBuilderFactory;
     @Autowired
     private StepBuilderFactory stepBuilderFactory;
-    private HabitDaysRepository habitDaysRepository;
-    private HabitSessionRepository habitSessionRepository;
-    private HabitRepository repository;
-    private DayConverter dayConverter;
+
+    private final HabitDaysRepository habitDaysRepository;
+
+    private final HabitSessionRepository habitSessionRepository;
+
+    private final HabitRepository repository;
+
+    private final DayConverter dayConverter;
 
     private final UserMvpRepository userMvpRepository;
 
@@ -97,7 +101,7 @@ public class OurtineBatchConfig {
 
     @Bean
     @Qualifier("VOTE_JOB")
-    public Job voteJob(@Qualifier("VOTE_STEP")Step step){
+    public Job voteJob(@Qualifier("VOTE_STEP")Step step) {
         return jobBuilderFactory.get("VOTE_JOB")
                 .start(step)
                 .build();

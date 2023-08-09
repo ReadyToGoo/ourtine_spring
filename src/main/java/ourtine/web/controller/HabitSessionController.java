@@ -22,6 +22,12 @@ public class HabitSessionController {
     private final HabitSessionServiceImpl habitSessionService;
     private final UserService userService;
 
+    // 세션 아이디 조회
+    @GetMapping("/habits/{habit_id}/habit-sessions")
+    @ApiOperation(value = "세션 ID 조회", notes = "세션 ID를 조회한다.")
+    public BaseResponseDto<HabitSessionIdGetResponseDto> getSessionId(@PathVariable Long habit_id, User user){
+        return new BaseResponseDto<>(habitSessionService.getSessionId(habit_id, user));
+    }
 
     // 세션 입장하기
     @PostMapping("/habits/{habit_id}/habit-sessions")
@@ -54,7 +60,7 @@ public class HabitSessionController {
     }
 
     // 베스트 습관러 투표하기
-    @PostMapping("/habit-sessions/{session_id}/vote")
+    @PatchMapping("/habit-sessions/{session_id}/vote")
     @ApiOperation(value = "습관 세션 - 베스트 습관러 투표", notes = "진행한 습관에 대한 베스트 습관러를 투표한다.")
     public BaseResponseDto<HabitSessionMvpVotePostResponseDto> voteMvp(@PathVariable Long session_id,User user,@RequestBody @Valid HabitSessionMvpVotePostRequestDto requestDto){
         return new BaseResponseDto<>( habitSessionService.voteMvp(session_id, user, requestDto));

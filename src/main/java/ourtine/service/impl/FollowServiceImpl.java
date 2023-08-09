@@ -116,11 +116,25 @@ public class FollowServiceImpl implements FollowService {
                         following.getSender().getImageUrl()));
     }
 
+    // 내 팔로잉 수
+    @Override
+    public Long getMyFollowingCount(User me, Pageable pageable) {
+        return Long.valueOf(getMyFollowing(me, pageable).getSize());
+    }
+
+    // 내 팔로워 수
+    @Override
+    public Long getMyFollowerCount(User me, Pageable pageable) {
+        return Long.valueOf(getMyFollower(me, pageable).getSize());
+    }
+
+    // 유저 팔로잉 수
     @Override
     public Long getFollowingCount(Long userId, User me, Pageable pageable) {
         return Long.valueOf(getFollowing(userId, me, pageable).getSize());
     }
 
+    // 유저 팔로워 수
     @Override
     public Long getFollowerCount(Long userId, User me, Pageable pageable) {
         return Long.valueOf(getFollower(userId, me, pageable).getSize());

@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HabitUpdateImagePatchResponseDto {
-    Long habitId;
+    private Long habitId;
 }

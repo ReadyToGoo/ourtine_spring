@@ -1,5 +1,6 @@
 package ourtine.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ourtine.aws.s3.S3Uploader;
@@ -15,6 +16,7 @@ import ourtine.repository.*;
 import ourtine.service.HabitSessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ourtine.util.CalculatorClass;
 import ourtine.web.dto.request.HabitSessionMvpVotePostRequestDto;
 import ourtine.web.dto.request.HabitSessionReviewPostRequestDto;
 import ourtine.web.dto.response.*;
@@ -25,6 +27,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class HabitSessionServiceImpl implements HabitSessionService {
 
     private final HabitRepository habitRepository;
@@ -33,10 +36,15 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     private final HabitSessionRepository habitSessionRepository;
     private final S3Uploader s3Uploader;
     private final UserMvpRepository userMvpRepository;
+    private final CalculatorClass calculatorClass;
 
-
-
-
+    // 세션 아이디 불러오기
+    @Override
+    public HabitSessionIdGetResponseDto getSessionId(Long habitId, User user) {
+        HabitSession habitSession = habitSessionRepository.queryFindTodaySessionByHabitId(habitId).orElseThrow(()
+                -> new BusinessException(ResponseMessage.INTERVAL_SERVER_ERROR));
+        return new HabitSessionIdGetResponseDto(habitSession.getId());
+    }
     // 습관 세션 입장하기
     @Override
     public HabitSessionEnterPostResponseDto enterHabitSession(Long habitId, User user) {
@@ -45,12 +53,14 @@ public class HabitSessionServiceImpl implements HabitSessionService {
         }
         HabitSession habitSession = habitSessionRepository.queryFindTodaySessionByHabitId(habitId).orElseThrow(()
                 -> new BusinessException(ResponseMessage.INTERVAL_SERVER_ERROR));
+            HabitSessionFollower habitSessionFollower = HabitSessionFollower.builder()
+                    .follower(user).habitSession(habitSession).build();
+            habitSessionFollowerRepository.save(habitSessionFollower);
 
-        HabitSessionFollower habitSessionFollower = HabitSessionFollower.builder()
-                .follower(user).habitSession(habitSession).build();
-        habitSessionFollowerRepository.save(habitSessionFollower);
         return new HabitSessionEnterPostResponseDto(habitSession,user);
     }
+
+
 
     // 활성화 된 습관 세션 정보 조회
     @Override
@@ -67,7 +77,7 @@ public class HabitSessionServiceImpl implements HabitSessionService {
             // 입장한 유저
             if ( habitSessionFollowerRepository.existsByFollowerIdAndHabitSessionId(follower.getId(),sessionId)){
                 followersResult.add(new HabitSessionFollowerResponseDto(follower.getId(),follower.getNickname(),follower.getImageUrl(),
-                        habitSessionFollowerRepository.findByHabitSessionIdAndFollower_Id(sessionId,follower.getId()).get().getHabitFollowerStatus()));
+                        habitSessionFollowerRepository.findByHabitSession_IdAndFollowerId(sessionId,follower.getId()).get().getHabitFollowerStatus()));
             }
             // 안 한 유저
             else{
@@ -83,11 +93,12 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     @Override
     @Transactional
     public HabitSessionUploadVideoPostResponseDto uploadVideo(Long sessionId, MultipartFile file, User user) throws IOException {
-        if (file.isEmpty()){throw new BusinessException(ResponseMessage.WRONG_HABIT_FILE);}
+        if (file.isEmpty()){throw new IOException(new BusinessException(ResponseMessage.WRONG_HABIT_FILE));}
         if (habitSessionRepository.findById(sessionId).isEmpty()){
             throw new BusinessException(ResponseMessage.WRONG_HABIT_SESSION);
         }
-        HabitSessionFollower habitSessionFollower = habitSessionFollowerRepository.findByHabitSessionIdAndFollower_Id(sessionId,user.getId()).orElseThrow();
+        HabitSessionFollower habitSessionFollower = habitSessionFollowerRepository.findByHabitSession_IdAndFollowerId(sessionId,user.getId()).orElseThrow(()->
+                new BusinessException(ResponseMessage.WRONG_HABIT_SESSION_FOLLOWER));
         // 영상 업로드
         String videoUrl = s3Uploader.upload(file,"images/habit-sessions");
         // 유저의 세션 완료 처리
@@ -117,12 +128,12 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     @Override
     @Transactional
     public HabitSessionMvpVotePostResponseDto voteMvp(Long sessionId, User user, HabitSessionMvpVotePostRequestDto habitSessionMvpVotePostRequestDto) {
-        HabitSessionFollower mySession = habitSessionFollowerRepository.findByHabitSessionIdAndFollower_Id(sessionId,user.getId()).orElseThrow();
+        HabitSessionFollower mySession = habitSessionFollowerRepository.findByHabitSession_IdAndFollowerId(sessionId,user.getId()).orElseThrow(()->
+                new BusinessException(ResponseMessage.WRONG_HABIT_SESSION_FOLLOWER));
         if (!habitSessionFollowerRepository.existsByFollowerIdAndHabitSessionId(
                 habitSessionMvpVotePostRequestDto.getMvpVote(),sessionId)){
             throw new BusinessException(ResponseMessage.WRONG_HABIT_SESSION_VOTE);
         }
-
         mySession.voteMvp(habitSessionMvpVotePostRequestDto.getMvpVote());
 
         return new HabitSessionMvpVotePostResponseDto(habitSessionMvpVotePostRequestDto.getMvpVote());
@@ -131,10 +142,6 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     // 투표 결과 보여주기
     @Override
     public List<HabitSessionMvpGetResponseDto> showMvp(Long sessionId, User user) {
-        if (userMvpRepository.findByHabitSessionId(sessionId).isEmpty()){
-            // 에러 처리??
-        }
-
         List<UserMvp> mvps = userMvpRepository.findByHabitSessionId(sessionId);
         List<HabitSessionMvpGetResponseDto> habitSessionMvpGetResponseDto = new ArrayList<>();
         mvps.forEach(mvp->{ habitSessionMvpGetResponseDto.add(
@@ -144,11 +151,12 @@ public class HabitSessionServiceImpl implements HabitSessionService {
 
     // 습관 회고 쓰기
     @Override
+    @Transactional
     public HabitSessionReviewPostResponseDto writeReview(Long sessionId, HabitSessionReviewPostRequestDto requestDto, User user) {
         if (habitSessionRepository.findById(sessionId).isEmpty()){
             throw new BusinessException(ResponseMessage.WRONG_HABIT_SESSION);
         }
-        HabitSessionFollower habitSessionFollower = habitSessionFollowerRepository.findByHabitSessionIdAndFollower_Id(sessionId,user.getId()).orElseThrow(
+        HabitSessionFollower habitSessionFollower = habitSessionFollowerRepository.findByHabitSession_IdAndFollowerId(sessionId,user.getId()).orElseThrow(
                 ()-> new BusinessException(ResponseMessage.WRONG_HABIT_SESSION_FOLLOWER)
         );
         habitSessionFollower.writeReview(requestDto.getStarRate(), requestDto.getEmotion());

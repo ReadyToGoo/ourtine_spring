@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HabitFollowerResponseDto {
-    Long habitId;
-    Long userId;
+    private Long habitId;
+    private Long userId;
 }

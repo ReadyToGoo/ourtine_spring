@@ -14,15 +14,15 @@ import javax.persistence.Enumerated;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HabitSearchCategoryGetResponse {
-    Long id;
+    private Long id;
 
-    String title;
+    private String title;
 
     @Enumerated(value = EnumType.STRING)
-    CategoryList category;
-    String hostName;
+    private CategoryList category;
+    private String hostName;
 
-    String imageUrl;
+    private String imageUrl;
 
     public HabitSearchCategoryGetResponse(Habit habit, Category category){
         this.id = habit.getId();

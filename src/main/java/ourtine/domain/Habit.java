@@ -10,7 +10,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ourtine.domain.mapping.HabitDays;
 import ourtine.domain.mapping.HabitFollowers;
+import software.amazon.ion.Decimal;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -53,16 +55,25 @@ public class Habit extends BaseEntity {
     @Column(nullable = false)
     private Long followerLimit;
 
-   // 습관 시작 시간
     @Column(nullable = false)
     private LocalTime startTime;
+
     @Column(nullable = false)
     private LocalTime endTime;
 
     @Column(nullable = false)
     private LocalDate startDate;
+
     @Column(nullable = false)
     private LocalDate endDate;
+
+    @Column(nullable = false)
+    @ColumnDefault("0")
+    private Integer participateRate ;
+
+    @Column(nullable = false)
+    @ColumnDefault("0.0")
+    private BigDecimal starRate;
 
     // 공개/비공개 여부
     @Column(nullable = false)
@@ -101,4 +112,8 @@ public class Habit extends BaseEntity {
     public void setStatus(Status status) {
         this.status = status;
     }
+
+    public void updateParticipateRate(Integer participateRate){this.participateRate = participateRate;}
+
+    public void updateStarRate(Decimal starRate){this.starRate=starRate;}
 }

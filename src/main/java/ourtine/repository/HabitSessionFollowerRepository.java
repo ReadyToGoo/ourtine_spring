@@ -16,11 +16,16 @@ import java.util.Optional;
 @Repository
 public interface HabitSessionFollowerRepository extends JpaRepository<HabitSessionFollower,Long> {
 
+
+
     // 팔로워의 습관 세션 입장 여부
-    boolean existsByFollowerIdAndHabitSessionId (Long userId, Long habitSessionId);
+    boolean existsByFollowerIdAndHabitSessionHabitId (Long follower_id, Long habitSession_habit_id);
+
+    // 팔로워의 습관 세션 입장 여부
+    boolean existsByFollowerIdAndHabitSessionId (Long follower_id, Long habitSession_id);
 
     // 입장한 팔로워의 습관 세션 정보
-    Optional<HabitSessionFollower> findByHabitSessionIdAndFollower_Id (Long habitSessionId, Long user);
+    Optional<HabitSessionFollower> findByHabitSession_IdAndFollowerId (Long habitSessionId, Long user);
 
     // 습관 세션의 팔로워 정보
     Slice<HabitSessionFollower> findByHabitSession_Id(Long habitSessionId);
@@ -53,13 +58,13 @@ public interface HabitSessionFollowerRepository extends JpaRepository<HabitSessi
     // 유저가 참여한 습관 세션의 만족도
     @Query("select hsf.starRate from HabitSessionFollower hsf " +
             "where hsf.follower = :user " +
-            "and hsf.habitSession.habit = :habitId " +
+            "and hsf.habitSession.habit.id = :habitId " +
             "and hsf.habitSession.id in :sessionIds" )
     List<Long> queryGetStarRate (User user, Long habitId, List<Long> sessionIds);
 
     // 습관 아이디로 삭제
     @Transactional
-    void deleteByHabitSession_Habit(Habit habit);
+    void deleteByHabitSession_Habit_Id(Long habitId);
 
     //  내 참여율 - 유저가 참여한 종료된 습관 세션 수 조회
     @Query("select count (hsf) from HabitSessionFollower hsf " +

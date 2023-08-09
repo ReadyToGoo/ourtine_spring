@@ -1,5 +1,7 @@
 package ourtine.web.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -14,5 +16,5 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class FollowPostRequestDto {
     @NotNull(message = "유저 입력은 필수입니다.")
-    Long userId;
+    private Long userId;
 }

@@ -5,9 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
-public class HabitDeleteResponseDto {
-    private Long habitId;
-    private Long userId;
+@AllArgsConstructor
+public class HabitSessionIdGetResponseDto {
+    private Long sessionId;
 }

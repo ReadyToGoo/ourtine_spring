@@ -61,7 +61,8 @@ public class OurtineScheduler {
         }
     }
 
-    @Scheduled(cron = "0 * * * * *")
+    // 매일 자정에 시작
+    @Scheduled(cron = "0 0 0 * * *")
     public void startSessionJob() {
         JobParameters jobParameters = new JobParametersBuilder().addString(
                 "sessionJob", LocalDateTime.now().toString()).toJobParameters();

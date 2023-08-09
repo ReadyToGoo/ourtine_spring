@@ -67,7 +67,7 @@ public class HabitTestController {
 
     // 내 프로필 - 위클리 로그
     @GetMapping(value = "/{my_id}/me/weekly-log")
-    @ApiOperation(value = "습관 프로필", notes = "이번주에 내가 진행했던 습관 기록들에 대해 조회한다.")
+    @ApiOperation(value = "마이 페이지", notes = "이번주에 내가 진행했던 습관 기록들에 대해 조회한다.")
     public BaseResponseDto<List<HabitWeeklyLogGetResponseDto>> getMyWeeklyLog(@PathVariable Long my_id){
         User user = userRepository.findById(my_id).orElseThrow();
         return new BaseResponseDto<>(habitService.getMyWeeklyLog(user));

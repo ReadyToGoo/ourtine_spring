@@ -55,6 +55,7 @@ public class UserController {
     }
 
     @GetMapping("user/{myId}/myPage")
+    @ApiOperation(value = "마이페이지 조회", notes = "마이페이지를 조회한다.")
     public BaseResponseDto<MyPageResponseDto> getMyPage(@PathVariable Long myId) {
         User me = userService.findById(myId);
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id"));

@@ -39,12 +39,12 @@ public class HabitSessionTasklet implements Tasklet, StepExecutionListener {
 
     @Override
     public void beforeStep(StepExecution stepExecution) {
-        Day day  = dayConverter.curDayOfWeek();
+        Day dayOfWeek  = dayConverter.curDayOfWeek();
         LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
         LocalTime startTime = LocalTime.of(23,59,59);
         
         // 오늘 진행되는 습관들을 조회한다.
-        habits = habitDaysRepository.queryFindHabitsByStartTime(startTime,day);
+        habits = habitDaysRepository.queryFindHabitsByStartTime(startTime,dayOfWeek);
 
         // 내일의, 시작 시간이 오전 12시 10분까지의 습관을 찾는다.
         habitsTomorrow = habitDaysRepository.queryFindHabitsByStartTime(LocalTime.of(0,10),

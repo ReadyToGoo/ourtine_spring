@@ -49,6 +49,7 @@ public class FollowServiceImpl implements FollowService {
         }
         else {
             Follow follow = Follow.builder().sender(me).receiver(receiver).build();
+
             followRepository.save(follow);
         }
         return new FollowPostResponseDto(requestDto.getUserId());

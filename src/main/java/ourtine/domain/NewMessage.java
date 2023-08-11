@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 import ourtine.domain.enums.MessageType;
 
 @Entity
-
+@NoArgsConstructor
+@DiscriminatorValue("New")
 public class NewMessage extends Message {
     @Builder
     public NewMessage(MessageType messageType, User sender, User receiver, String contents){

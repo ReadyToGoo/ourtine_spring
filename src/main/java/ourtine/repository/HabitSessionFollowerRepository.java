@@ -20,7 +20,6 @@ import java.util.Optional;
 public interface HabitSessionFollowerRepository extends JpaRepository<HabitSessionFollower,Long> {
 
 
-
     // 팔로워의 습관 세션 입장 여부
     boolean existsByFollowerIdAndHabitSessionHabitId (Long follower_id, Long habitSession_habit_id);
 
@@ -41,15 +40,6 @@ public interface HabitSessionFollowerRepository extends JpaRepository<HabitSessi
     // 습관에 대한 유저의 회고
     Slice<HabitSessionFollower> findByFollowerIdAndHabitSessionHabitId (Long userId, Long habitId);
 
-    // 입장한 팔로워의 습관 세션 완료 여부
-    @Query("select case " +
-            "when count(hsf)>0 then hsf.habitFollowerStatus " + // 입장 기록 있으면 완료 여부 반환
-            "else 'NOT_ENTERED' END " +                            // 없으면 완료 NOT_ENTERED
-            "from HabitSessionFollower hsf " +
-            "where hsf.follower.id = :userId " +
-            "and hsf.habitSession.habit.id =:habitId " +
-            "and hsf.createdAt = hsf.habitSession.date ")
-    HabitFollowerStatus queryGetHabitSessionFollowerCompleteStatus (Long userId, Long habitId);
 
     // 유저가 참여한 습관 세션의 횟수
     @Query("select count (hsf) from HabitSessionFollower hsf " +
@@ -60,10 +50,9 @@ public interface HabitSessionFollowerRepository extends JpaRepository<HabitSessi
 
     // 유저가 참여한 습관 세션의 만족도
     @Query("select hsf.starRate from HabitSessionFollower hsf " +
-            "where hsf.follower = :user " +
-            "and hsf.habitSession.habit.id = :habitId " +
-            "and hsf.habitSession.id in :sessionIds" )
-    List<Long> queryGetStarRate (User user, Long habitId, List<Long> sessionIds);
+            "where hsf.starRate != null " +
+            "and hsf.habitSession.habit.id = :habitId " )
+    List<Integer> queryGetStarRate (Long habitId);
 
     // 습관 아이디로 삭제
     @Transactional

@@ -19,19 +19,23 @@ public interface HabitSessionRepository extends JpaRepository<HabitSession,Long>
 
     Optional<HabitSession> findByHabit_Id(Long habitId);
 
-    // 현재 진행중인 습관 아이디 조회
+    // 현재 투표중인 습관 아이디 조회
     @Query("select hs from HabitSession hs " +
             "where hs.date = CURDATE() "+
             "and hs.habit.endTime = :time "+
             "and hs.status = 'ACTIVE'")
     List<HabitSession> queryFindActiveSession(LocalTime time);
 
-
     // 습관 아이디로 오늘 진행되는 습관 세션 조회
     @Query("select hs from HabitSession hs " +
             "where hs.habit.id = :habitId " +
             "and hs.date = CURDATE()")
     Optional<HabitSession> queryFindTodaySessionByHabitId(Long habitId);
+
+    // 날짜로 습관 조회
+    @Query("select hs.habit from HabitSession hs " +
+            "where hs.date = :date")
+    List<Habit> queryFindSessionsByDate(Date date);
 
     // 참여율 - 습관 아이디로 종료된 습관 세션 조회
     @Query("select hs.id from HabitSession hs " +

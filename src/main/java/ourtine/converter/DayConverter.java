@@ -35,11 +35,9 @@ public class DayConverter{
     }
     // 이번주 월요일 날짜 구하기
     public LocalDateTime getCurMonday(){
-
         Calendar c = Calendar.getInstance();
         c.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
         return c.getTime().toInstant().atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime();
-
     }
 
 

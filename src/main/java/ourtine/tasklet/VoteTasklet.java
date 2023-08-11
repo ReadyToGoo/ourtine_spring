@@ -44,16 +44,19 @@ public class VoteTasklet implements Tasklet, StepExecutionListener {
         this.habitSessionFollowerRepository = habitSessionFollowerRepository;
         this.userRepository = userRepository;
     }
+
     @Override
     public void beforeStep(StepExecution stepExecution) {
-        LocalTime time = LocalTime.now(ZoneId.of("Asia/Seoul")).minusMinutes(1);
-        sessions = habitSessionRepository.queryFindActiveSession(time);
+
     }
 
     // 습관 시간 종료 후 투표 집계
     @Override
     @Transactional
-    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext)  {
+        LocalTime time = LocalTime.now(ZoneId.of("Asia/Seoul")).minusMinutes(1);
+        sessions = habitSessionRepository.queryFindActiveSession(time);
+        log.info("사이즈:{}",sessions.size());
         // 투표 진행
         if (!sessions.isEmpty()) {
             sessions.forEach(session -> {
@@ -102,7 +105,7 @@ public class VoteTasklet implements Tasklet, StepExecutionListener {
                 // 유저 참여도 업데이트
                 List<User> followers = habitFollowersRepository.queryFindHabitFollowerIds(session.getHabit());
                 for(User follower : followers){
-                    follower.updateParticipationRate(calculatorClass.myParticipateRate(follower,habitSessionRepository,habitSessionFollowerRepository,habitFollowersRepository));
+                    follower.updateParticipationRate(calculatorClass.myParticipationRate(follower,habitSessionRepository,habitSessionFollowerRepository,habitFollowersRepository));
                 }
                 // 습관 참여도 업데이트
                 session.getHabit().updateParticipateRate(calculatorClass.habitParticipateRate(session.getHabit().getId(),

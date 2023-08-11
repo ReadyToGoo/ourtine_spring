@@ -49,7 +49,7 @@ public class HabitServiceImpl implements HabitService {
     private final HashtagRepository hashtagRepository;
     private final HabitHashtagRepository habitHashtagRepository;
     private final S3Uploader s3Uploader;
-    private final MessageRepository messageRepository;
+    private final NewMessageRepository newMessageRepository;
     private final DayConverter dayConverter;
     private final UserMvpRepository userMvpRepository;
     private final UserRepository userRepository;
@@ -417,9 +417,9 @@ public class HabitServiceImpl implements HabitService {
         friends.forEach(friend ->{
             User receiver = userRepository.findById(friend).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_USER));
                 if (followRepository.findBySenderIdAndReceiverId(me.getId(),friend).isPresent()) {
-                    Message invitation = NewMessage.builder().messageType(MessageType.HABIT_INVITE)
+                    NewMessage invitation = NewMessage.builder().messageType(MessageType.HABIT_INVITE)
                             .sender(me).receiver(receiver).contents(requestDto.getHabitId().toString()).build();
-                    messageRepository.save(invitation);
+                    newMessageRepository.save(invitation);
                 }
         }
         );

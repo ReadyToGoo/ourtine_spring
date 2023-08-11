@@ -4,7 +4,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import ourtine.converter.MessageContentsConverter;
+import ourtine.domain.NewMessage;
 import ourtine.domain.User;
+import ourtine.domain.enums.MessageType;
+import ourtine.service.MessageService;
+import ourtine.service.UserService;
 import ourtine.web.dto.common.BaseResponseDto;
 import ourtine.web.dto.common.SliceResponseDto;
 import ourtine.service.impl.FollowServiceImpl;
@@ -17,11 +22,18 @@ import ourtine.web.dto.response.*;
 @RequestMapping("/follow")
 public class FollowController {
     private final FollowServiceImpl followService;
+    private final MessageService messageService;
+    private final UserService userService;
+    private final MessageContentsConverter messageContentsConverter;
 
-    @PostMapping
+    @PostMapping("/{userId}")
     @ApiOperation(value = "유저 팔로우", notes = "특정 유저를 팔로우 한다.")
-    public BaseResponseDto<FollowPostResponseDto> followUser(@RequestBody FollowPostRequestDto requestDto, User user){
-        return new BaseResponseDto<>(followService.followUser(requestDto,user));
+    public BaseResponseDto<FollowPostResponseDto> followUser(@RequestBody FollowPostRequestDto requestDto/*, User user*/,@PathVariable Long userId){
+        User user = userService.findById(userId);
+        FollowPostResponseDto followPostResponseDto = followService.followUser(requestDto, user);
+        User receiver = userService.findById(requestDto.getUserId());
+        messageService.createNewMessage(new NewMessage(MessageType.FOLLOW, user, receiver, messageContentsConverter.createContents(user)));
+        return new BaseResponseDto<>(followPostResponseDto);
     }
     @DeleteMapping
     @ApiOperation(value = "유저 언팔로우", notes = "특정 유저를 언팔로우 한다.")

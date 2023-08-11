@@ -4,14 +4,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import ourtine.domain.enums.AuthProvider;
 import ourtine.domain.User;
 
 import java.util.Optional;
 
-@Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByNickname(String nickname);
+    //    Optional<User> findByNickname(String nickname);
+    Optional<User> findById(Long id);
 
     boolean existsByNickname(String nickname);
 
@@ -21,4 +21,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "and u.nickname like concat('%', :nickname, '%') " +
             "order by u.createdAt desc " )
     Slice<User> querySearchByNickname(Long userId, String nickname, Pageable pageable);
+
+    Optional<User> findByAuthProviderAndProviderId(AuthProvider authProvider, Long providerId);
+
+
+
 }

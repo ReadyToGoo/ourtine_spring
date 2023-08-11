@@ -1,13 +1,11 @@
 package ourtine.repository;
 
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.Habit;
 import ourtine.domain.HabitSession;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ourtine.domain.User;
 
 import java.time.LocalTime;
 import java.util.Date;

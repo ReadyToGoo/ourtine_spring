@@ -4,11 +4,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ourtine.domain.Category;
 import ourtine.domain.HabitSession;
 import ourtine.domain.User;
 import ourtine.domain.common.BaseEntity;
-import ourtine.domain.enums.Status;
 
 import javax.persistence.*;
 

@@ -1,7 +1,6 @@
 package ourtine.domain.mapping;
 
 import lombok.AccessLevel;
-import org.hibernate.annotations.ColumnDefault;
 import ourtine.domain.HabitSession;
 import ourtine.domain.User;
 import ourtine.domain.common.BaseEntity;

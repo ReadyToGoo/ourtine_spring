@@ -10,6 +10,8 @@ import ourtine.aws.s3.UploadService;
 import ourtine.domain.Habit;
 import ourtine.domain.User;
 import ourtine.domain.enums.CategoryList;
+import ourtine.service.MessageService;
+import ourtine.service.UserService;
 import ourtine.web.dto.common.BaseResponseDto;
 import ourtine.web.dto.common.SliceResponseDto;
 import ourtine.domain.enums.Sort;
@@ -29,7 +31,10 @@ import java.util.List;
 public class HabitController {
 
     private final HabitServiceImpl habitService;
+    private final UserService userService;
     private final UploadService uploadService;
+    private final MessageService messageService;
+
 
     // 습관 개설
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -136,9 +141,12 @@ public class HabitController {
     }
 
     // 습관 초대
-    @PostMapping("/invite")
+    @PostMapping("/invite/{userId}")
     @ApiOperation(value = "습관 개설 - 습관 초대", notes = "유저들에게 습관 초대장을 보낸다.")
-    public BaseResponseDto<HabitInvitationPostResponseDto> sendInvitation (@RequestBody HabitInvitationPostRequestDto requestDto, User user){
+    public BaseResponseDto<HabitInvitationPostResponseDto> sendInvitation (@RequestBody HabitInvitationPostRequestDto requestDto/*, User user*/,@PathVariable Long userId){
+        User user = userService.findById(userId);
+        Habit habit = habitService.findById(requestDto.getHabitId());
+        messageService.newHabitInviteMessage(user, requestDto.getFriends(), habit);
         return new BaseResponseDto<>(habitService.sendInvitation(user,requestDto));
     }
 

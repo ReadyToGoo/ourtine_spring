@@ -24,15 +24,13 @@ public class FollowController {
     private final FollowServiceImpl followService;
     private final MessageService messageService;
     private final UserService userService;
-    private final MessageContentsConverter messageContentsConverter;
 
-    @PostMapping("/{userId}")
+    @PostMapping
     @ApiOperation(value = "유저 팔로우", notes = "특정 유저를 팔로우 한다.")
-    public BaseResponseDto<FollowPostResponseDto> followUser(@RequestBody FollowPostRequestDto requestDto/*, User user*/,@PathVariable Long userId){
-        User user = userService.findById(userId);
+    public BaseResponseDto<FollowPostResponseDto> followUser(@RequestBody FollowPostRequestDto requestDto, User user){
         FollowPostResponseDto followPostResponseDto = followService.followUser(requestDto, user);
         User receiver = userService.findById(requestDto.getUserId());
-        messageService.createNewMessage(new NewMessage(MessageType.FOLLOW, user, receiver, messageContentsConverter.createContents(user)));
+        messageService.newFollowMessage(user, receiver);
         return new BaseResponseDto<>(followPostResponseDto);
     }
     @DeleteMapping

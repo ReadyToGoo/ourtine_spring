@@ -6,9 +6,13 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ourtine.converter.IdListToUserListConverter;
+import ourtine.converter.MessageContentsConverter;
+import ourtine.domain.Habit;
 import ourtine.domain.NewMessage;
 import ourtine.domain.OldMessage;
 import ourtine.domain.User;
+import ourtine.domain.enums.MessageType;
 import ourtine.repository.NewMessageRepository;
 import ourtine.repository.OldMessageRepository;
 import ourtine.service.MessageService;
@@ -24,6 +28,9 @@ public class MessageServiceImpl implements MessageService {
 
     private final NewMessageRepository newMessageRepository;
     private final OldMessageRepository oldMessageRepository;
+    private final MessageContentsConverter messageContentsConverter;
+    private final IdListToUserListConverter idListToUserListConverter;
+
     private static final Long messageCount = 30L;
 
     @Override
@@ -50,4 +57,17 @@ public class MessageServiceImpl implements MessageService {
         return new SliceImpl<>(messageResponseDtoList, newMessages.getPageable(), newMessages.hasNext());
     }
 
+
+    @Override
+    public void newFollowMessage(User sender, User receiver) {
+        createNewMessage(new NewMessage(MessageType.FOLLOW, sender, receiver, messageContentsConverter.createContents(sender)));
+    }
+
+    @Override
+    public void newHabitInviteMessage(User sender, List<Long> receiverIds, Habit habit) {
+        List<User> userList = idListToUserListConverter.idToUser(receiverIds);
+        for (User receiver : userList) {
+            createNewMessage(new NewMessage(MessageType.HABIT_INVITE, sender, receiver, messageContentsConverter.createContents(sender, habit)));
+        }
+    }
 }

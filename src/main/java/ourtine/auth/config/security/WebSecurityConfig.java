@@ -32,7 +32,8 @@ public class WebSecurityConfig {
             "/swagger-resources",
             "/**swagger**/**",
             "/swagger-resources/**",
-            "/csrf/**"
+            "/csrf/**",
+            "/health"
     };
 
 

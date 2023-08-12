@@ -3,7 +3,6 @@ package ourtine.domain.mapping;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import ourtine.domain.Category;
 import ourtine.domain.User;
 import ourtine.domain.enums.Status;

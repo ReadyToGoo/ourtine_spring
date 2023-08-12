@@ -26,10 +26,10 @@ import java.util.List;
 @AllArgsConstructor
 @ApiModel
 public class HabitCreatePostRequestDto {
-        @NotBlank(message = "습관명을 입력해주세요")
+        @NotBlank(message = "습관명을 입력해주세요.")
         private String title; // 제목
 
-        @NotBlank
+        @NotBlank(message = "습관명을 입력해주세요.")
         private String detail;
 
         @NotNull

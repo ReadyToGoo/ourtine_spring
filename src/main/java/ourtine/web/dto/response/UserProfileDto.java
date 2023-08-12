@@ -2,6 +2,7 @@ package ourtine.web.dto.response;
 
 import lombok.Getter;
 import ourtine.domain.User;
+
 import java.util.List;
 
 @Getter

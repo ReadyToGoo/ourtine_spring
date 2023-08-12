@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ourtine.domain.Category;
 import ourtine.domain.Habit;
-import ourtine.domain.User;
 import ourtine.domain.enums.CategoryList;
 import ourtine.domain.enums.Day;
 

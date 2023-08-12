@@ -71,7 +71,7 @@ public class Habit extends BaseEntity {
     @ColumnDefault("0")
     private Integer participateRate ;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision =2, scale = 1)
     @ColumnDefault("0.0")
     private BigDecimal starRate;
 

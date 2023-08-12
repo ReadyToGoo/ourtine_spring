@@ -21,4 +21,5 @@ public interface MessageService {
     public void newFollowMessage(User sender, User receiver);
 
     public void newHabitInviteMessage(User sender, List<Long> receiverIds, Habit habit);
+
 }

@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ourtine.domain.User;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 

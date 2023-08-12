@@ -70,4 +70,5 @@ public class MessageServiceImpl implements MessageService {
             createNewMessage(new NewMessage(MessageType.HABIT_INVITE, sender, receiver, messageContentsConverter.createContents(sender, habit)));
         }
     }
+
 }

@@ -38,6 +38,9 @@ public class OurtineScheduler {
     @Autowired
     @Qualifier("VOTE_JOB")
     private Job VoteJob;
+    @Autowired
+    @Qualifier("STARRATE_JOB")
+    private Job StarRateJob;
 
     @Scheduled(cron = "0 * * * * *")
     public void startVoteJob() {
@@ -61,18 +64,31 @@ public class OurtineScheduler {
         }
     }
 
-    // 매일 자정에 시작
+    // 매일 자정에 실행
     @Scheduled(cron = "0 0 0 * * *")
     public void startSessionJob() {
         JobParameters jobParameters = new JobParametersBuilder().addString(
                 "sessionJob", LocalDateTime.now().toString()).toJobParameters();
         try {
             jobLauncher.run(HabitSessionJob,jobParameters);
+
         } catch (JobExecutionException ex) {
             System.out.println(ex.getMessage());
             ex.printStackTrace();
         }
     }
 
+    // 매일 자정에 실행
+    @Scheduled(cron = "0 0 0 * * *")
+    public void startStarRateJob() {
+        JobParameters jobParameters = new JobParametersBuilder().addString(
+                "starRateJob", LocalDateTime.now().toString()).toJobParameters();
+        try {
+            jobLauncher.run(StarRateJob,jobParameters);
+        } catch (JobExecutionException ex) {
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
 
 }

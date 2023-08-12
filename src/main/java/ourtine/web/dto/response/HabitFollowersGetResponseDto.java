@@ -13,8 +13,6 @@ import lombok.NoArgsConstructor;
 public class HabitFollowersGetResponseDto {
     private Long id;
 
-    private Boolean isHost;
-
     private String nickname;
 
     private String imageUrl;

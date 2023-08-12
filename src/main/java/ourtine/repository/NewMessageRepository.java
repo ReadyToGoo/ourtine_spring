@@ -7,8 +7,6 @@ import org.springframework.stereotype.Repository;
 import ourtine.domain.NewMessage;
 import ourtine.domain.User;
 
-import java.util.List;
-
 @Repository
 public interface NewMessageRepository extends JpaRepository<NewMessage, Long> {
 

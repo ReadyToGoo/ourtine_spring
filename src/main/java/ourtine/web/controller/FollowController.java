@@ -31,6 +31,7 @@ public class FollowController {
         FollowPostResponseDto followPostResponseDto = followService.followUser(requestDto, user);
         User receiver = userService.findById(requestDto.getUserId());
         messageService.newFollowMessage(user, receiver);
+
         return new BaseResponseDto<>(followPostResponseDto);
     }
     @DeleteMapping

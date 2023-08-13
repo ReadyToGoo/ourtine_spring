@@ -32,7 +32,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static ourtine.exception.enums.ResponseMessage.WRONG_HABIT_DELETE;
 
@@ -393,7 +392,7 @@ public class HabitServiceImpl implements HabitService {
         }
         else
         {
-            habitFollowersRepository.queryDeleteFollowerById(habitId, user);
+            habitFollowersRepository.deleteByFollowerAndHabit_Id(user, habitId);
         }
         return new HabitFollowerResponseDto(habitId,user.getId());
     }

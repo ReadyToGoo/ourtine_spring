@@ -71,15 +71,13 @@ public class VoteTasklet implements Tasklet, StepExecutionListener {
                         userMvpRepository.save(userMvp);
                     }
                     else {
-                        long[] voteNum = new long[followers.size()]; // 유저마다 득표 수 저장
                         HashMap<Long, Long> resultMap = new HashMap<>(); // ( 유저 아이디, 득표 수)
                         long result = 0L; // 최다 득표수
-
                         for (int i = 0; i < followers.size(); i++) {
-                            voteNum[i] = Collections.frequency(votes, followers.get(i).getId());
-                            resultMap.put(followers.get(i).getId(), voteNum[i]);
-                            if (result <= voteNum[i]) {
-                                result = voteNum[i];
+                            long voteNum = Collections.frequency(votes, followers.get(i).getId());
+                            resultMap.put(followers.get(i).getId(), voteNum);
+                            if (result <= voteNum) {
+                                result = voteNum;
                             }
                         }
                             for (User follower : followers) {

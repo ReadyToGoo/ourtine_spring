@@ -73,8 +73,7 @@ public final class CalculatorClass {
             int starRateSum = 0;
             List<Integer> starRates = habitSessionFollowerRepository.queryGetStarRate(habitId);
             if (!starRates.isEmpty())
-            {
-                for (Integer s : starRates) {
+            {for (Integer s : starRates) {
                     starRateSum += s;}
                 // 소수점 첫째 자리까지 출력
                 starRate =  (double) Math.round((float) starRateSum / starRates.size() * 10) / 10;

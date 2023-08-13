@@ -17,6 +17,7 @@ import ourtine.domain.UserDetailsImpl;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -39,15 +40,10 @@ public class OAuth2Controller {
         return oAuth2Service.appleLoginPageRedirect();
     }
 
-    /**
-     * 카카오 로그인 진행 ( 인가코드를 통한 Access_Token, Access_Token을 통한 유저 정보 -> 우리 서비스의 토큰으로 만들어 보내줌
-     * @param code : 사용자 카카오 로그인 시, 카카오 서버에서 발급해준 인증 코드
-     * @param response : HttpServletResponse로 보내줄 데이터
-     * @throws JsonProcessingException
-     */
+
     @GetMapping("/api/auth/kakao/callback")
     @ResponseBody
-    public void kakaoCallback(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+    public void kakaoCallback(@RequestParam String code, HttpServletResponse response) throws IOException {
         String token = oAuth2Service.kakaoLogin(code);
         // 시큐리티 필터 단에서 해주는 것? -> Filter로 이관해도 될듯 -> ㄴㄴ 컨트롤러에서 해주면 되는거였음.
         // JWTAuthenticationFilter implements UsernamepasswordAuthenticaitonFilter 를 사용하지 않아도 된다
@@ -59,6 +55,11 @@ public class OAuth2Controller {
         Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token);
         cookie.setPath("/");
         response.addCookie(cookie);
+        response.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.print("<html><head><title>Query 문자열 테스트</title></head>");
+        out.print("<body>");
+        out.print("<h1>임시 회원 가입 완료 및 토큰 발급</h1>");
     }
 
     @GetMapping("/api/auth/apple/callback")

@@ -41,7 +41,7 @@ public class KakaoService{
         this.restTemplate = restTemplate;
         this.jwtUtil = jwtUtil;
         clientId = "ab8915a9cb5583de48b6e54e901b247f";
-        redirectURI = "https://localhost:8080/api/auth/kakao/callback";
+        redirectURI = "http://localhost:8080/api/auth/kakao/callback";
     }
 
 //    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")

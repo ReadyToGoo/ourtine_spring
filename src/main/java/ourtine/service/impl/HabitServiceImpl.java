@@ -32,6 +32,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static ourtine.exception.enums.ResponseMessage.WRONG_HABIT_DELETE;
 
@@ -291,8 +292,7 @@ public class HabitServiceImpl implements HabitService {
     public Slice<HabitRecommendResponseDto> getRecommendHabits(User user, Pageable pageable) {
         Slice<Habit> habits = habitRepository.queryGetRecommendHabits(user.getId(),pageable);
         Slice<HabitRecommendResponseDto> result = habits.map(habit ->
-                new HabitRecommendResponseDto(habit,categoryRepository.findById(habit.getCategoryId()).get(),
-                        habitDaysRepository.findDaysByHabit(habit)));
+                new HabitRecommendResponseDto(habit,categoryRepository.findById(habit.getCategoryId()).get()));
         return result;
     }
     // 습관 참여하기
@@ -377,7 +377,7 @@ public class HabitServiceImpl implements HabitService {
         Slice<Habit> habits = habitRepository.querySearchHabitByCategory(user.getId(), category.getId(), pageable);
 
         return habits.map(habit ->
-             new HabitFindByCategoryGetResponseDto(habit, category,habitDaysRepository.findDaysByHabit(habit)));
+             new HabitFindByCategoryGetResponseDto(habit, category));
     }
 
     // 습관 참여 취소 하기

@@ -56,7 +56,6 @@ public class VoteTasklet implements Tasklet, StepExecutionListener {
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext)  {
         LocalTime time = LocalTime.now(ZoneId.of("Asia/Seoul")).minusMinutes(1);
         sessions = habitSessionRepository.queryFindActiveSession(time);
-        log.info("사이즈:{}",sessions.size());
         // 투표 진행
         if (!sessions.isEmpty()) {
             sessions.forEach(session -> {

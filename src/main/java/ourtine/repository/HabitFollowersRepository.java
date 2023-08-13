@@ -83,19 +83,11 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
             "order by hf.habit.id asc")
     Slice<Habit> queryFindOtherHabitsByUserId(Long userId, User me, Pageable pageable);
 
-    // 습관의 모집 여부 조회
-    @Query("select case " +
-            "when hf.habit.followerLimit-hf.habit.followerCount > 0 then true " +
-            "else false end " +
-            "from HabitFollowers hf " +
-            "where hf.habit.id = :habitId")
-    boolean queryGetHabitRecruitingStatus(Long habitId);
 
     // 습관 유저 삭제
     @Modifying
     @Transactional
-    @Query("delete from HabitFollowers where follower = :user and habit.id = :habitId ")
-    void queryDeleteFollowerById (Long habitId, User user);
+    void deleteByFollowerAndHabit_Id (User follower, Long habit_id);
 
     // 습관 아이디로 삭제
     @Transactional

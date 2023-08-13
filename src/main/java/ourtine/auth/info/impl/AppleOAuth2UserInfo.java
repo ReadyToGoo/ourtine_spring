@@ -2,7 +2,7 @@ package ourtine.auth.info.impl;
 
 
 import ourtine.auth.info.OAuth2UserInfo;
-import ourtine.domain.enums.AuthProvider;
+import ourtine.domain.enums.Provider;
 
 
 public class AppleOAuth2UserInfo implements OAuth2UserInfo {
@@ -19,7 +19,7 @@ public class AppleOAuth2UserInfo implements OAuth2UserInfo {
     }
 
     @Override
-    public AuthProvider getProvider() {
-        return AuthProvider.APPLE;
+    public Provider getProvider() {
+        return Provider.APPLE;
     }
 }

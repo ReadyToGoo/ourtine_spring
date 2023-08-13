@@ -29,7 +29,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         log.info("UserDetails : loadUserByUsername 호출");
         if(userOptional.isPresent()){
             User user = userOptional.get();
-            OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(user.getAuthProvider().toString(), user.getProviderId());
+            OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(user.getProvider().toString(), user.getProviderId());
             return new UserDetailsImpl(user, oAuth2UserInfo);
         } else {
             throw new UsernameNotFoundException("해당 유저 아이디가 존재하지 않습니다.");

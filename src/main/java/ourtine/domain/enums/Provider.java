@@ -3,11 +3,11 @@ package ourtine.domain.enums;
 import lombok.Getter;
 
 @Getter
-public enum AuthProvider {
+public enum Provider {
     KAKAO("kakao"),
     APPLE("apple");
     private final String provider;
-    AuthProvider(String provider) {
+    Provider(String provider) {
         this.provider = provider;
     }
 }

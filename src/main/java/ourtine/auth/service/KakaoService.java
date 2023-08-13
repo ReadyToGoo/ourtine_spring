@@ -15,7 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import ourtine.auth.info.impl.KakaoOAuth2UserInfo;
 import ourtine.auth.utils.JwtUtil;
 import ourtine.domain.User;
-import ourtine.domain.enums.AuthProvider;
+import ourtine.domain.enums.Provider;
 import ourtine.domain.enums.UserRoleEnum;
 import ourtine.domain.enums.UserStatus;
 import ourtine.repository.UserRepository;
@@ -155,14 +155,14 @@ public class KakaoService{
         // DB 에 중복된 Kakao Id 가 있는지 확인
         Long kakaoId = kakaoUserInfo.getProviderId();
 
-        User kakaoUser = userRepository.findByAuthProviderAndProviderId(AuthProvider.KAKAO, kakaoId).orElse(null);
+        User kakaoUser = userRepository.findByProviderAndProviderId(Provider.KAKAO, kakaoId).orElse(null);
 
         // 회원가입이 되어있지 않다면 -> 임시 회원가입
         if (kakaoUser == null) {
             log.info("임시 회원가입 진행");
             kakaoUser = User.builder()
                     .userRole(UserRoleEnum.USER)
-                    .authProvider(AuthProvider.KAKAO)
+                    .provider(Provider.KAKAO)
                     .providerId(kakaoUserInfo.getProviderId())  // oauthId 설정
                     .userStatus(UserStatus.SIGNUP_PROGRESS) // 임시 회원가입
                     .habitCount(0)
@@ -176,7 +176,7 @@ public class KakaoService{
                     .marketingAgreed(false)
                     .termsAgreed(false)
                     .build();
-            log.info(""+kakaoUser.getAuthProvider());
+            log.info(""+kakaoUser.getProvider());
             log.info("ID = "+kakaoUser.getId());
             userRepository.save(kakaoUser);
             log.info("ID = "+kakaoUser.getId());

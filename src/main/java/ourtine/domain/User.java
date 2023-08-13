@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import ourtine.domain.common.BaseEntity;
-import ourtine.domain.enums.AuthProvider;
+import ourtine.domain.enums.Provider;
 import ourtine.domain.enums.UserRoleEnum;
 import ourtine.domain.enums.UserStatus;
 import ourtine.domain.mapping.HabitFollowers;
@@ -35,7 +35,7 @@ public class User extends BaseEntity {
     private String goal;
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private AuthProvider authProvider;
+    private Provider provider;
     @Column(nullable = false)
     private Long providerId;
     @JsonIgnore

@@ -15,7 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import ourtine.auth.info.impl.AppleOAuth2UserInfo;
 import ourtine.auth.utils.JwtUtil;
 import ourtine.domain.User;
-import ourtine.domain.enums.AuthProvider;
+import ourtine.domain.enums.Provider;
 import ourtine.domain.enums.UserRoleEnum;
 import ourtine.domain.enums.UserStatus;
 import ourtine.repository.UserRepository;
@@ -147,13 +147,13 @@ public class AppleService{
         // DB 에 중복된 Kakao Id 가 있는지 확인
         Long appleId = appleUserInfo.getProviderId();
 
-        User appleUser = userRepository.findByAuthProviderAndProviderId(AuthProvider.APPLE, appleId).orElse(null);
+        User appleUser = userRepository.findByProviderAndProviderId(Provider.APPLE, appleId).orElse(null);
 
         // 회원가입이 되어있지 않다면 -> 임시 회원가입
         if (appleUser == null) {
             appleUser = User.builder()
                     .userRole(UserRoleEnum.USER)
-                    .authProvider(AuthProvider.APPLE)
+                    .provider(Provider.APPLE)
                     .providerId(appleUserInfo.getProviderId())
                     .userStatus(UserStatus.SIGNUP_PROGRESS) // 임시 회원가입
                     .habitCount(0)

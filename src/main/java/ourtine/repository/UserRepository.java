@@ -4,7 +4,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import ourtine.domain.enums.AuthProvider;
+import ourtine.domain.enums.Provider;
 import ourtine.domain.User;
 
 import java.util.Optional;
@@ -22,7 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "order by u.createdAt desc " )
     Slice<User> querySearchByNickname(Long userId, String nickname, Pageable pageable);
 
-    Optional<User> findByAuthProviderAndProviderId(AuthProvider authProvider, Long providerId);
+    Optional<User> findByProviderAndProviderId(Provider provider, Long providerId);
 
 
 

@@ -1,7 +1,7 @@
 package ourtine.auth.info;
 
 
-import ourtine.domain.enums.AuthProvider;
+import ourtine.domain.enums.Provider;
 
 
 /**
@@ -11,7 +11,7 @@ import ourtine.domain.enums.AuthProvider;
 public interface OAuth2UserInfo {
 //    Map<String, Object> getAttributes();
     Long getProviderId();
-    AuthProvider getProvider();
+    Provider getProvider();
 //    String getEmail();
 //    String getName();
 }

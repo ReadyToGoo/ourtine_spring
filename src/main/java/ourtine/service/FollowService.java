@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.User;
 import ourtine.web.dto.request.FollowDeleteRequestDto;
-import ourtine.web.dto.request.FollowGetRequestDto;
 import ourtine.web.dto.request.FollowPostRequestDto;
 import ourtine.web.dto.response.*;
 

@@ -30,7 +30,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -179,18 +178,17 @@ public class HabitServiceImpl implements HabitService {
         List<User> followers = habitFollowersRepository.queryFindHabitFollowers(habitId);
         List<HabitFollowersGetResponseDto> habitFollowersResult = new ArrayList<>();
         for (User follower : followers){
-            habitFollowersResult.add(new HabitFollowersGetResponseDto(follower.getId(),habitRepository.existsByHostIdAndId(user.getId(), habitId)
-                    ,follower.getNickname(),follower.getImageUrl()));
+            habitFollowersResult.add(new HabitFollowersGetResponseDto(follower.getId(),follower.getNickname(),follower.getImageUrl()));
         }
 
         // 참여하고 있으면
         if(habitFollowersRepository.findByHabitIdAndFollowerId(habitId, user.getId()).isPresent()){
-            int participateRate = calculatorClass.myHabitParticipateRate(habitId,user,habitSessionRepository,habitSessionFollowerRepository,habitFollowersRepository);
+            int participateRate = calculatorClass.myHabitParticipationRate(habitId,user,habitSessionRepository,habitSessionFollowerRepository,habitFollowersRepository);
             return new HabitGetResponseDto(true,null,new HabitFollowingGetResponseDto(habit,hashtags,category,participateRate,habitFollowersResult));
         }
         // 참여 안 하고 있으면
         else {
-            double starRate = calculatorClass.habitStarRate(habitId,followers,habitSessionRepository,habitSessionFollowerRepository,habitFollowersRepository);
+            double starRate = calculatorClass.habitStarRate(habitId,habitSessionRepository,habitSessionFollowerRepository);
             return new HabitGetResponseDto(false, new HabitNotFollowingGetResponseDto(habit, starRate,hashtags, category, habitFollowersResult,
                     habitRepository.queryGetHabitRecruitingStatus(habitId)), null);
         }

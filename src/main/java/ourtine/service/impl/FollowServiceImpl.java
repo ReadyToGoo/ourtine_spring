@@ -14,7 +14,6 @@ import ourtine.repository.FollowRepository;
 import ourtine.repository.UserRepository;
 import ourtine.service.FollowService;
 import ourtine.web.dto.request.FollowDeleteRequestDto;
-import ourtine.web.dto.request.FollowGetRequestDto;
 import ourtine.web.dto.request.FollowPostRequestDto;
 import ourtine.web.dto.response.*;
 

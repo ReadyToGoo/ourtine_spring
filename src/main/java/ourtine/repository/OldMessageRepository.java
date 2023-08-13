@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import ourtine.domain.OldMessage;
 import ourtine.domain.User;
 
+
 @Repository
 public interface OldMessageRepository extends JpaRepository<OldMessage, Long> {
 

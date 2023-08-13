@@ -1,46 +1,50 @@
 package ourtine.domain;
 
-import javax.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import ourtine.domain.common.BaseEntity;
-import ourtine.domain.enums.Provider;
-import ourtine.domain.enums.UserRole;
+import ourtine.domain.enums.AuthProvider;
+import ourtine.domain.enums.UserRoleEnum;
 import ourtine.domain.enums.UserStatus;
 import ourtine.domain.mapping.HabitFollowers;
 import ourtine.domain.mapping.UserCategory;
+
+import javax.persistence.*;
 import java.util.List;
 
 @Getter
 @Entity
-@NoArgsConstructor/*(access = AccessLevel.PROTECTED)*/
+@Builder
+//@AllArgsConstructor(access = AccessLevel.PROTECTED)
+//@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@NoArgsConstructor
 public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
     private String nickname;
-
-    @Column(nullable = false)
+    private String introduce;
     private String email;
     private String imageUrl;
+    private String goal;
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private Provider provider;
-
+    private AuthProvider authProvider;
+    @Column(nullable = false)
+    private Long providerId;
     @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<UserCategory> userCategoryList;
 
     @Enumerated(value = EnumType.STRING)
     @ColumnDefault("USER")
-    private UserRole userRole;
-
-    private String goal;
+    private UserRoleEnum userRole;
 
     @OneToMany(mappedBy = "follower")
     private List<HabitFollowers> habitFollowersList;
@@ -49,8 +53,6 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     @ColumnDefault("false")
     private boolean termsAgreed;
-
-
     // 개인 정보 수집 동의
     @Column(nullable = false)
     @ColumnDefault("false")
@@ -78,33 +80,48 @@ public class User extends BaseEntity {
     @ColumnDefault("true")
     private boolean marketingPushAlert;
 
+    private String refreshToken;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
-    @ColumnDefault("'NORMAL_ACTIVE'")
     private UserStatus userStatus;
 
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
-
     public void updateImage(String imageUrl) {
         this.imageUrl = imageUrl;
     }
-
     public void updateGoal(String goal) {
         this.goal=goal;
     }
-
     public void updateParticipationRate(Integer participationRate ){
         this.participationRate = participationRate;}
-
     public void updatePushAlert(){
         this.pushAlert = !pushAlert;
     }
-
     public void updateMarketingPushAlert(){
         this.marketingPushAlert = !marketingPushAlert;
+    }
+
+    public UserRoleEnum getRole() {
+        return userRole;
+    }
+
+    public void saveRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void signup(String nickname, List<String> favoriteCategoryList, String introduce, String goal, Boolean termsAgreed, Boolean privacyAgreed, Boolean marketingAgreed){
+        this.nickname = nickname;
+        // this.categories =  favoriteCategoryList.stream().map(Category::new).collect(Collectors.toList());
+        // -> Category Mapping Table 에 저장하는 로직 필요 ( User : Category = N : M )
+        this.introduce =introduce;
+        this.goal = goal;
+        this.termsAgreed = termsAgreed;
+        this.privacyAgreed = privacyAgreed;
+        this.marketingAgreed = marketingAgreed;
+        this.userStatus = UserStatus.NORMAL_ACTIVE;
     }
 
 }

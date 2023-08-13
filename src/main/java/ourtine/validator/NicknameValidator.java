@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import ourtine.domain.User;
 import ourtine.repository.UserRepository;
 import ourtine.web.dto.request.NicknameChangeRequestDto;
 

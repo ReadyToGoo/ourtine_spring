@@ -1,5 +1,6 @@
 package ourtine.web.controller;
 
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -20,6 +21,8 @@ public class MessageController {
     private final MessageService messageService;
 
     @GetMapping("message/{userId}")
+    @ApiOperation(value = "유저 메시지 조회", notes = "유저에게 온 메시지를 조회한다.")
+
     public BaseResponseDto<SliceResponseDto<MessageResponseDto>> getMessages(@PathVariable Long userId, Pageable pageable) {
         User user = userService.findById(userId);
         Slice<MessageResponseDto> messages = messageService.getMessages(user, pageable);

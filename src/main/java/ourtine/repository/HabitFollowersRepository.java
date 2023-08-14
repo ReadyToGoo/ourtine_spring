@@ -18,14 +18,13 @@ import java.util.Optional;
 @Repository
 public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,Long> {
 
-
     // 습관 참여 여부
     Optional<HabitFollowers> findByHabitIdAndFollowerId(Long habitId, Long userId);
 
     // 습관의 팔로워 수 조회
-    @Query("select count (hf) from HabitFollowers hf where hf.habit = :habit " +
+    @Query("select hf from HabitFollowers hf where hf.habit = :habit " +
             "and hf.status='ACTIVE'" )
-    long countHabitFollowersByHabit(Habit habit);
+    List<HabitFollowers> countHabitFollowersByHabit(Habit habit);
 
     // 습관 팔로워 정보 조회
     @Query("select hf.follower from HabitFollowers hf " +

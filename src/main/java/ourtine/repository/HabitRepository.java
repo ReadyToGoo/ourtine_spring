@@ -117,9 +117,6 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "and h.endDate = curdate()")
     List<Habit> queryFindHabitsByEndTime(LocalTime endTime);
 
-    // 호스트 여부
-    boolean existsByHostIdAndId(Long hostId, Long id);
-
     // 시간대로 조회
     @Query("select h from Habit h " +
             "where h.id = :habitId " +

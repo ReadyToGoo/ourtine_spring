@@ -418,27 +418,6 @@ public class HabitServiceImpl implements HabitService {
                         review-> new HabitDailyLogGetResponseDto(review.getHabitSession().getDate(), review.getEmotion()));
     }
 
-    // 습관 초대장
-    @Override
-    @Transactional
-    public HabitInvitationPostResponseDto sendInvitation(User me, HabitInvitationPostRequestDto requestDto){
-        Habit habit = habitRepository.findById(requestDto.getHabitId()).orElseThrow(()-> new BusinessException(WRONG_HABIT));
-        List<Long> friends = requestDto.getFriends();
-        if (friends.size()<=habit.getFollowerLimit()-1) {
-            friends.forEach(friend -> {
-                User receiver = userRepository.findById(friend).orElseThrow(() -> new BusinessException(ResponseMessage.WRONG_USER));
-                if (followRepository.findBySenderIdAndReceiverId(me.getId(), friend).isPresent()) {
-                    NewMessage invitation = NewMessage.builder().messageType(MessageType.HABIT_INVITE)
-                            .sender(me).receiver(receiver).contents(requestDto.getHabitId().toString()).build();
-                    newMessageRepository.save(invitation);
-                }
-            }
-        );}
-        // 초대한 인원 수가 습관 수용 인원보다 크다면
-        else throw new BusinessException(WRONG_HABIT_INVITE);
-        return new HabitInvitationPostResponseDto(requestDto.getHabitId());
-
-    }
 
     // 습관 삭제하기
     @Transactional

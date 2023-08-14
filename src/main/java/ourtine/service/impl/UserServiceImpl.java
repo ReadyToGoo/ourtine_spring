@@ -7,6 +7,8 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ourtine.domain.User;
+import ourtine.exception.BusinessException;
+import ourtine.exception.enums.ResponseMessage;
 import ourtine.repository.UserRepository;
 import ourtine.service.UserService;
 import ourtine.web.dto.response.UserSimpleProfileResponseDto;
@@ -22,7 +24,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(Long id) {
-        return userRepository.findById(id).get();
+        return userRepository.findById(id).orElseThrow(()->new BusinessException(ResponseMessage.WRONG_USER));
     }
     @Override
     public void saveOrUpdateUser(User user) {

@@ -13,13 +13,18 @@ import ourtine.domain.NewMessage;
 import ourtine.domain.OldMessage;
 import ourtine.domain.User;
 import ourtine.domain.enums.MessageType;
+import ourtine.exception.BusinessException;
+import ourtine.exception.enums.ResponseMessage;
 import ourtine.repository.NewMessageRepository;
 import ourtine.repository.OldMessageRepository;
 import ourtine.service.MessageService;
+import ourtine.web.dto.response.HabitInvitationPostResponseDto;
 import ourtine.web.dto.response.MessageResponseDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ourtine.exception.enums.ResponseMessage.WRONG_HABIT_INVITE;
 
 @Service
 @RequiredArgsConstructor
@@ -62,12 +67,17 @@ public class MessageServiceImpl implements MessageService {
     public void newFollowMessage(User sender, User receiver) {
         createNewMessage(new NewMessage(MessageType.FOLLOW, sender, receiver, messageContentsConverter.createContents(sender),null));
     }
-
     @Override
-    public void newHabitInviteMessage(User sender, List<Long> receiverIds, Habit habit) {
-        List<User> userList = idListToUserListConverter.idToUser(receiverIds);
-        for (User receiver : userList) {
-            createNewMessage(new NewMessage(MessageType.HABIT_INVITE, sender, receiver, messageContentsConverter.createContents(sender, habit), habit.getId()));
+    @Transactional
+    public HabitInvitationPostResponseDto newHabitInviteMessage(User sender, List<Long> receiverIds, Habit habit) {
+        if (receiverIds.size() <= habit.getFollowerLimit() - 1) {
+            List<User> userList = idListToUserListConverter.idToUser(receiverIds);
+            for (User receiver : userList) {
+                createNewMessage(new NewMessage(MessageType.HABIT_INVITE, sender, receiver, messageContentsConverter.createContents(sender, habit), habit.getId()));
+            }
+            return new HabitInvitationPostResponseDto(habit.getId());
         }
+        // 초대한 인원 수가 습관 수용 인원보다 크다면
+        else throw new BusinessException(WRONG_HABIT_INVITE);
     }
 }

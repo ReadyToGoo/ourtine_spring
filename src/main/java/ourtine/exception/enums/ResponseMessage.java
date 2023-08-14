@@ -30,6 +30,7 @@ public enum ResponseMessage {
     WRONG_HABIT_JOIN(NOT_FOUND,false,"이미 습관에 참여하고 있습니다."),
     WRONG_HABIT_TIME(NOT_FOUND,false,"참여하고 있는 습관과 시간이 겹칩니다."),
     WRONG_HABIT_QUIT(NOT_FOUND,false,"이미 참여하고 있지 않은 습관입니다."),
+    WRONG_HABIT_INVITE(NOT_FOUND,false,"초대할 수 있는 사용자 인원을 초과했습니다."),
 
 
     // HABIT-SESSION

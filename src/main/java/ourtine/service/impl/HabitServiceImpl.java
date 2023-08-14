@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static ourtine.exception.enums.ResponseMessage.WRONG_HABIT_DELETE;
+import static ourtine.exception.enums.ResponseMessage.*;
 
 @Service
 @RequiredArgsConstructor
@@ -200,7 +200,7 @@ public class HabitServiceImpl implements HabitService {
     // 내 프로필 - 참여한 습관 리스트
     @Override
     public Slice<HabitUserFollowedGetResponseDto> getMyHabits(User user, Pageable pageable){
-        Slice<HabitUserFollowedGetResponseDto> responseDto  = null;
+        Slice<HabitUserFollowedGetResponseDto> responseDto ;
         Slice<Habit> habits = new SliceImpl<>(user.getHabitFollowersList().stream().map(HabitFollowers::getHabit).collect(Collectors.toList()));
             responseDto = habits.map(habit ->
                     {
@@ -221,9 +221,7 @@ public class HabitServiceImpl implements HabitService {
         } catch (NullPointerException e) {
             return 0L;
         }
-
     }
-
 
     // 내 프로필 - 위클리 로그
     @Override
@@ -424,16 +422,20 @@ public class HabitServiceImpl implements HabitService {
     @Override
     @Transactional
     public HabitInvitationPostResponseDto sendInvitation(User me, HabitInvitationPostRequestDto requestDto){
+        Habit habit = habitRepository.findById(requestDto.getHabitId()).orElseThrow(()-> new BusinessException(WRONG_HABIT));
         List<Long> friends = requestDto.getFriends();
-        friends.forEach(friend ->{
-            User receiver = userRepository.findById(friend).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_USER));
-                if (followRepository.findBySenderIdAndReceiverId(me.getId(),friend).isPresent()) {
+        if (friends.size()<=habit.getFollowerLimit()-1) {
+            friends.forEach(friend -> {
+                User receiver = userRepository.findById(friend).orElseThrow(() -> new BusinessException(ResponseMessage.WRONG_USER));
+                if (followRepository.findBySenderIdAndReceiverId(me.getId(), friend).isPresent()) {
                     NewMessage invitation = NewMessage.builder().messageType(MessageType.HABIT_INVITE)
                             .sender(me).receiver(receiver).contents(requestDto.getHabitId().toString()).build();
                     newMessageRepository.save(invitation);
                 }
-        }
-        );
+            }
+        );}
+        // 초대한 인원 수가 습관 수용 인원보다 크다면
+        else throw new BusinessException(WRONG_HABIT_INVITE);
         return new HabitInvitationPostResponseDto(requestDto.getHabitId());
 
     }

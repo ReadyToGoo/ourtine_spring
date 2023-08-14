@@ -37,7 +37,6 @@ public class HabitTestController {
     @ApiOperation(value = "습관 개설 - 습관 개설하기", notes = "습관을 개설한다.")
     public BaseResponseDto<HabitCreatePostResponseDto> createHabit(@RequestPart @Valid HabitCreatePostRequestDto habitCreatePostRequestDto,
                                                   @RequestPart MultipartFile file, @PathVariable Long my_id) throws IOException {
-        //
         User user = userRepository.findById(my_id).orElseThrow(()->new BusinessException(ResponseMessage.WRONG_USER));
         return new BaseResponseDto<>(habitService.createHabit(habitCreatePostRequestDto,file,user));
     }

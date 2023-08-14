@@ -28,7 +28,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/habits/test/2")
+@RequestMapping("/habits")
 public class HabitController {
 
     private final HabitServiceImpl habitService;

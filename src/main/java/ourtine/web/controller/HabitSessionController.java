@@ -23,7 +23,6 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/test")
 @Slf4j
 public class HabitSessionController {
     private final HabitSessionServiceImpl habitSessionService;

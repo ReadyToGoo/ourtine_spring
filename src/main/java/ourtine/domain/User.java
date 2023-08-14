@@ -94,6 +94,10 @@ public class User extends BaseEntity {
     public void updateGoal(String goal) {
         this.goal=goal;
     }
+
+    public void updateHabitCount(Long habitCount) {
+        this.habitCount=habitCount;
+    }
     public void updateParticipationRate(Integer participationRate ){
         this.participationRate = participationRate;}
     public void updatePushAlert(){

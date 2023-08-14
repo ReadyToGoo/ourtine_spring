@@ -1,4 +1,4 @@
-package ourtine.auth.dto;
+package ourtine.web.dto.request;
 
 
 // 임시 회원가입 -> 회원가입 완료 상태로 바꾸기 위해 필요한 Data 모음

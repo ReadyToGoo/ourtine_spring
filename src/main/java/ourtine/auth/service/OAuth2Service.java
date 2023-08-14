@@ -4,9 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ourtine.auth.dto.ApiResponse;
-import ourtine.auth.dto.SignupRequestDto;
-import ourtine.auth.dto.SignupResponseDto;
+import ourtine.web.dto.common.BaseResponseDto;
+import ourtine.web.dto.request.SignupRequestDto;
+import ourtine.web.dto.response.SignupResponseDto;
 import ourtine.domain.User;
 import ourtine.domain.enums.UserStatus;
 import ourtine.repository.UserRepository;
@@ -39,18 +39,18 @@ public class OAuth2Service {
     }
 
 //    @Transactional
-    public ApiResponse<SignupResponseDto> signup(User user, SignupRequestDto signupRequestDto) {
+    public BaseResponseDto<SignupResponseDto> signup(User user, SignupRequestDto signupRequestDto) {
         log.info("OAuth2Service SIGNUP - " + user.getId());
         // TO-DO : 임시회원가입상태 -> 회원가입 완료
         if (user == null) {
-            return new ApiResponse<SignupResponseDto>(404,false, "해당 회원이 존재하지 않습니다.",new SignupResponseDto(user.getNickname()));
+            return new BaseResponseDto<>(404, false, "해당 회원이 존재하지 않습니다.",new SignupResponseDto(user.getNickname()));
         } else if (user.getUserStatus() != UserStatus.SIGNUP_PROGRESS) {
-            return new ApiResponse(400,false, "Bad Request : 이미 회원가입된 유저입니다.", new SignupResponseDto(user.getNickname()));
+            return new BaseResponseDto<>(400, false, "Bad Request : 이미 회원가입된 유저입니다.", new SignupResponseDto(user.getNickname()));
         } else {
             user.signup(signupRequestDto.getNickname(), signupRequestDto.getFavoriteCategoryList(), signupRequestDto.getIntroduce(), signupRequestDto.getGoal(), signupRequestDto.getTermsAgreed(), signupRequestDto.getPrivacyAgreed(), signupRequestDto.getMarketingAgreed());  // 유저 Entity 자체의 public method
             userRepository.save(user);  //  ! UserDetails 객체는 JPA에 의해 관리되는 Entity가 아니다.
         }
-        return new ApiResponse<>(201, true, "Created", new SignupResponseDto(user.getNickname()));
+        return new BaseResponseDto<>(201, true, "Created", new SignupResponseDto(user.getNickname()));
     }
 }
 

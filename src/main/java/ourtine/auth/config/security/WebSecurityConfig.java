@@ -36,7 +36,6 @@ public class WebSecurityConfig {
             "/health"
     };
 
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
@@ -46,8 +45,6 @@ public class WebSecurityConfig {
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
 
     // FilterChain을 통해 인증, 인가 관리
     @Bean

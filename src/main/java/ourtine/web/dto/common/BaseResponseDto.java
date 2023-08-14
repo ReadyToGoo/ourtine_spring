@@ -3,6 +3,7 @@ package ourtine.web.dto.common;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import ourtine.exception.enums.ResponseMessage;
@@ -10,6 +11,7 @@ import ourtine.exception.enums.ResponseMessage;
 import static ourtine.exception.enums.ResponseMessage.SUCCESS;
 
 @Getter
+@AllArgsConstructor
 @JsonPropertyOrder({"code", "isSuccess", "message", "result"})
 public class BaseResponseDto<T> {
     private final int code;

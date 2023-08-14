@@ -45,7 +45,7 @@ public class HabitTest2Controller {
     // 홈 - 팔로잉하는 습관 목록
     @GetMapping("/me")
     @ApiOperation(value = "홈 - 습관 참여 리스트", notes = "오늘 내가 진행할 습관들을 조회한다.")
-    public BaseResponseDto<SliceResponseDto<HabitMyFollowingListGetResponseDto>> getMyTodaysMyHabits(@PathVariable Long my_id, Pageable pageable){
+    public BaseResponseDto<SliceResponseDto<HabitMyFollowingListGetResponseDto>> getMyTodaysMyHabits(Pageable pageable){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
         return new BaseResponseDto<>(new SliceResponseDto<>(habitService.getTodaysMyHabits(user,pageable)));
@@ -72,7 +72,7 @@ public class HabitTest2Controller {
     // 내 프로필 - 위클리 로그
     @GetMapping(value = "/me/weekly-log")
     @ApiOperation(value = "마이 페이지 - 위클리 로그", notes = "이번주에 내가 진행했던 습관 기록들에 대해 조회한다.")
-    public BaseResponseDto<List<HabitWeeklyLogGetResponseDto>> getMyWeeklyLog(@PathVariable Long my_id){
+    public BaseResponseDto<List<HabitWeeklyLogGetResponseDto>> getMyWeeklyLog(){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
         return new BaseResponseDto<>(habitService.getMyWeeklyLog(user));
@@ -99,7 +99,7 @@ public class HabitTest2Controller {
     // 추천 습관 목록
     @GetMapping(value = "/recommend")
     @ApiOperation(value = "참여 - 추천 습관", notes = "유저가 관심있는 카테고리에 대한 습관을 조회한다.")
-    public BaseResponseDto<SliceResponseDto<HabitRecommendResponseDto>> getRecommendHabits(@PathVariable Long my_id, Pageable pageable){
+    public BaseResponseDto<SliceResponseDto<HabitRecommendResponseDto>> getRecommendHabits(Pageable pageable){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User me = userDetails.getUser();
         return new BaseResponseDto<>(new  SliceResponseDto<>(habitService.getRecommendHabits(me, pageable)));

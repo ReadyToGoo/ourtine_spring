@@ -71,7 +71,6 @@ public class HabitSessionServiceImpl implements HabitSessionService {
 
         Habit habit = habitSession.getHabit();
         List<User> followers = habitFollowersRepository.queryFindHabitFollowers(habit.getId());
-
         List<HabitSessionFollowerResponseDto> followersResult = new ArrayList<>();
         for(User follower : followers){
             // 입장한 유저

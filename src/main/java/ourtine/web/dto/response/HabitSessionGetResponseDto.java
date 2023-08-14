@@ -22,9 +22,9 @@ public class HabitSessionGetResponseDto {
 
     private String title;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "kk:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "HH:mm:ss", timezone = "Asia/Seoul")
     private LocalTime startTime;
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "kk:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "HH:mm:ss", timezone = "Asia/Seoul")
     private LocalTime endTime;
 
     private List<HabitSessionFollowerResponseDto> followers = new ArrayList<>();

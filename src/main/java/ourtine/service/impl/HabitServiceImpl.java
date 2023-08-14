@@ -222,6 +222,7 @@ public class HabitServiceImpl implements HabitService {
         } catch (NullPointerException e) {
             return 0L;
         }
+
     }
 
 

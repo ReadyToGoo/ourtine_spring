@@ -71,7 +71,7 @@ public class HabitTest2Controller {
 
     // 내 프로필 - 위클리 로그
     @GetMapping(value = "/me/weekly-log")
-    @ApiOperation(value = "마이 페이지", notes = "이번주에 내가 진행했던 습관 기록들에 대해 조회한다.")
+    @ApiOperation(value = "마이 페이지 - 위클리 로그", notes = "이번주에 내가 진행했던 습관 기록들에 대해 조회한다.")
     public BaseResponseDto<List<HabitWeeklyLogGetResponseDto>> getMyWeeklyLog(@PathVariable Long my_id){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();

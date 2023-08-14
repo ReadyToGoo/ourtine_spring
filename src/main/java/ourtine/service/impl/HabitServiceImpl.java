@@ -196,6 +196,7 @@ public class HabitServiceImpl implements HabitService {
     }
 
     // 내 프로필 - 참여한 습관 리스트
+    @Override
     public Slice<HabitUserFollowedGetResponseDto> getMyHabits(User user, Pageable pageable){
         Slice<HabitUserFollowedGetResponseDto> responseDto  = null;
         List<Long> habitIds = habitFollowersRepository.queryFindMyHabitIds(user.getId(), pageable).getContent();
@@ -212,6 +213,12 @@ public class HabitServiceImpl implements HabitService {
 
         }return responseDto;
     }
+
+    @Override
+    public Long getMyHabitCount(User user, Pageable pageable) {
+        return Long.valueOf(getMyHabits(user, pageable).getContent().size());
+    }
+
 
     // 내 프로필 - 위클리 로그
     @Override

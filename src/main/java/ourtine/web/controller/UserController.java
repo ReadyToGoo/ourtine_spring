@@ -56,8 +56,9 @@ public class UserController {
     @GetMapping("user/{myId}/myPage")
     @ApiOperation(value = "마이페이지 조회", notes = "마이페이지를 조회한다.")
     public BaseResponseDto<MyPageResponseDto> getMyPage(@PathVariable Long myId) {
-        User me = userService.findById(myId);
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id"));
+        User me = userService.findById(myId);
+        me.updateHabitCount(habitService.getMyHabitCount(me, pageable));
         Long myFollowerCount = followService.getMyFollowerCount(me, pageable);
         Long myFollowingCount = followService.getMyFollowingCount(me, pageable);
         MyPageResponseDto myPageResponseDto = new MyPageResponseDto(me, myFollowerCount, myFollowingCount, habitService.getMyWeeklyLog(me));
@@ -67,9 +68,10 @@ public class UserController {
     @GetMapping("user/{userId}/profile/{myId}")
     @ApiOperation(value = "유저프로필 조회", notes = "특정 유저의 유저프로필을 조회한다.")
     public BaseResponseDto<UserProfileDto> getUserProfile(@PathVariable Long userId, @PathVariable Long myId) {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id"));
         User me = userService.findById(myId);
         User user = userService.findById(userId);
-        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id"));
+        user.updateHabitCount(habitService.getMyHabitCount(user, pageable));
         List<String> categories = userCategoryService.findUsersAllCategory(me.getId());
         Boolean isFollow = followService.getFollowStatus(userId, myId).getIsFollow();
         Long followerCount = followService.getFollowerCount(userId, me, pageable);

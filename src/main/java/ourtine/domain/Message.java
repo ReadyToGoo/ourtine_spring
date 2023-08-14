@@ -32,14 +32,18 @@ public class Message extends BaseEntity {
     @Column(nullable = true)
     private String contents;
 
+    @Column(nullable = true)
+    private Long habitId=null;
+
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private Status status=Status.ACTIVE ;
+    private Status status = Status.ACTIVE;
 
-    public Message(MessageType messageType,User sender, User receiver, String contents){
+    public Message(MessageType messageType,User sender, User receiver, String contents, Long habitId){
         this.messageType =messageType;
         this.sender = sender;
         this.receiver = receiver;
         this.contents = contents;
+        this.habitId = habitId;
     }
 }

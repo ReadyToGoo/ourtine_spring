@@ -216,7 +216,12 @@ public class HabitServiceImpl implements HabitService {
 
     @Override
     public Long getMyHabitCount(User user, Pageable pageable) {
-        return Long.valueOf(getMyHabits(user, pageable).getContent().size());
+        try {
+            Long size = Long.valueOf(getMyHabits(user, pageable).getContent().size());
+            return size;
+        } catch (NullPointerException e) {
+            return 0L;
+        }
     }
 
 

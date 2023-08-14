@@ -60,15 +60,14 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public void newFollowMessage(User sender, User receiver) {
-        createNewMessage(new NewMessage(MessageType.FOLLOW, sender, receiver, messageContentsConverter.createContents(sender)));
+        createNewMessage(new NewMessage(MessageType.FOLLOW, sender, receiver, messageContentsConverter.createContents(sender),null));
     }
 
     @Override
     public void newHabitInviteMessage(User sender, List<Long> receiverIds, Habit habit) {
         List<User> userList = idListToUserListConverter.idToUser(receiverIds);
         for (User receiver : userList) {
-            createNewMessage(new NewMessage(MessageType.HABIT_INVITE, sender, receiver, messageContentsConverter.createContents(sender, habit)));
+            createNewMessage(new NewMessage(MessageType.HABIT_INVITE, sender, receiver, messageContentsConverter.createContents(sender, habit), habit.getId()));
         }
     }
-
 }

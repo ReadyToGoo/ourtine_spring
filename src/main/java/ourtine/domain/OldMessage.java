@@ -10,6 +10,6 @@ import lombok.RequiredArgsConstructor;
 public class OldMessage extends Message {
 
     public OldMessage(NewMessage newMessage) {
-        super(newMessage.getMessageType(), newMessage.getSender(), newMessage.getReceiver(), newMessage.getContents());
+        super(newMessage.getMessageType(), newMessage.getSender(), newMessage.getReceiver(), newMessage.getContents(), newMessage.getHabitId());
     }
 }

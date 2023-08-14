@@ -169,7 +169,6 @@ public class KakaoService{
                     .participationRate(0)
                     .imageUrl(null)
                     .goal(null)
-                    .email(null)
                     .introduce(null)
                     .nickname(null)
                     .privacyAgreed(false)

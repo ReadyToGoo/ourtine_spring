@@ -1,4 +1,4 @@
-package ourtine.auth.controller;
+package ourtine.web.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
@@ -6,9 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ourtine.auth.dto.ApiResponse;
-import ourtine.auth.dto.SignupRequestDto;
-import ourtine.auth.dto.SignupResponseDto;
+import ourtine.web.dto.common.BaseResponseDto;
+import ourtine.web.dto.request.SignupRequestDto;
+import ourtine.web.dto.response.SignupResponseDto;
 import ourtine.auth.service.OAuth2Service;
 import ourtine.auth.utils.JwtUtil;
 import ourtine.domain.User;
@@ -45,8 +45,6 @@ public class OAuth2Controller {
     @ResponseBody
     public void kakaoCallback(@RequestParam String code, HttpServletResponse response) throws IOException {
         String token = oAuth2Service.kakaoLogin(code);
-        // 시큐리티 필터 단에서 해주는 것? -> Filter로 이관해도 될듯 -> ㄴㄴ 컨트롤러에서 해주면 되는거였음.
-        // JWTAuthenticationFilter implements UsernamepasswordAuthenticaitonFilter 를 사용하지 않아도 된다
         try {
             token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20");
         } catch(UnsupportedEncodingException e){
@@ -76,10 +74,9 @@ public class OAuth2Controller {
         response.addCookie(cookie);
     }
 
-    // 회원가입 진행 ( 민서님과 논의가 필요한 부분 ) -> 회원가입 완료 후 모든 데이터 받아서 회원가입 처리하는 거로!
     @PostMapping("/api/user/signup")
     @ResponseBody
-    public ApiResponse<SignupResponseDto> signupProgress(/*@AuthenticationPrincipal UserDetailsImpl userDetails, */@RequestBody SignupRequestDto signupRequestDto){
+    public BaseResponseDto<SignupResponseDto> signupProgress(/*@AuthenticationPrincipal UserDetailsImpl userDetails, */@RequestBody SignupRequestDto signupRequestDto){
         log.info("/api/user/signup 접속");
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();

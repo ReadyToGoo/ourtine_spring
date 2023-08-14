@@ -75,7 +75,5 @@ public interface HabitService {
     // 습관 프로필 - 습관 데일리 로그
     public Slice<HabitDailyLogGetResponseDto> getHabitWeeklyLog(Long habitId, User user);
 
-    // 습관 초대
-    public HabitInvitationPostResponseDto sendInvitation(User user, HabitInvitationPostRequestDto requestDto);
 
 }

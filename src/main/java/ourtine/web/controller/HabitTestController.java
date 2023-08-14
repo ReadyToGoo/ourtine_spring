@@ -4,12 +4,17 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ourtine.aws.s3.UploadService;
+import ourtine.domain.Habit;
 import ourtine.domain.User;
+import ourtine.domain.UserDetailsImpl;
 import ourtine.domain.enums.CategoryList;
 import ourtine.exception.BusinessException;
 import ourtine.exception.enums.ResponseMessage;
+import ourtine.service.MessageService;
 import ourtine.web.dto.common.BaseResponseDto;
 import ourtine.web.dto.common.SliceResponseDto;
 import ourtine.domain.enums.Sort;
@@ -30,6 +35,8 @@ public class HabitTestController {
 
     private final HabitServiceImpl habitService;
     private final UserRepository userRepository;
+    private final UploadService uploadService;
+    private final MessageService messageService;
 
     // 습관 개설
     @PostMapping(value = "/{my_id}",consumes = {MediaType.APPLICATION_JSON_VALUE,
@@ -39,6 +46,16 @@ public class HabitTestController {
                                                   @RequestPart MultipartFile file, @PathVariable Long my_id) throws IOException {
         User user = userRepository.findById(my_id).orElseThrow(()->new BusinessException(ResponseMessage.WRONG_USER));
         return new BaseResponseDto<>(habitService.createHabit(habitCreatePostRequestDto,file,user));
+    }
+
+    // 습관 프로필 사진 수정
+    @PatchMapping(value="/{habit_id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ApiOperation(value = "습관 프로필 - 사진 변경",notes="습관의 프로필 사진을 변경한다.")
+    public BaseResponseDto<HabitUpdateImagePatchResponseDto> updateHabitProfileImage(@PathVariable Long habit_id, @RequestParam(value="image") MultipartFile image) throws IOException {
+        Habit habit = habitService.findById(habit_id);
+        habit.updateImage(uploadService.uploadHabitProfile(image));
+        habitService.saveOrUpdateHabit(habit);
+        return new BaseResponseDto<>(new HabitUpdateImagePatchResponseDto(habit_id));
     }
 
     // 홈 - 팔로잉하는 습관 목록
@@ -143,7 +160,8 @@ public class HabitTestController {
     @ApiOperation(value = "습관 개설 - 습관 초대", notes = "유저들에게 습관 초대장을 보낸다.")
     public BaseResponseDto<HabitInvitationPostResponseDto> sendInvitation (@RequestBody @Valid HabitInvitationPostRequestDto requestDto, @PathVariable Long my_id){
         User user = userRepository.findById(my_id).orElseThrow(()->new BusinessException(ResponseMessage.WRONG_USER));
-        return new BaseResponseDto<>(habitService.sendInvitation(user,requestDto));
+        Habit habit = habitService.findById(requestDto.getHabitId());
+        return new BaseResponseDto<>( messageService.newHabitInviteMessage(user, requestDto.getFriends(), habit));
     }
 
 }

@@ -4,13 +4,11 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ourtine.aws.s3.UploadService;
 import ourtine.domain.Habit;
 import ourtine.domain.User;
-import ourtine.domain.UserDetailsImpl;
 import ourtine.domain.enums.CategoryList;
 import ourtine.exception.BusinessException;
 import ourtine.exception.enums.ResponseMessage;
@@ -161,7 +159,7 @@ public class HabitTestController {
     public BaseResponseDto<HabitInvitationPostResponseDto> sendInvitation (@RequestBody @Valid HabitInvitationPostRequestDto requestDto, @PathVariable Long my_id){
         User user = userRepository.findById(my_id).orElseThrow(()->new BusinessException(ResponseMessage.WRONG_USER));
         Habit habit = habitService.findById(requestDto.getHabitId());
-        return new BaseResponseDto<>( messageService.newHabitInviteMessage(user, requestDto.getFriends(), habit));
+        return new BaseResponseDto<>( messageService.newHabitInviteMessage(user, requestDto.getUsers(), habit));
     }
 
 }

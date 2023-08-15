@@ -14,7 +14,6 @@ import ourtine.domain.UserDetailsImpl;
 import ourtine.domain.enums.CategoryList;
 import ourtine.domain.enums.Sort;
 import ourtine.service.MessageService;
-import ourtine.service.UserService;
 import ourtine.service.impl.HabitServiceImpl;
 import ourtine.web.dto.common.BaseResponseDto;
 import ourtine.web.dto.common.SliceResponseDto;
@@ -172,7 +171,7 @@ public class HabitController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
         Habit habit = habitService.findById(requestDto.getHabitId());
-        return new BaseResponseDto<>( messageService.newHabitInviteMessage(user, requestDto.getFriends(), habit));
+        return new BaseResponseDto<>( messageService.newHabitInviteMessage(user, requestDto.getUsers(), habit));
     }
 
 }

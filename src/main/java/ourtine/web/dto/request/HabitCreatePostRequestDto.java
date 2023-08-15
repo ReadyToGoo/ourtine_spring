@@ -79,7 +79,9 @@ public class HabitCreatePostRequestDto {
         @NotEmpty(message = "해시태그는 1~8개로 작성해야 합니다.")
         @Size(min = 1, max = 8, message = "해시태그는 1~8개까지 작성 가능합니다.")
         @Schema(title = "해시태그", description = "1개 이상 8개까지 입력 가능, 2자 이상 10자 이내의 한글, 영어, _(언더바)만 입력 가능")
-        private List<@Min(value = 2, message = "해시태그는 2자 이상 10자 이하여야 합니다.")@Max(value = 10, message = "해시태그는 2자 이상 10자 이하여야 합니다. ")
+        private List<
+                @NotBlank(message = "해시태그를 입력해주세요.")
+                @Size(min = 2,max = 10,message = "해시태그는 2~10자 이내로 입력해야합니다.")
                 @Pattern(regexp = "^[0-9a-zA-Zㄱ-ㅎ가-힣]*$",message = "해시태그는 공백과 특수문자를 불포함한 해시태그만 입력할 수 있습니다.")
                 String> hashtags;
 

@@ -1,5 +1,6 @@
 package ourtine.web.dto.request;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -17,5 +18,6 @@ import javax.validation.constraints.Positive;
 public class HabitSessionMvpVotePostRequestDto {
     @NotNull(message = "유저 입력은 필수 입니다.")
     @Positive(message = "양수만 입력가능합니다.")
+    @ApiModelProperty(value = "투표할 유저의 아이디", notes = "mvp 후보에 있는 유저에게만 투표가 가능")
     private Long mvpVote;
 }

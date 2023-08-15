@@ -23,7 +23,6 @@ import ourtine.service.HabitService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
-import ourtine.web.dto.request.HabitInvitationPostRequestDto;
 import ourtine.web.dto.response.*;
 
 import java.io.IOException;
@@ -51,7 +50,6 @@ public class HabitServiceImpl implements HabitService {
     private final HashtagRepository hashtagRepository;
     private final HabitHashtagRepository habitHashtagRepository;
     private final S3Uploader s3Uploader;
-    private final NewMessageRepository newMessageRepository;
     private final DayConverter dayConverter;
     private final UserMvpRepository userMvpRepository;
     private final UserRepository userRepository;
@@ -126,7 +124,7 @@ public class HabitServiceImpl implements HabitService {
         // 해시태그 DB에 저장
         requestDto.getHashtags().forEach(name->{
             Hashtag hashtag;
-            if (hashtagRepository.existsByName(name)){
+            if (hashtagRepository.findHashtagByName(name).isPresent()){
                 hashtag = hashtagRepository.findHashtagByName(name).get();
             }
             else {
@@ -216,8 +214,7 @@ public class HabitServiceImpl implements HabitService {
     @Override
     public Long getMyHabitCount(User user, Pageable pageable) {
         try {
-            Long size = Long.valueOf(getMyHabits(user, pageable).getContent().size());
-            return size;
+            return (long) getMyHabits(user, pageable).getContent().size();
         } catch (NullPointerException e) {
             return 0L;
         }
@@ -229,10 +226,9 @@ public class HabitServiceImpl implements HabitService {
         LocalDateTime monday = dayConverter.getCurMonday();
         List<HabitSessionFollower> habitSessionFollowers = habitSessionFollowerRepository.getFollowerSessionInfo(monday, user.getId());
         List<HabitWeeklyLogGetResponseDto> responseDto = new ArrayList<>();
-        habitSessionFollowers.forEach(follower -> {
-            responseDto.add(new HabitWeeklyLogGetResponseDto(dayConverter.dayOfWeek(follower.getCreatedAt()),
-                    follower.getVideoUrl(), follower.getEmotion()));
-        });
+        habitSessionFollowers.forEach(follower ->
+                responseDto.add(new HabitWeeklyLogGetResponseDto(dayConverter.dayOfWeek(follower.getCreatedAt()),
+                follower.getVideoUrl(), follower.getEmotion())));
         return responseDto;
     }
 
@@ -246,10 +242,7 @@ public class HabitServiceImpl implements HabitService {
                 // 친구인 유저면
                 Slice<Habit> commonHabits = habitFollowersRepository.queryGetCommonHabitsByUserId(userId, me);
                 Slice<Habit> otherHabits = habitFollowersRepository.queryFindOtherHabitsByUserId(userId, me, pageable);
-                SliceResponseDto<HabitFollowingInfoDto> commonHabitsInfo = new SliceResponseDto<>(commonHabits.map(habit ->{
-                    List<User> followers = habitFollowersRepository.queryFindHabitFollowers(habit.getId());
-                    return new HabitFollowingInfoDto(habit);
-                }));
+                SliceResponseDto<HabitFollowingInfoDto> commonHabitsInfo = new SliceResponseDto<>(commonHabits.map(HabitFollowingInfoDto::new));
                 SliceResponseDto<HabitFollowingInfoDto> otherHabitsInfo = new SliceResponseDto<>(otherHabits.map(HabitFollowingInfoDto::new));
                 responseDto = new HabitUserFollowingListGetResponseDto(userId, true, null, commonHabitsInfo, otherHabitsInfo);
             } else {
@@ -300,9 +293,8 @@ public class HabitServiceImpl implements HabitService {
     @Override
     public Slice<HabitRecommendResponseDto> getRecommendHabits(User user, Pageable pageable) {
         Slice<Habit> habits = habitRepository.queryGetRecommendHabits(user.getId(),pageable);
-        Slice<HabitRecommendResponseDto> result = habits.map(habit ->
-                new HabitRecommendResponseDto(habit,categoryRepository.findById(habit.getCategoryId()).get()));
-        return result;
+        return habits.map(habit ->
+                new HabitRecommendResponseDto(habit,categoryRepository.findById(habit.getCategoryId()).orElseThrow(()->new BusinessException(WRONG_HABIT_CATEGORY))));
     }
     // 습관 참여하기
     @Override
@@ -369,7 +361,7 @@ public class HabitServiceImpl implements HabitService {
         else if (sort == Sort.RECRUITING){
             habits = habitRepository.querySearchFindOrderByFollowerCount(user.getId(), keyword, habitsIdsSearchByHashtag,pageable);
         }
-        else return null;
+        else throw new BusinessException(WRONG_HABIT_SEARCH);
 
         return habits.map(habit -> new HabitSearchResponseDto(
                 habit,
@@ -401,9 +393,7 @@ public class HabitServiceImpl implements HabitService {
             throw new BusinessException(ResponseMessage.WRONG_HABIT_QUIT);
         }
         else
-        {
-            habitFollowersRepository.deleteByFollowerAndHabit_Id(user, habitId);
-        }
+        {habitFollowersRepository.deleteByFollowerAndHabit_Id(user, habitId);}
         return new HabitFollowerResponseDto(habitId,user.getId());
     }
 

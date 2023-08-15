@@ -13,9 +13,6 @@ import java.util.Optional;
 public interface HashtagRepository extends JpaRepository<Hashtag,Long> {
 
 
-    // 해시태그 있는지 여부
-    boolean existsByName(String name);
-
     Optional<Hashtag> findHashtagByName(String name);
 
 

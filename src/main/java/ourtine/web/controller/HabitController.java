@@ -36,7 +36,7 @@ public class HabitController {
     private final MessageService messageService;
 
     // 습관 개설
-    @PostMapping(value = "",consumes = {MediaType.APPLICATION_JSON_VALUE,
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.MULTIPART_FORM_DATA_VALUE})
     @ApiOperation(value = "습관 개설 - 습관 개설하기", notes = "습관을 개설한다.")
     public BaseResponseDto<HabitCreatePostResponseDto> createHabit(@RequestPart @Valid HabitCreatePostRequestDto habitCreatePostRequestDto,
@@ -76,7 +76,7 @@ public class HabitController {
 
     // 습관 프로필 - 습관 위클리 로그
     @GetMapping(value = "/{habit_id}/weekly-log")
-    @ApiOperation(value = "습관 프로필", notes = "내가 참여하는 특정 습관에 대한 위클리로그를 조회한다.")
+    @ApiOperation(value = "습관 프로필 - 위클리 로그", notes = "내가 참여하는 특정 습관에 대한 위클리로그를 조회한다.")
     public BaseResponseDto<SliceResponseDto<HabitDailyLogGetResponseDto>> getHabitWeeklyLog(@PathVariable Long habit_id){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
@@ -121,7 +121,7 @@ public class HabitController {
 
     // 습관 참여하기
     @PostMapping(value = "/{habit_id}")
-    @ApiOperation(value = "습관 참여", notes = "습관에 참여 신청을 한다.")
+    @ApiOperation(value = "습관 프로필 -  참여", notes = "습관에 참여 신청을 한다.")
     public BaseResponseDto<HabitFollowerResponseDto> joinHabit(@PathVariable @Valid Long habit_id){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();

@@ -9,8 +9,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import ourtine.domain.mapping.HabitFollowers;
+import ourtine.domain.mapping.HabitSessionFollower;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Entity
@@ -31,6 +35,8 @@ public class HabitSession extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private Status status =Status.ACTIVE;
 
+    @OneToMany( mappedBy = "habitSession")
+    private List<HabitSessionFollower> HabitSessionFollowers = new ArrayList<>();
     @Builder
     public HabitSession(Habit habit, Date date){
         this.habit = habit;

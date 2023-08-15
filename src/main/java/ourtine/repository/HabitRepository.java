@@ -59,7 +59,7 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "or h.id in :habitIds)" +
             "and h.startDate >= CURDATE()" +
             "and h.habitStatus = 'PUBLIC' " +
-            "order by h.createdAt desc")
+            "order by h.startDate asc")
     Slice<Habit> queryFindHabitOrderByStartDate(Long userId, String keyword, List<Long> habitIds, Pageable pageable);
 
     // 검색 - 모집중 ( 임박한 순으로 )
@@ -81,9 +81,9 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "and h.host.id not in (select b.blocker.id from Block b where b.blocked.id = :userId) " +
             "and not h.host.id = :userId " + // 내가 만든 습관 제외
             "and h.categoryId = :categoryId " +
-            "and h.followerLimit-h.followerCount>0" +
+            "and h.followerLimit - h.followerCount>0" +
             "and h.habitStatus = 'PUBLIC'" +
-            "order by h.followerLimit-h.followerCount desc")
+            "order by h.followerLimit-h.followerCount asc")
     Slice<Habit> querySearchHabitByCategory(Long userId, Long categoryId, Pageable pageable);
 
     // 참여 - 추천 습관 목록

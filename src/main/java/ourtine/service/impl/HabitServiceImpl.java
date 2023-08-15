@@ -161,6 +161,7 @@ public class HabitServiceImpl implements HabitService {
         return habitsOfDay.map(habit ->
             new HabitMyFollowingListGetResponseDto(
                     habit,
+                    calculatorClass.myHabitParticipationRate(habit.getId(),user,habitSessionRepository,habitSessionFollowerRepository,habitFollowersRepository),
                     userMvpRepository.queryFindByHabitIdAndUserId(habit.getId(), user.getId()).size(),
                     habitSessionFollowerRepository.existsByFollowerIdAndHabitSessionHabitId(user.getId(),habit.getId() )
             )

@@ -4,6 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ourtine.converter.CategoryListsConverter;
+import ourtine.domain.Category;
+import ourtine.domain.enums.CategoryList;
+import ourtine.repository.CategoryRepository;
+import ourtine.service.UserCategoryService;
 import ourtine.web.dto.common.BaseResponseDto;
 import ourtine.web.dto.request.SignupRequestDto;
 import ourtine.web.dto.response.SignupResponseDto;
@@ -13,6 +19,9 @@ import ourtine.repository.UserRepository;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +29,9 @@ import java.io.IOException;
 public class OAuth2Service {
     private final KakaoService kakaoService;
     private final AppleService appleService;
+    private final UserCategoryService userCategoryService;
     private final UserRepository userRepository;
+    private final CategoryRepository categorRepository;
 
     public void kakaoLoginPageRedirect(HttpServletResponse res) throws IOException {
         kakaoService.kakaoLoginPageRedirect(res);
@@ -38,7 +49,7 @@ public class OAuth2Service {
         return appleService.appleLogin(code);
     }
 
-//    @Transactional
+    @Transactional
     public BaseResponseDto<SignupResponseDto> signup(User user, SignupRequestDto signupRequestDto) {
         log.info("OAuth2Service SIGNUP - " + user.getId());
         // TO-DO : 임시회원가입상태 -> 회원가입 완료
@@ -47,8 +58,18 @@ public class OAuth2Service {
         } else if (user.getUserStatus() != UserStatus.SIGNUP_PROGRESS) {
             return new BaseResponseDto<>(400, false, "Bad Request : 이미 회원가입된 유저입니다.", new SignupResponseDto(user.getNickname()));
         } else {
-            user.signup(signupRequestDto.getNickname(), signupRequestDto.getFavoriteCategoryList(), signupRequestDto.getIntroduce(), signupRequestDto.getGoal(), signupRequestDto.getTermsAgreed(), signupRequestDto.getPrivacyAgreed(), signupRequestDto.getMarketingAgreed());  // 유저 Entity 자체의 public method
-            userRepository.save(user);  //  ! UserDetails 객체는 JPA에 의해 관리되는 Entity가 아니다.
+            user.signup(signupRequestDto.getNickname(), signupRequestDto.getIntroduce(), signupRequestDto.getGoal(), signupRequestDto.getTermsAgreed(), signupRequestDto.getPrivacyAgreed(), signupRequestDto.getMarketingAgreed());  // 유저 Entity 자체의 public method
+            userRepository.saveAndFlush(user);
+            List<CategoryList> categoryListList = new CategoryListsConverter().convert(signupRequestDto.getFavoriteCategoryList());
+            assert categoryListList != null;
+            List<Category> categoryList;
+            try {
+                categoryList = categoryListList.stream().map(v -> categorRepository.findByName(v).orElseThrow( () -> new IllegalArgumentException("유효하지 않은 카테고리명 입력입니다."))).collect(Collectors.toList());
+            } catch (IllegalArgumentException e){
+                return new BaseResponseDto<>(400, true, "Bad Request : " + e.getMessage(), new SignupResponseDto(user.getNickname()));
+            }
+            User savedUser = userRepository.findById(user.getId()).orElse(null);
+            userCategoryService.saveCategories(savedUser, categoryList);
         }
         return new BaseResponseDto<>(201, true, "Created", new SignupResponseDto(user.getNickname()));
     }

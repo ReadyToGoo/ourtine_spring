@@ -111,10 +111,8 @@ public class User extends BaseEntity {
         this.refreshToken = refreshToken;
     }
 
-    public void signup(String nickname, List<String> favoriteCategoryList, String introduce, String goal, Boolean termsAgreed, Boolean privacyAgreed, Boolean marketingAgreed){
+    public void signup(String nickname, String introduce, String goal, Boolean termsAgreed, Boolean privacyAgreed, Boolean marketingAgreed){
         this.nickname = nickname;
-        // this.categories =  favoriteCategoryList.stream().map(Category::new).collect(Collectors.toList());
-        // -> Category Mapping Table 에 저장하는 로직 필요 ( User : Category = N : M )
         this.introduce =introduce;
         this.goal = goal;
         this.termsAgreed = termsAgreed;

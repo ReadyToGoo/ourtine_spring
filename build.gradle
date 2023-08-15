@@ -56,12 +56,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-batch'
 	// Quartz
 	implementation 'org.springframework.boot:spring-boot-starter-quartz'
-	//
+	//Batch test
 	testImplementation 'org.springframework.batch:spring-batch-test'
 	// Swagger
 	implementation "io.springfox:springfox-boot-starter:3.0.0"
 	implementation "io.springfox:springfox-swagger-ui:3.0.0"
-
+	/*implementation 'org.springdoc:spring-boot-springdoc:3.1.2'*/
 	implementation 'com.google.code.gson:gson:2.8.7'
 
 }

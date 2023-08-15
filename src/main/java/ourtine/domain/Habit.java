@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ourtine.domain.mapping.HabitDays;
 import ourtine.domain.mapping.HabitFollowers;
+import ourtine.domain.mapping.HabitHashtag;
 import software.amazon.ion.Decimal;
 
 import java.math.BigDecimal;
@@ -49,6 +50,9 @@ public class Habit extends BaseEntity {
 
     @OneToMany( mappedBy = "habit")
     private List<HabitDays> days = new ArrayList<>();
+
+    @OneToMany( mappedBy = "habit")
+    private List<HabitHashtag> hashtags = new ArrayList<>();
 
     private Long followerCount = 1l;
 

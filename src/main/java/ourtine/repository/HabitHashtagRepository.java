@@ -25,10 +25,6 @@ public interface HabitHashtagRepository extends JpaRepository<HabitHashtag,Long>
     @Transactional
     void deleteByHabitId(Long habitId);
 
-    // 습관의 해시태그  찾기
-    @Query("select hh.hashtag.name from HabitHashtag hh where hh.habit.id = :habitId")
-    List<String> queryFindHashtagNameByHabit(Long habitId);
-
     // 습관의 해시태그 찾기
     List<HabitHashtag> findByHabit(Habit habit);
 

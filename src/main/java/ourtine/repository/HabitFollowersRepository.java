@@ -18,14 +18,13 @@ import java.util.Optional;
 @Repository
 public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,Long> {
 
-
     // 습관 참여 여부
     Optional<HabitFollowers> findByHabitIdAndFollowerId(Long habitId, Long userId);
 
     // 습관의 팔로워 수 조회
-    @Query("select count (hf) from HabitFollowers hf where hf.habit = :habit " +
+    @Query("select hf from HabitFollowers hf where hf.habit = :habit " +
             "and hf.status='ACTIVE'" )
-    long countHabitFollowersByHabit(Habit habit);
+    List<HabitFollowers> countHabitFollowersByHabit(Habit habit);
 
     // 습관 팔로워 정보 조회
     @Query("select hf.follower from HabitFollowers hf " +
@@ -83,19 +82,11 @@ public interface HabitFollowersRepository extends JpaRepository<HabitFollowers,L
             "order by hf.habit.id asc")
     Slice<Habit> queryFindOtherHabitsByUserId(Long userId, User me, Pageable pageable);
 
-    // 습관의 모집 여부 조회
-    @Query("select case " +
-            "when hf.habit.followerLimit-hf.habit.followerCount > 0 then true " +
-            "else false end " +
-            "from HabitFollowers hf " +
-            "where hf.habit.id = :habitId")
-    boolean queryGetHabitRecruitingStatus(Long habitId);
 
     // 습관 유저 삭제
     @Modifying
     @Transactional
-    @Query("delete from HabitFollowers where follower = :user and habit.id = :habitId ")
-    void queryDeleteFollowerById (Long habitId, User user);
+    void deleteByFollowerAndHabit_Id (User follower, Long habit_id);
 
     // 습관 아이디로 삭제
     @Transactional

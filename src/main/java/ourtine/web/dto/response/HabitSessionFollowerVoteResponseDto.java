@@ -19,8 +19,6 @@ public class HabitSessionFollowerVoteResponseDto {
 
     public HabitSessionFollowerVoteResponseDto(HabitSessionFollower habitSessionFollower){
         this.id = habitSessionFollower.getFollower().getId();
-/*        this.nickname = habitSessionFollower.getFollower().getNickname();
-        this.profileImg = habitSessionFollower.getFollower().getImageUrl();*/
         this.videoUrl = habitSessionFollower.getVideoUrl();
         this.habitFollowerStatus = habitSessionFollower.getHabitFollowerStatus();
     }

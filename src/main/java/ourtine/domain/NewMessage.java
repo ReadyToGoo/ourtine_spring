@@ -12,7 +12,7 @@ import ourtine.domain.enums.MessageType;
 @DiscriminatorValue("New")
 public class NewMessage extends Message {
     @Builder
-    public NewMessage(MessageType messageType, User sender, User receiver, String contents){
-        super(messageType, sender, receiver, contents);
+    public NewMessage(MessageType messageType, User sender, User receiver, String contents,Long habitId){
+        super(messageType, sender, receiver, contents,habitId);
     }
 }

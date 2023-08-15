@@ -32,6 +32,10 @@ public interface HabitService {
     // @Transactional
     public HabitGetResponseDto getHabit(Long habitId, User user);
 
+
+    public Slice<HabitUserFollowedGetResponseDto> getMyHabits(User user, Pageable pageable);
+
+    public Long getMyHabitCount(User user, Pageable pageable);
     // 내 프로필 - 위클리 로그 조회
     public List<HabitWeeklyLogGetResponseDto> getMyWeeklyLog(User user);
 
@@ -71,7 +75,5 @@ public interface HabitService {
     // 습관 프로필 - 습관 데일리 로그
     public Slice<HabitDailyLogGetResponseDto> getHabitWeeklyLog(Long habitId, User user);
 
-    // 습관 초대
-    public HabitInvitationPostResponseDto sendInvitation(User user, HabitInvitationPostRequestDto requestDto);
 
 }

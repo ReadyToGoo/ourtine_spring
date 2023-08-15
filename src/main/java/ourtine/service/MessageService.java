@@ -6,6 +6,7 @@ import ourtine.domain.Habit;
 import ourtine.domain.NewMessage;
 import ourtine.domain.OldMessage;
 import ourtine.domain.User;
+import ourtine.web.dto.response.HabitInvitationPostResponseDto;
 import ourtine.web.dto.response.MessageResponseDto;
 
 import java.util.List;
@@ -20,6 +21,6 @@ public interface MessageService {
 
     public void newFollowMessage(User sender, User receiver);
 
-    public void newHabitInviteMessage(User sender, List<Long> receiverIds, Habit habit);
+    public HabitInvitationPostResponseDto newHabitInviteMessage(User sender, List<Long> receiverIds, Habit habit);
 
 }

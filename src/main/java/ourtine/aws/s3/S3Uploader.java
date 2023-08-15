@@ -64,7 +64,17 @@ public class S3Uploader {
 
     private Optional<File> convert(MultipartFile file) throws  IOException {
         UUID uuid = UUID.randomUUID();
-        File convertFile = new File(uuid.toString());
+        String path = uuid.toString();
+        if (file.getContentType().equals("image/jpeg")) {
+            path += ".jpg";
+        } else if (file.getContentType().equals("image/png")) {
+            path += ".png";
+        } else if (file.getContentType().equals("video/mp4")) {
+            path += ".mp4";
+        } else{
+            // 잘못된 파일 형식에 대한 예외처리
+        }
+        File convertFile = new File(path);
         if(convertFile.createNewFile()) {
             try (FileOutputStream fos = new FileOutputStream(convertFile)) {
                 fos.write(file.getBytes());

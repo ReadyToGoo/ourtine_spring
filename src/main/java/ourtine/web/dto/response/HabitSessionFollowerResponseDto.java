@@ -12,5 +12,5 @@ public class HabitSessionFollowerResponseDto {
     private Long userId;
     private String nickname;
     private String imageUrl;
-    private HabitFollowerStatus habitFollowerStatus; // 습관 완료 여부
+    private HabitFollowerStatus status; // 습관 완료 여부
 }

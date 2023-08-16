@@ -37,6 +37,7 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     private final HabitSessionRepository habitSessionRepository;
     private final UploadService uploadService;
     private final UserMvpRepository userMvpRepository;
+    private final UserRepository userRepository;
 
     // 세션 아이디 불러오기
     @Override
@@ -127,21 +128,27 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     // 베스트 습관러 투표하기
     @Override
     @Transactional
-    public HabitSessionMvpVotePostResponseDto voteMvp(Long sessionId, User user, HabitSessionMvpVotePostRequestDto habitSessionMvpVotePostRequestDto) {
-        HabitSessionFollower mySession = habitSessionFollowerRepository.findByHabitSession_IdAndFollowerId(sessionId,user.getId()).orElseThrow(()->
-                new BusinessException(ResponseMessage.WRONG_HABIT_SESSION_FOLLOWER));
-        if (!habitSessionFollowerRepository.existsByFollowerIdAndHabitSessionId(
-                habitSessionMvpVotePostRequestDto.getMvpVote(),sessionId)){
-            throw new BusinessException(ResponseMessage.WRONG_HABIT_SESSION_VOTE);
+    public HabitSessionMvpVotePostResponseDto voteMvp(Long sessionId, User user, HabitSessionMvpVotePostRequestDto requestDto) {
+        if (userRepository.findById(requestDto.getMvpVote()).isPresent()) {
+            if (habitSessionRepository.findById(sessionId).isPresent()){
+                HabitSessionFollower mySession = habitSessionFollowerRepository.findByHabitSession_IdAndFollowerId(sessionId, user.getId()).orElseThrow(() ->
+                        new BusinessException(ResponseMessage.WRONG_HABIT_SESSION_FOLLOWER));
+                if (habitSessionFollowerRepository.queryFindCompleteUser(
+                        requestDto.getMvpVote(), sessionId).isEmpty()) {
+                    throw new BusinessException(ResponseMessage.WRONG_HABIT_SESSION_VOTE);
+                }
+                mySession.voteMvp(requestDto.getMvpVote());
+                return new HabitSessionMvpVotePostResponseDto(requestDto.getMvpVote());
+            }
+            else throw new BusinessException(ResponseMessage.WRONG_HABIT_SESSION);
         }
-        mySession.voteMvp(habitSessionMvpVotePostRequestDto.getMvpVote());
-
-        return new HabitSessionMvpVotePostResponseDto(habitSessionMvpVotePostRequestDto.getMvpVote());
+        else throw new BusinessException(ResponseMessage.WRONG_USER);
     }
 
     // 투표 결과 보여주기
     @Override
     public List<HabitSessionMvpGetResponseDto> showMvp(Long sessionId, User user) {
+        if (habitSessionRepository.findById(sessionId).isEmpty()) throw new BusinessException(ResponseMessage.WRONG_HABIT_SESSION);
         List<UserMvp> mvps = userMvpRepository.findByHabitSessionId(sessionId);
         List<HabitSessionMvpGetResponseDto> habitSessionMvpGetResponseDto = new ArrayList<>();
         mvps.forEach(mvp->{ habitSessionMvpGetResponseDto.add(

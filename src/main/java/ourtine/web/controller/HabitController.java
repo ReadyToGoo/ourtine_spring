@@ -45,7 +45,7 @@ public class HabitController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
         if (file.isEmpty())
-        {throw new IOException(new BusinessException(ResponseMessage.WRONG_HABIT_FILE));}
+        {throw new IOException(new BusinessException(ResponseMessage.EMPTY_FILE));}
         return new BaseResponseDto<>(habitService.createHabit(habitCreatePostRequestDto,file,user));
     }
 
@@ -54,6 +54,7 @@ public class HabitController {
     @ApiOperation(value = "습관 프로필 - 사진 변경",notes="습관의 프로필 사진을 변경한다.")
     public BaseResponseDto<HabitUpdateImagePatchResponseDto> updateHabitProfileImage(@PathVariable Long habit_id, @RequestParam(value="image") MultipartFile image) throws IOException {
         Habit habit = habitService.findById(habit_id);
+        if (image.isEmpty())throw new BusinessException(ResponseMessage.EMPTY_FILE);
         habit.updateImage(uploadService.uploadHabitProfile(image));
         habitService.saveOrUpdateHabit(habit);
         return new BaseResponseDto<>(new HabitUpdateImagePatchResponseDto(habit_id));

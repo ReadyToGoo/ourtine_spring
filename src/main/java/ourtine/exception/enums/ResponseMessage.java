@@ -24,7 +24,6 @@ public enum ResponseMessage {
     // HABIT
     WRONG_HABIT(NOT_FOUND,false,"해당 습관을 찾을 수 없습니다."),
     WRONG_HABIT_CATEGORY(NOT_FOUND,false,"해당 카테고리 찾을 수 없습니다."),
-    WRONG_HABIT_FILE(BAD_REQUEST,false,"파일을 찾을 수 없습니다."),
     WRONG_HABIT_DELETE(NOT_FOUND,false,"해당 습관을 삭제할 수 없습니다."),
     WRONG_HABIT_JOIN(NOT_FOUND,false,"이미 습관에 참여하고 있습니다."),
     WRONG_HABIT_TIME(NOT_FOUND,false,"참여하고 있는 습관과 시간이 겹칩니다."),
@@ -39,7 +38,11 @@ public enum ResponseMessage {
 
     //FOLLOW
     WRONG_FOLLOW(NOT_FOUND,false,"이미 팔로우하고 있는 유저입니다."),
-    WRONG_UNFOLLOW(NOT_FOUND,false,"이미 팔로우하고 있지 않은 유저입니다.")
+    WRONG_UNFOLLOW(NOT_FOUND,false,"이미 팔로우하고 있지 않은 유저입니다."),
+
+    //FILE
+
+    EMPTY_FILE(BAD_REQUEST,false,"파일을 찾을 수 없습니다."),
 
     ;
     private final int code;

@@ -301,7 +301,7 @@ public class HabitServiceImpl implements HabitService {
         Habit habit = habitRepository.findById(habitId).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT));
         //참여하고 있으면 or 인원이 다 찬 상태이면 참여 불가
         if (habitFollowersRepository.findByHabitIdAndFollowerId(habitId,user.getId()).isPresent() ||
-                habit.getFollowerLimit()-habit.getFollowerCount()<1 ){
+                habit.getFollowerLimit()-habit.getFollowerCount()==0 ){
             throw new BusinessException(ResponseMessage.WRONG_HABIT_JOIN);
         }
         else {

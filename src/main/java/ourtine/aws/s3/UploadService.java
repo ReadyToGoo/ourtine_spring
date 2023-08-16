@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ourtine.exception.BusinessException;
+import ourtine.exception.enums.ResponseMessage;
 
 import java.io.IOException;
 
@@ -17,7 +19,7 @@ public class UploadService {
         if (!image.isEmpty()) {
             return s3Uploader.upload(image, "images/users");
         }
-        return "";
+        else throw new BusinessException(ResponseMessage.EMPTY_FILE);
     }
 
     @Transactional
@@ -25,7 +27,7 @@ public class UploadService {
         if (!image.isEmpty()) {
             return s3Uploader.upload(image, "images/habits");
         }
-        return "";
+        else throw new BusinessException(ResponseMessage.EMPTY_FILE);
     }
 
     @Transactional
@@ -33,6 +35,6 @@ public class UploadService {
         if (!video.isEmpty()) {
             return s3Uploader.upload(video, "images/habit-sessions");
         }
-        return "";
+        else throw new BusinessException(ResponseMessage.EMPTY_FILE);
     }
 }

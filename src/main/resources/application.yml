@@ -11,8 +11,7 @@ spring:
     jdbc:
       initialize-schema: always
     job:
-      enabled:
-      names: HABIT_JOB , SESSION_JOB
+      enabled: false
   main:
     allow-bean-definition-overriding: true
   jpa:

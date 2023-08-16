@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ourtine.aws.s3.S3Uploader;
+import ourtine.aws.s3.UploadService;
 import ourtine.domain.Habit;
 import ourtine.domain.HabitSession;
 import ourtine.domain.User;
@@ -34,7 +35,7 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     private final HabitFollowersRepository habitFollowersRepository;
     private final HabitSessionFollowerRepository habitSessionFollowerRepository;
     private final HabitSessionRepository habitSessionRepository;
-    private final S3Uploader s3Uploader;
+    private final UploadService uploadService;
     private final UserMvpRepository userMvpRepository;
 
     // 세션 아이디 불러오기
@@ -91,14 +92,13 @@ public class HabitSessionServiceImpl implements HabitSessionService {
     @Override
     @Transactional
     public HabitSessionUploadVideoPostResponseDto uploadVideo(Long sessionId, MultipartFile file, User user) throws IOException {
-        if (file.isEmpty()){throw new IOException(new BusinessException(ResponseMessage.WRONG_HABIT_FILE));}
         if (habitSessionRepository.findById(sessionId).isEmpty()){
             throw new BusinessException(ResponseMessage.WRONG_HABIT_SESSION);
         }
         HabitSessionFollower habitSessionFollower = habitSessionFollowerRepository.findByHabitSession_IdAndFollowerId(sessionId,user.getId()).orElseThrow(()->
                 new BusinessException(ResponseMessage.WRONG_HABIT_SESSION_FOLLOWER));
         // 영상 업로드
-        String videoUrl = s3Uploader.upload(file,"images/habit-sessions");
+        String videoUrl = uploadService.uploadSessionVideo(file);
         // 유저의 세션 완료 처리
         habitSessionFollower.uploadVideo(videoUrl);
         return new HabitSessionUploadVideoPostResponseDto(sessionId,user.getId());

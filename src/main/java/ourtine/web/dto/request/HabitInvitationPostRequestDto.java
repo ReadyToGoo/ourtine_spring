@@ -17,7 +17,6 @@ import java.util.List;
 public class HabitInvitationPostRequestDto {
 
     @NotNull(message = "습관 아이디 입력은 필수입니다.")
-    @Positive(message = "양수만 입력가능합니다.")
     @Schema(title = "습관 아이디")
     private Long habitId ;
 

@@ -70,7 +70,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     @Transactional
     public HabitInvitationPostResponseDto newHabitInviteMessage(User sender, List<Long> receiverIds, Habit habit) {
-        if (receiverIds.size() <= habit.getFollowerLimit() - 1) {
+        if (receiverIds.size() <= habit.getFollowerLimit() - habit.getFollowerCount()) {
             List<User> userList = idListToUserListConverter.idToUser(receiverIds);
             for (User receiver : userList) {
                 createNewMessage(new NewMessage(MessageType.HABIT_INVITE, sender, receiver, messageContentsConverter.createContents(sender, habit), habit.getId()));

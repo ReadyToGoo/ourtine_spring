@@ -19,7 +19,7 @@ import java.util.List;
 public interface HabitService {
 
     public Habit findById(Long id);
-    public void saveOrUpdateHabit(Habit habit);
+    public Habit saveOrUpdateHabit(Habit habit);
     //습관 개설하기
     @Transactional
     public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto habitCreatePostRequestDto, MultipartFile file, User user) throws IOException;

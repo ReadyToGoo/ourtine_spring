@@ -13,6 +13,8 @@ import ourtine.domain.User;
 import ourtine.domain.UserDetailsImpl;
 import ourtine.domain.enums.CategoryList;
 import ourtine.domain.enums.Sort;
+import ourtine.exception.BusinessException;
+import ourtine.exception.enums.ResponseMessage;
 import ourtine.service.MessageService;
 import ourtine.service.impl.HabitServiceImpl;
 import ourtine.web.dto.common.BaseResponseDto;
@@ -42,6 +44,8 @@ public class HabitController {
                                                   @RequestPart MultipartFile file) throws IOException {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
+        if (file.isEmpty())
+        {throw new IOException(new BusinessException(ResponseMessage.WRONG_HABIT_FILE));}
         return new BaseResponseDto<>(habitService.createHabit(habitCreatePostRequestDto,file,user));
     }
 

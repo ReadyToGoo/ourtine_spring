@@ -18,7 +18,6 @@ import javax.validation.constraints.Positive;
 @AllArgsConstructor
 public class HabitSessionMvpVotePostRequestDto {
     @NotNull(message = "유저 입력은 필수 입니다.")
-    @Positive(message = "자연수만 입력가능합니다.")
     @Schema(title = "투표할 유저의 아이디", description = "mvp 후보에 있는 유저에게만 투표가 가능")
     private Long mvpVote;
 }

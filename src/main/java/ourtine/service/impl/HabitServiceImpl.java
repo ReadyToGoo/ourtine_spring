@@ -63,9 +63,7 @@ public class HabitServiceImpl implements HabitService {
     // 습관 개설하기
     @Override
     public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto requestDto, MultipartFile file, User user) throws IOException {
-        Habit habit;
-        if (file.isEmpty())
-            {throw new IOException(new BusinessException(ResponseMessage.WRONG_HABIT_FILE));}
+        Habit habit = null;
 
         Category category = categoryRepository.findByName(requestDto.getCategory()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
 
@@ -102,9 +100,8 @@ public class HabitServiceImpl implements HabitService {
                     .followerLimit(requestDto.getFollowerLimit())
                     .build();
         }
-        else return null;
 
-        Habit savedHabit = habitRepository.save(habit);
+        Habit savedHabit = saveOrUpdateHabit(habit);
         Long habitNum = habitRepository.countByHost(user);
 
         // 습관 시작 시간이 습관 세션 생성 예정 시간보다 빠르다면
@@ -144,8 +141,8 @@ public class HabitServiceImpl implements HabitService {
     }
 
     @Override
-    public void saveOrUpdateHabit(Habit habit) {
-        habitRepository.save(habit);
+    public Habit saveOrUpdateHabit(Habit habit) {
+        return habitRepository.save(habit);
     }
 
 

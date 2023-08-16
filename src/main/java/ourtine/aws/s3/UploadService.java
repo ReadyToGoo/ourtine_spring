@@ -27,4 +27,12 @@ public class UploadService {
         }
         return "";
     }
+
+    @Transactional
+    public String uploadSessionVideo(MultipartFile video) throws IOException{
+        if (!video.isEmpty()) {
+            return s3Uploader.upload(video, "images/habit-sessions");
+        }
+        return "";
+    }
 }

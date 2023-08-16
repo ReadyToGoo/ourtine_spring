@@ -120,7 +120,7 @@ public class UserController {
 
     @PatchMapping(value = "/user/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiOperation(value = "유저 프로필 사진 변경", notes = "유저의 프로필 사진을 변경한다.")
-    public BaseResponseDto<UserUpdateResponseDto> changeUserProfileImage(@RequestBody MultipartFile image) throws IOException {
+    public BaseResponseDto<UserUpdateResponseDto> changeUserProfileImage(@RequestPart MultipartFile image) throws IOException {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
         Long userId = user.getId();

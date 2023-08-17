@@ -3,6 +3,7 @@ package ourtine.web.controller;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,9 +57,9 @@ public class HabitSessionController {
     }
 
     // 습관 인증샷 올리기
-    @PatchMapping("/habit-sessions/{session_id}/upload")
+    @PatchMapping(value = "/habit-sessions/{session_id}/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiOperation(value = "습관 세션 - 습관 인증", notes = "진행한 습관 인증 영상을 올린다.")
-    public BaseResponseDto<HabitSessionUploadVideoPostResponseDto> uploadVideo(@PathVariable Long session_id, @RequestPart MultipartFile file) throws IOException {
+    public BaseResponseDto<HabitSessionUploadVideoPostResponseDto> uploadVideo(@PathVariable Long session_id, @ModelAttribute MultipartFile file) throws IOException {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
         if (file.isEmpty()){throw new IOException(new BusinessException(ResponseMessage.EMPTY_FILE));}

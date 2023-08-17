@@ -64,7 +64,6 @@ public class HabitServiceImpl implements HabitService {
     @Override
     public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto requestDto, MultipartFile file, User user) throws IOException {
         Habit habit = null;
-
         Category category = categoryRepository.findByName(requestDto.getCategory()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
 
         if (requestDto.getHabitStatus()== HabitStatus.PUBLIC)

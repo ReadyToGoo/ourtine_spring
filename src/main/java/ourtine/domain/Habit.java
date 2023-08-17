@@ -86,7 +86,7 @@ public class Habit extends BaseEntity {
     // 활성 / 비활성 여부
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private Status status;
+    private Status status = Status.ACTIVE;
 
 
     public Habit(User host, String title, String detail, String imageUrl, Long categoryId, /*Long followerCount, */Long followerLimit,

@@ -30,6 +30,7 @@ public enum ResponseMessage {
     WRONG_HABIT_QUIT(NOT_FOUND,false,"이미 참여하고 있지 않은 습관입니다."),
     WRONG_HABIT_INVITE(NOT_FOUND,false,"초대할 수 있는 인원 수를 초과했습니다."),
     WRONG_HABIT_SEARCH(BAD_REQUEST,false, "습관을 검색할 수 없습니다."),
+    WRONG_HABIT_HOST(BAD_REQUEST, false, "습관의 수정 및 삭제에 대한 권한이 없습니다."),
 
     // HABIT-SESSION
     WRONG_HABIT_SESSION(NOT_FOUND,false,"해당 습관 세션을 찾을 수 없습니다."),

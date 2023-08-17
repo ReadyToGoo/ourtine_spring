@@ -33,15 +33,13 @@ import java.util.List;
 public class HabitController {
 
     private final HabitServiceImpl habitService;
-    private final UploadService uploadService;
     private final MessageService messageService;
 
     // 습관 개설
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE,
-            MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     @ApiOperation(value = "습관 개설 - 습관 개설하기", notes = "습관을 개설한다.")
     public BaseResponseDto<HabitCreatePostResponseDto> createHabit(@RequestPart @Valid HabitCreatePostRequestDto habitCreatePostRequestDto,
-                                                  @RequestPart MultipartFile file) throws IOException {
+                                                  @ModelAttribute MultipartFile file) throws IOException {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
         return new BaseResponseDto<>(habitService.createHabit(habitCreatePostRequestDto,file,user));
@@ -51,10 +49,9 @@ public class HabitController {
     @PatchMapping(value="/{habit_id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiOperation(value = "습관 프로필 - 사진 변경",notes="습관의 프로필 사진을 변경한다.")
     public BaseResponseDto<HabitUpdateImagePatchResponseDto> updateHabitProfileImage(@PathVariable Long habit_id, @RequestParam(value="image") MultipartFile image) throws IOException {
-        Habit habit = habitService.findById(habit_id);
-        habit.updateImage(uploadService.uploadHabitProfile(image));
-        habitService.saveOrUpdateHabit(habit);
-        return new BaseResponseDto<>(new HabitUpdateImagePatchResponseDto(habit_id));
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userDetails.getUser();
+        return new BaseResponseDto<>(habitService.updateHabitImage(habit_id,image,user));
     }
 
     // 홈 - 팔로잉하는 습관 목록

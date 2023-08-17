@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import ourtine.web.dto.response.*;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -63,12 +64,12 @@ public class HabitServiceImpl implements HabitService {
     // 습관 개설하기
     @Override
     public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto requestDto, MultipartFile file, User user) throws IOException {
-        Habit habit = null;
+        Habit habit;
         Category category = categoryRepository.findByName(requestDto.getCategory()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
-
+        if (file.isEmpty()) throw new BusinessException(EMPTY_FILE);
         if (requestDto.getHabitStatus()== HabitStatus.PUBLIC)
         {
-            String imageUrl = s3Uploader.upload(file,"images/habits");
+            String imageUrl = s3Uploader.upload(file, "images/habits");
 
             habit = PublicHabit.builder()
                     .host(user)
@@ -99,6 +100,7 @@ public class HabitServiceImpl implements HabitService {
                     .followerLimit(requestDto.getFollowerLimit())
                     .build();
         }
+        else throw new BusinessException(INTERVAL_SERVER_ERROR);
 
         Habit savedHabit = saveOrUpdateHabit(habit);
         Long habitNum = habitRepository.countByHost(user);
@@ -140,9 +142,26 @@ public class HabitServiceImpl implements HabitService {
     }
 
     @Override
+    public HabitUpdateImagePatchResponseDto updateHabitImage(Long habitId, MultipartFile file, User user) throws IOException {
+        Habit habit = habitRepository.findById(habitId).orElseThrow(()-> new BusinessException(WRONG_HABIT));
+        if (habit.getHost().getId().equals(user.getId())){
+            if (!file.isEmpty()) {
+                s3Uploader.upload(file, "images/habits");
+                habitRepository.save(habit);
+                return new HabitUpdateImagePatchResponseDto(habitId);
+            }
+            else throw new BusinessException(ResponseMessage.EMPTY_FILE);
+
+        }
+        // 수정하려는 유저가 습관의 호스트가 아니면
+        else throw new BusinessException(WRONG_HABIT_HOST);
+    }
+
+    @Override
     public Habit saveOrUpdateHabit(Habit habit) {
         return habitRepository.save(habit);
     }
+
 
 
     // 홈 - 팔로잉하는 습관 목록 (요일 필터링)
@@ -443,7 +462,7 @@ public class HabitServiceImpl implements HabitService {
 
             return new HabitDeleteResponseDto(habitId, user.getId());
         }
-        else throw new BusinessException(WRONG_HABIT_DELETE);
+        else throw new BusinessException(WRONG_HABIT_HOST);
     }
 
 }

@@ -10,7 +10,6 @@ import ourtine.domain.enums.CategoryList;
 import ourtine.domain.enums.Sort;
 import ourtine.web.dto.request.HabitCreatePostRequestDto;
 import org.springframework.transaction.annotation.Transactional;
-import ourtine.web.dto.request.HabitInvitationPostRequestDto;
 import ourtine.web.dto.response.*;
 
 import java.io.IOException;
@@ -20,10 +19,13 @@ public interface HabitService {
 
     public Habit findById(Long id);
     public Habit saveOrUpdateHabit(Habit habit);
+
     //습관 개설하기
     @Transactional
     public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto habitCreatePostRequestDto, MultipartFile file, User user) throws IOException;
 
+    //습관 프로필 변경
+    public HabitUpdateImagePatchResponseDto updateHabitImage(Long habitId, MultipartFile file, User user) throws IOException;
     // 홈 - 팔로잉하는 습관 목록 (요일 필터링)
     // @Transactional
     public Slice<HabitMyFollowingListGetResponseDto> getTodaysMyHabits(User user, Pageable pageable);

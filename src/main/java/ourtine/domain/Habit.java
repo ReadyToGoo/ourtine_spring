@@ -74,10 +74,10 @@ public class Habit extends BaseEntity {
     private LocalDate endDate;
 
     @Column(nullable = false)
-    private Integer participateRate ;
+    private Integer participateRate = 0 ;
 
     @Column(nullable = false, precision =2, scale = 1)
-    private BigDecimal starRate;
+    private BigDecimal starRate = BigDecimal.valueOf(0.0);
 
     // 공개/비공개 여부
     @Column(nullable = false)

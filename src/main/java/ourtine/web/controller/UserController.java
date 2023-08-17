@@ -115,6 +115,7 @@ public class UserController {
 //        return new BaseResponseDto<>(new UserUpdateResponseDto(userId));
 //    }
 
+
     @PatchMapping("/user/category")
     @ApiOperation(value = "관심 카테고리 변경",notes="User의 관심 카테고리 목록을 변경한다.")
     public BaseResponseDto<UserUpdateResponseDto> changeCategory(@RequestBody List<CategoryList> categoryLists) {

@@ -48,7 +48,7 @@ public class HabitController {
     // 습관 프로필 사진 수정
     @PatchMapping(value="/{habit_id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiOperation(value = "습관 프로필 - 사진 변경",notes="습관의 프로필 사진을 변경한다.")
-    public BaseResponseDto<HabitUpdateImagePatchResponseDto> updateHabitProfileImage(@PathVariable Long habit_id, @RequestParam(value="image") MultipartFile image) throws IOException {
+    public BaseResponseDto<HabitUpdateImagePatchResponseDto> updateHabitProfileImage(@PathVariable Long habit_id, @ModelAttribute MultipartFile image) throws IOException {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
         return new BaseResponseDto<>(habitService.updateHabitImage(habit_id,image,user));

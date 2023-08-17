@@ -62,7 +62,6 @@ public class HabitSessionController {
     public BaseResponseDto<HabitSessionUploadVideoPostResponseDto> uploadVideo(@PathVariable Long session_id, @ModelAttribute MultipartFile file) throws IOException {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
-        if (file.isEmpty()){throw new IOException(new BusinessException(ResponseMessage.EMPTY_FILE));}
         return new BaseResponseDto<>(habitSessionService.uploadVideo(session_id, file, user));
     }
 

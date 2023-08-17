@@ -23,7 +23,7 @@ public interface HabitSessionFollowerRepository extends JpaRepository<HabitSessi
     boolean existsByFollowerIdAndHabitSessionId (Long follower_id, Long habitSession_id);
 
     @Query("select hsf from HabitSessionFollower hsf " +
-            "where hsf.habitSession.id = :seesionId " +
+            "where hsf.habitSession.id = :sessionId " +
             "and hsf.follower.id = :userId " +
             "and hsf.habitFollowerStatus = 'COMPLETE'")
     Optional<HabitSessionFollower> queryFindCompleteUser(Long sessionId, Long userId);

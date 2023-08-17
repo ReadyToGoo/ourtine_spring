@@ -39,10 +39,10 @@ public class HabitController {
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     @ApiOperation(value = "습관 개설 - 습관 개설하기", notes = "습관을 개설한다.")
     public BaseResponseDto<HabitCreatePostResponseDto> createHabit(@RequestPart @Valid HabitCreatePostRequestDto habitCreatePostRequestDto,
-                                                  @ModelAttribute MultipartFile file) throws IOException {
+                                                  @RequestPart MultipartFile image) throws IOException {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
-        return new BaseResponseDto<>(habitService.createHabit(habitCreatePostRequestDto,file,user));
+        return new BaseResponseDto<>(habitService.createHabit(habitCreatePostRequestDto,image,user));
     }
 
     // 습관 프로필 사진 수정

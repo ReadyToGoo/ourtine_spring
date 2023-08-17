@@ -69,9 +69,10 @@ public class User extends BaseEntity {
     @ColumnDefault("0")
     private long habitCount;
 
-    @Column
-    @ColumnDefault("아직 작성한 위클리로그가 없습니다.")
-    private String weeklyLog;
+//    @Column
+//    @ColumnDefault("아직 작성한 위클리로그가 없습니다.")
+//    private String weeklyLog;
+
 
     // 푸쉬 알림 동의
     @Column(nullable = false)
@@ -98,9 +99,10 @@ public class User extends BaseEntity {
     public void updateGoal(String goal) {
         this.goal=goal;
     }
-    public void updateWeeklyLog(String weeklyLog) {
-        this.weeklyLog=weeklyLog;
-    }
+//    public void updateWeeklyLog(String weeklyLog) {
+//        this.weeklyLog=weeklyLog;
+//    }
+
 
     public void updateHabitCount(Long habitCount) {
         this.habitCount=habitCount;

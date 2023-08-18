@@ -1,5 +1,6 @@
 package ourtine.domain;
 
+import lombok.AllArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import ourtine.domain.common.BaseEntity;
@@ -22,6 +23,7 @@ import java.util.List;
 
 @Getter
 @Entity
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn

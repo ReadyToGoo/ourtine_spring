@@ -90,6 +90,15 @@ public class HabitController {
         return new BaseResponseDto<>(habitService.getMyWeeklyLog(user));
     }
 
+    // 내 프로필 - 참여한 습관 목록
+    @GetMapping(value = "/users/me")
+    @ApiOperation(value = "내 프로필 - 참여한 습관 목록", notes = "내 프로필의 내가 참여한 습관들에 대해서 조회한다.")
+    public BaseResponseDto<SliceResponseDto<HabitUserFollowedGetResponseDto>> getMyHabits(Pageable pageable){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userDetails.getUser();
+        return new BaseResponseDto<>(new SliceResponseDto<>(habitService.getMyHabits(user,pageable)));
+    }
+
     // 유저 프로필 - 팔로잉 하는 습관 목록
     @GetMapping(value = "/following/users/{user_id}")
     @ApiOperation(value = "유저 프로필", notes = "특정 유저의 참여중인 습관 목록을 조회한다.")

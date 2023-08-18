@@ -12,7 +12,6 @@ import java.util.List;
 public class SignupRequestDto {
     private String nickname;
     private List<String> favoriteCategoryList;
-    private String introduce;
     private String goal;
     private Boolean termsAgreed;
     // 개인 정보 수집 동의

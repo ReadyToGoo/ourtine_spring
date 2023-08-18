@@ -25,7 +25,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn
-@DynamicInsert
 public class Habit extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -74,7 +73,7 @@ public class Habit extends BaseEntity {
     private LocalDate endDate;
 
     @Column(nullable = false)
-    private Integer participateRate =0 ;
+    private Integer participateRate = 0 ;
 
     @Column(nullable = false, precision =2, scale = 1)
     private BigDecimal starRate = BigDecimal.valueOf(0.0);
@@ -87,7 +86,7 @@ public class Habit extends BaseEntity {
     // 활성 / 비활성 여부
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private Status status;
+    private Status status = Status.ACTIVE;
 
 
     public Habit(User host, String title, String detail, String imageUrl, Long categoryId, /*Long followerCount, */Long followerLimit,

@@ -145,8 +145,10 @@ public class HabitServiceImpl implements HabitService {
     public HabitUpdateImagePatchResponseDto updateHabitImage(Long habitId, MultipartFile file, User user) throws IOException {
         Habit habit = habitRepository.findById(habitId).orElseThrow(()-> new BusinessException(WRONG_HABIT));
         if (habit.getHost().getId().equals(user.getId())){
-            if (!file.isEmpty()) {
-                s3Uploader.upload(file, "images/habits");
+            if(file==null) throw new BusinessException(ResponseMessage.EMPTY_FILE);
+            else if (!file.isEmpty()) {
+                String uploadUrl = s3Uploader.upload(file, "images/habits");
+                habit.updateImage(uploadUrl);
                 habitRepository.save(habit);
                 return new HabitUpdateImagePatchResponseDto(habitId);
             }

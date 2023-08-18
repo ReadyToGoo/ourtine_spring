@@ -105,7 +105,18 @@ public class UserController {
         return new BaseResponseDto<>(new UserUpdateResponseDto(userId));
     }
 
-    @PatchMapping("user/category")
+//    @PatchMapping("/user/weeklyLog")
+//    @ApiOperation(value = "위클리로그 변경", notes = "User의 위클리로그를 변경한다.")
+//    public BaseResponseDto<UserUpdateResponseDto> changeWeeklyLog(@RequestBody String weeklyLog) {
+//        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        User user = userDetails.getUser();
+//        Long userId = user.getId();
+//        userService.changeWeeklyLog(userId, weeklyLog);
+//        return new BaseResponseDto<>(new UserUpdateResponseDto(userId));
+//    }
+
+
+    @PatchMapping("/user/category")
     @ApiOperation(value = "관심 카테고리 변경",notes="User의 관심 카테고리 목록을 변경한다.")
     public BaseResponseDto<UserUpdateResponseDto> changeCategory(@RequestBody List<CategoryList> categoryLists) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

@@ -39,16 +39,16 @@ public class HabitController {
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     @ApiOperation(value = "습관 개설 - 습관 개설하기", notes = "습관을 개설한다.")
     public BaseResponseDto<HabitCreatePostResponseDto> createHabit(@RequestPart @Valid HabitCreatePostRequestDto habitCreatePostRequestDto,
-                                                  @ModelAttribute MultipartFile file) throws IOException {
+                                                  @RequestPart MultipartFile image) throws IOException {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
-        return new BaseResponseDto<>(habitService.createHabit(habitCreatePostRequestDto,file,user));
+        return new BaseResponseDto<>(habitService.createHabit(habitCreatePostRequestDto,image,user));
     }
 
     // 습관 프로필 사진 수정
     @PatchMapping(value="/{habit_id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiOperation(value = "습관 프로필 - 사진 변경",notes="습관의 프로필 사진을 변경한다.")
-    public BaseResponseDto<HabitUpdateImagePatchResponseDto> updateHabitProfileImage(@PathVariable Long habit_id, @RequestParam(value="image") MultipartFile image) throws IOException {
+    public BaseResponseDto<HabitUpdateImagePatchResponseDto> updateHabitProfileImage(@PathVariable Long habit_id, @ModelAttribute MultipartFile image) throws IOException {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
         return new BaseResponseDto<>(habitService.updateHabitImage(habit_id,image,user));

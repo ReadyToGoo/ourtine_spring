@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ourtine.exception.BusinessException;
 import ourtine.exception.enums.ResponseMessage;
 
+import javax.validation.constraints.Null;
 import java.io.IOException;
 
 @Service
@@ -16,7 +17,8 @@ public class UploadService {
 
     @Transactional
     public String uploadUserProfile(MultipartFile image) throws IOException {
-        if (!image.isEmpty()) {
+        if(image==null) throw new BusinessException(ResponseMessage.EMPTY_FILE);
+        else if (!image.isEmpty()) {
             return s3Uploader.upload(image, "images/users");
         }
         else throw new BusinessException(ResponseMessage.EMPTY_FILE);
@@ -24,7 +26,8 @@ public class UploadService {
 
     @Transactional
     public String uploadHabitProfile(MultipartFile image) throws IOException {
-        if (!image.isEmpty()) {
+        if(image==null) throw new BusinessException(ResponseMessage.EMPTY_FILE);
+        else if (!image.isEmpty()) {
             return s3Uploader.upload(image, "images/habits");
         }
         else throw new BusinessException(ResponseMessage.EMPTY_FILE);
@@ -32,7 +35,8 @@ public class UploadService {
 
     @Transactional
     public String uploadSessionVideo(MultipartFile video) throws IOException{
-        if (!video.isEmpty()) {
+        if(video==null) throw new BusinessException(ResponseMessage.EMPTY_FILE);
+        else if (!video.isEmpty()) {
             return s3Uploader.upload(video, "images/habit-sessions");
         }
         else throw new BusinessException(ResponseMessage.EMPTY_FILE);

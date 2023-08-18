@@ -45,6 +45,13 @@ public class UserServiceImpl implements UserService {
         saveOrUpdateUser(user);
     }
 
+//    @Override
+//    public void changeWeeklyLog(Long userId, String weeklyLog) {
+//        User user = userRepository.findById(userId).get();
+//        user.updateWeeklyLog(weeklyLog);
+//        saveOrUpdateUser(user);
+//    }
+
     @Override
     public void changePushAlert(Long userId) {
         User user = userRepository.findById(userId).get();

@@ -17,11 +17,11 @@ public class HabitFollowers extends BaseEntity {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "habit_id",nullable = false)
     private Habit habit;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "follower_id",nullable = false)
     private User follower;
 

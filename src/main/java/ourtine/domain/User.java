@@ -45,7 +45,7 @@ public class User extends BaseEntity {
     @ColumnDefault("USER")
     private UserRoleEnum userRole;
 
-    @OneToMany(mappedBy = "follower")
+    @OneToMany(mappedBy = "follower", fetch = FetchType.EAGER)
     private List<HabitFollowers> habitFollowersList;
 
     // 이용 약관 동의

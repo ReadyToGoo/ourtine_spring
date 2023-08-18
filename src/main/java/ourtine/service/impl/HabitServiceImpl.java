@@ -215,6 +215,7 @@ public class HabitServiceImpl implements HabitService {
 
     // 내 프로필 - 참여한 습관 리스트
     @Override
+    @Transactional
     public Slice<HabitUserFollowedGetResponseDto> getMyHabits(User user, Pageable pageable){
         Slice<HabitUserFollowedGetResponseDto> responseDto ;
         Slice<Habit> habits = new SliceImpl<>(user.getHabitFollowersList().stream().map(HabitFollowers::getHabit).collect(Collectors.toList()));

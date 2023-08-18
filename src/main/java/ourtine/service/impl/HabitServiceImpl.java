@@ -225,7 +225,6 @@ public class HabitServiceImpl implements HabitService {
                         return new HabitUserFollowedGetResponseDto(habit, category, hashtags);
                     }
             );
-
         return responseDto;
     }
 
@@ -459,6 +458,8 @@ public class HabitServiceImpl implements HabitService {
 
             // 습관-세션 삭제
             habitSessionRepository.deleteByHabitId(habit.getId());
+
+            // TODO:  이미지 삭제
 
             habitRepository.deleteById(habit.getId());
 

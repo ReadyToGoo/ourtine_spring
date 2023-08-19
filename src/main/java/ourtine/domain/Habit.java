@@ -48,11 +48,8 @@ public class Habit extends BaseEntity {
     @Column(nullable = false)
     private Long categoryId;
 
-    @OneToMany( mappedBy = "habit")
-    private List<HabitDays> days = new ArrayList<>();
-
     @OneToMany( mappedBy = "habit", fetch = FetchType.EAGER)
-    private List<HabitHashtag> hashtags = new ArrayList<>();
+    private List<HabitDays> days = new ArrayList<>();
 
     private Long followerCount = 1l;
 

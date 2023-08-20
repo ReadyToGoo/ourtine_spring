@@ -25,5 +25,6 @@ public class Block extends BaseEntity {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private Status status=Status.ACTIVE;
+    @ColumnDefault("ACTIVE")
+    private Status status;
 }

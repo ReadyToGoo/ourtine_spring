@@ -28,7 +28,8 @@ public class Follow extends BaseEntity {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private Status status=Status.ACTIVE;
+    @ColumnDefault("ACTIVE")
+    private Status status;
 
     @Builder
     public Follow(User sender, User receiver){

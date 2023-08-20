@@ -58,7 +58,7 @@ public class OAuth2Service {
         } else if (user.getUserStatus() != UserStatus.SIGNUP_PROGRESS) {
             return new BaseResponseDto<>(400, false, "Bad Request : 이미 회원가입된 유저입니다.", new SignupResponseDto(user.getNickname()));
         } else {
-            user.signup(signupRequestDto.getNickname(), signupRequestDto.getIntroduce(), signupRequestDto.getGoal(), signupRequestDto.getTermsAgreed(), signupRequestDto.getPrivacyAgreed(), signupRequestDto.getMarketingAgreed());  // 유저 Entity 자체의 public method
+            user.signup(signupRequestDto.getNickname(), signupRequestDto.getGoal(), signupRequestDto.getTermsAgreed(), signupRequestDto.getPrivacyAgreed(), signupRequestDto.getMarketingAgreed());  // 유저 Entity 자체의 public method
             userRepository.saveAndFlush(user);
             List<CategoryList> categoryListList = new CategoryListsConverter().convert(signupRequestDto.getFavoriteCategoryList());
             assert categoryListList != null;

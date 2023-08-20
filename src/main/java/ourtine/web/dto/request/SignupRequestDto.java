@@ -11,7 +11,6 @@ import java.util.List;
 @Getter
 public class SignupRequestDto {
     private String nickname;
-    private String introduce;
     private List<String> favoriteCategoryList;
     private String goal;
     private Boolean termsAgreed;

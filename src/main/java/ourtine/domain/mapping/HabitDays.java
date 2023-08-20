@@ -30,7 +30,8 @@ public class HabitDays extends BaseEntity {
     private Day day;
 
     @Enumerated(value = EnumType.STRING)
-    private Status status =Status.ACTIVE;
+    @ColumnDefault("ACTIVE")
+    private Status status;
 
     @Builder
     public HabitDays(Habit habit, Day day){

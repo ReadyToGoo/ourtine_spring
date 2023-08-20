@@ -69,10 +69,12 @@ public class Habit extends BaseEntity {
     private LocalDate endDate;
 
     @Column(nullable = false)
-    private Integer participateRate = 0 ;
+    @ColumnDefault("0")
+    private Integer participateRate ;
 
     @Column(nullable = false, precision =2, scale = 1)
-    private BigDecimal starRate = BigDecimal.valueOf(0.0);
+    @ColumnDefault("0.0")
+    private BigDecimal starRate;
 
     // 공개/비공개 여부
     @Column(nullable = false)
@@ -82,7 +84,8 @@ public class Habit extends BaseEntity {
     // 활성 / 비활성 여부
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private Status status = Status.ACTIVE;
+    @ColumnDefault("ACTIVE")
+    private Status status;
 
 
     public Habit(User host, String title, String detail, String imageUrl, Long categoryId, /*Long followerCount, */Long followerLimit,

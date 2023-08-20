@@ -5,17 +5,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import ourtine.domain.Habit;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import ourtine.domain.enums.Day;
 import ourtine.domain.enums.HabitFollowerStatus;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class HabitMyFollowingListGetResponseDto {
+public class HabitProfileHomeGetResponseDto {
     private Long habitId;
 
     private String title;
@@ -29,7 +25,7 @@ public class HabitMyFollowingListGetResponseDto {
     private int participationRate; // 내 참여율
     private int mvp ;
 
-    public HabitMyFollowingListGetResponseDto(Habit habit, int participationRate, int mvp, boolean status){
+    public HabitProfileHomeGetResponseDto(Habit habit, int participationRate, int mvp, boolean status){
         this.habitId = habit.getId();
         this.title = habit.getTitle();
         this.imageUrl = habit.getImageUrl();

@@ -28,7 +28,7 @@ public interface HabitService {
     public HabitUpdateImagePatchResponseDto updateHabitImage(Long habitId, MultipartFile file, User user) throws IOException;
     // 홈 - 팔로잉하는 습관 목록 (요일 필터링)
     // @Transactional
-    public Slice<HabitMyFollowingListGetResponseDto> getTodaysMyHabits(User user, Pageable pageable);
+    public HabitHomeGetResponseDto getTodaysMyHabits(User user, Pageable pageable);
 
     // 습관 프로필 조회
     // @Transactional

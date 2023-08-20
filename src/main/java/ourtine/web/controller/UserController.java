@@ -78,7 +78,7 @@ public class UserController {
         User user = userService.findById(userId);
         userService.changeHabitCount(user.getId(), habitService.getMyHabitCount(user, pageable));
         user.updateHabitCount(habitService.getMyHabitCount(user, pageable));
-        List<String> categories = userCategoryService.findUsersAllCategory(me.getId());
+        List<String> categories = userCategoryService.findUsersAllCategory(user.getId());
         Boolean isFollow = followService.getFollowStatus(userId, me.getId()).getIsFollow();
         Long followerCount = followService.getFollowerCount(userId, me, pageable);
         Long followingCount = followService.getFollowingCount(userId, me, pageable);

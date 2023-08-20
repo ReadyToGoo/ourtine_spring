@@ -16,6 +16,7 @@ import ourtine.domain.enums.Sort;
 import ourtine.exception.BusinessException;
 import ourtine.exception.enums.ResponseMessage;
 import ourtine.service.MessageService;
+import ourtine.service.UserService;
 import ourtine.service.impl.HabitServiceImpl;
 import ourtine.web.dto.common.BaseResponseDto;
 import ourtine.web.dto.common.SliceResponseDto;
@@ -34,6 +35,7 @@ public class HabitController {
 
     private final HabitServiceImpl habitService;
     private final MessageService messageService;
+    private final UserService userService;
 
     // 습관 개설
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -57,10 +59,12 @@ public class HabitController {
     // 홈 - 팔로잉하는 습관 목록
     @GetMapping("/me")
     @ApiOperation(value = "홈 - 습관 참여 리스트", notes = "오늘 내가 진행할 습관들을 조회한다.")
-    public BaseResponseDto<SliceResponseDto<HabitMyFollowingListGetResponseDto>> getMyTodaysMyHabits(Pageable pageable){
+    public BaseResponseDto<HomeResponseDto> getMyTodaysMyHabits(Pageable pageable){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
-        return new BaseResponseDto<>(new SliceResponseDto<>(habitService.getTodaysMyHabits(user,pageable)));
+        String weeklyLogPeriod = userService.getWeeklyLogPeriod(user);
+        String weeklyLogContents = userService.getWeeklyLogContents(user);
+        return new BaseResponseDto<>(new HomeResponseDto(weeklyLogPeriod, weeklyLogContents, new SliceResponseDto<>(habitService.getTodaysMyHabits(user, pageable))));
     }
 
     // 습관 프로필 조회

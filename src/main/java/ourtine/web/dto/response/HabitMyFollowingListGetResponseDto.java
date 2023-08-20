@@ -25,6 +25,7 @@ public class HabitMyFollowingListGetResponseDto {
     private LocalTime startTime;
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "kk:mm:ss", timezone = "Asia/Seoul")
     private LocalTime endTime;
+
     private HabitFollowerStatus status;
     private int participationRate; // 내 참여율
     private int mvp ;

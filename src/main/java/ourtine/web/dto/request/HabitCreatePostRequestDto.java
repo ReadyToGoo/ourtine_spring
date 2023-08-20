@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 import ourtine.domain.enums.CategoryList;
 import ourtine.domain.enums.Day;
 import ourtine.domain.enums.HabitStatus;
@@ -82,6 +83,8 @@ public class HabitCreatePostRequestDto {
                 @Size(min = 2,max = 10,message = "해시태그는 2자 이상 10자 이하여야 합니다.")
                 @Pattern(regexp = "^[0-9a-zA-Zㄱ-ㅎ가-힣]*$",message = "해시태그는 공백과 특수문자를 불포함한 해시태그만 입력할 수 있습니다.")
                 String> hashtags;
+
+        private MultipartFile profileImage;
 
         @NotNull(message = "습관 타입 입력은 필수입니다.")
         @Schema(title = "습관 타입", description = "PRIVATE 혹은 PUBLIC만 입력 가능")

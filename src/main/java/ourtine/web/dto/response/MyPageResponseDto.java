@@ -18,10 +18,11 @@ public class MyPageResponseDto {
     private long followingCount;
     private List<HabitWeeklyLogGetResponseDto> weeklyLog;
 
-    public MyPageResponseDto(User user, Long followerCount, Long followingCount, List<HabitWeeklyLogGetResponseDto> habitWeeklyLogGetResponseDtoList) {
+    public MyPageResponseDto(User user,Long followerCount, Long followingCount, List<HabitWeeklyLogGetResponseDto> habitWeeklyLogGetResponseDtoList) {
         this.nickname = user.getNickname();
         this.imageUrl = user.getImageUrl();
         this.goal = user.getGoal();
+        this.participationRate = user.getParticipationRate();
         this.habitCount = user.getHabitCount();
         this.followerCount=followerCount;
         this.followingCount=followingCount;

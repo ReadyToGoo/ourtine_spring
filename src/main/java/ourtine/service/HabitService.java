@@ -28,7 +28,7 @@ public interface HabitService {
     public HabitUpdateImagePatchResponseDto updateHabitImage(Long habitId, MultipartFile file, User user) throws IOException;
     // 홈 - 팔로잉하는 습관 목록 (요일 필터링)
     // @Transactional
-    public Slice<HabitMyFollowingListGetResponseDto> getTodaysMyHabits(User user, Pageable pageable);
+    public HabitHomeGetResponseDto getTodaysMyHabits(User user, Pageable pageable);
 
     // 습관 프로필 조회
     // @Transactional
@@ -50,7 +50,7 @@ public interface HabitService {
 
     // 추천 습관 목록
     // @Transactional
-    public Slice<HabitRecommendResponseDto> getRecommendHabits(User user, Pageable pageable);
+    public Slice<HabitSearchGetResponseDto> getRecommendHabits(User user, Pageable pageable);
 
     //습관 참여하기
     @Transactional
@@ -59,7 +59,7 @@ public interface HabitService {
 
     // @Transactional
     // 습관 검색
-    public Slice<HabitSearchResponseDto> searchHabits(Sort sort, User user, String keyword, Pageable pageable);
+    public Slice<HabitSearchGetResponseDto> searchHabits(Sort sort, User user, String keyword, Pageable pageable);
 
     // 습관 탈퇴하기
     @Modifying
@@ -67,7 +67,7 @@ public interface HabitService {
     public HabitFollowerResponseDto quitHabit(Long habitId, User user);
 
     // 카테고리별 습관 검색
-    public Slice<HabitFindByCategoryGetResponseDto> findHabitsByCategory(CategoryList categoryName, User user, Pageable pageable);
+    public Slice<HabitSearchGetResponseDto> findHabitsByCategory(CategoryList categoryName, User user, Pageable pageable);
 
     @Modifying
     @Transactional

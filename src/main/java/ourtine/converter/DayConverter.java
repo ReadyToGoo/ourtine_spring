@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 @Component
 public class DayConverter{
@@ -34,10 +35,10 @@ public class DayConverter{
         return dayOfWeek(dayNum);
     }
     // 이번주 월요일 날짜 구하기
-    public LocalDateTime getCurMonday(){
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
-        return c.getTime().toInstant().atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+    public LocalDate getCurMonday(){
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        int dayNum = LocalDate.now(ZoneId.of("Asia/Seoul")).getDayOfWeek().getValue();
+        return today.minusDays(dayNum-1);
     }
 
 

@@ -22,7 +22,6 @@ import ourtine.web.dto.response.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -108,7 +107,7 @@ public class HabitController {
     // 추천 습관 목록
     @GetMapping(value = "/recommend")
     @ApiOperation(value = "참여 - 추천 습관", notes = "유저가 관심있는 카테고리에 대한 습관을 조회한다.")
-    public BaseResponseDto<SliceResponseDto<HabitRecommendResponseDto>> getRecommendHabits(Pageable pageable){
+    public BaseResponseDto<SliceResponseDto<HabitSearchGetResponseDto>> getRecommendHabits(Pageable pageable){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User me = userDetails.getUser();
         return new BaseResponseDto<>(new  SliceResponseDto<>(habitService.getRecommendHabits(me, pageable)));
@@ -126,7 +125,7 @@ public class HabitController {
     // 습관 검색하기
     @GetMapping(value = "/search")
     @ApiOperation(value = "참여 - 검색", notes = "원하는 정렬 필터와 키워드로 습관을 검색한다.")
-    public BaseResponseDto<SliceResponseDto<HabitSearchResponseDto>> searchHabits(@RequestParam Sort sort_by,  @RequestParam String keyword, Pageable pageable){
+    public BaseResponseDto<SliceResponseDto<HabitSearchGetResponseDto>> searchHabits(@RequestParam Sort sort_by,  @RequestParam String keyword, Pageable pageable){
         String word = '%'+keyword+'%';
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
@@ -136,7 +135,7 @@ public class HabitController {
     // 카테고리별 검색
     @GetMapping("/discover")
     @ApiOperation(value = "참여 - 카테고리별 습관 추천", notes = "카테고리로 분류된 습관들을 조회한다.")
-    public BaseResponseDto<SliceResponseDto<HabitFindByCategoryGetResponseDto>> findHabitsByCategory(@RequestParam CategoryList category, Pageable pageable){
+    public BaseResponseDto<SliceResponseDto<HabitSearchGetResponseDto>> findHabitsByCategory(@RequestParam CategoryList category, Pageable pageable){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
         return new BaseResponseDto<>(new SliceResponseDto<>(habitService.findHabitsByCategory(category, user, pageable)));

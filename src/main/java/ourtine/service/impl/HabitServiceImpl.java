@@ -258,7 +258,7 @@ public class HabitServiceImpl implements HabitService {
         habitSessionFollowers.forEach(follower ->
                 responseDto.add(new HabitWeeklyLogGetResponseDto(
                         dayConverter.dayOfWeek(follower.getCreatedAt()),
-                        java.sql.Timestamp.valueOf(follower.getCreatedAt()),
+                        java.sql.Date.valueOf(follower.getCreatedAt().toLocalDate()),
                         follower.getHabitSession().getHabit().getTitle(),
                         follower.getVideoUrl(), follower.getEmotion())));
         return responseDto;
@@ -319,10 +319,10 @@ public class HabitServiceImpl implements HabitService {
     }
     // 추천 습관 목록
     @Override
-    public Slice<HabitRecommendResponseDto> getRecommendHabits(User user, Pageable pageable) {
+    public Slice<HabitSearchGetResponseDto> getRecommendHabits(User user, Pageable pageable) {
         Slice<Habit> habits = habitRepository.queryGetRecommendHabits(user.getId(),pageable);
         return habits.map(habit ->
-                new HabitRecommendResponseDto(habit,categoryRepository.findById(habit.getCategoryId()).orElseThrow(()->new BusinessException(WRONG_HABIT_CATEGORY))));
+                new HabitSearchGetResponseDto(habit,categoryRepository.findById(habit.getCategoryId()).orElseThrow(()->new BusinessException(WRONG_HABIT_CATEGORY))));
     }
     // 습관 참여하기
     @Override
@@ -375,7 +375,7 @@ public class HabitServiceImpl implements HabitService {
 
     // 습관 검색하기
     @Override
-    public Slice<HabitSearchResponseDto> searchHabits(Sort sort, User user, String keyword, Pageable pageable) {
+    public Slice<HabitSearchGetResponseDto> searchHabits(Sort sort, User user, String keyword, Pageable pageable) {
         Slice<Habit> habits;
         // 키워드와 일치하는 해시태그를 가진 습관 아이디 리스트
         List<Long> habitsIdsSearchByHashtag = habitHashtagRepository.queryFindHabitIdsByHashtag(habitHashtagRepository.queryFindHashTagIdsByName(keyword).getContent()).getContent();
@@ -391,22 +391,20 @@ public class HabitServiceImpl implements HabitService {
         }
         else throw new BusinessException(WRONG_HABIT_SEARCH);
 
-        return habits.map(habit -> new HabitSearchResponseDto(
+        return habits.map(habit -> new HabitSearchGetResponseDto(
                 habit,
-                habitRepository.queryGetHabitRecruitingStatus(habit.getId()),
-                habitHashtagRepository.queryFindHashtagNameByHabit(habit.getId()),
                 categoryRepository.findById(habit.getCategoryId()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY))
         ));
     }
 
     // 카테고리별 검색
     @Override
-    public Slice<HabitFindByCategoryGetResponseDto> findHabitsByCategory(CategoryList categoryName, User user, Pageable pageable) {
+    public Slice<HabitSearchGetResponseDto> findHabitsByCategory(CategoryList categoryName, User user, Pageable pageable) {
         Category category = categoryRepository.findByName(categoryName).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
         Slice<Habit> habits = habitRepository.querySearchHabitByCategory(user.getId(), category.getId(), pageable);
 
         return habits.map(habit ->
-             new HabitFindByCategoryGetResponseDto(habit, category));
+             new HabitSearchGetResponseDto(habit, category));
     }
 
     // 습관 참여 취소 하기

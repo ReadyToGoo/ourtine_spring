@@ -8,6 +8,8 @@ import ourtine.repository.HabitSessionFollowerRepository;
 import ourtine.repository.HabitSessionRepository;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Component
@@ -80,5 +82,20 @@ public final class CalculatorClass {
             }
         }
         return starRate;
+    }
+
+    //userWeeklyLog 기간 파싱
+    public String userWeeklyLogPeriod(String weeklyLog) {
+        String dateString = weeklyLog.substring(1, 11);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate currentDate = LocalDate.parse(dateString, formatter);
+        LocalDate.parse(dateString, formatter).atStartOfDay();
+        LocalDate startDate = currentDate.minus(7, ChronoUnit.DAYS);
+        return startDate.format(DateTimeFormatter.ofPattern("MM/dd")) + " ~ " + currentDate.format(DateTimeFormatter.ofPattern("MM/dd"));
+    }
+
+    // userWeeklyLog 본문 파싱
+    public String userWeeklyLogContents(String weeklyLog) {
+        return weeklyLog.substring(12);
     }
 }

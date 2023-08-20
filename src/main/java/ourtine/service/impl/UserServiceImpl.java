@@ -11,8 +11,11 @@ import ourtine.exception.BusinessException;
 import ourtine.exception.enums.ResponseMessage;
 import ourtine.repository.UserRepository;
 import ourtine.service.UserService;
+import ourtine.util.CalculatorClass;
 import ourtine.web.dto.response.UserSimpleProfileResponseDto;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +24,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final CalculatorClass calculatorClass;
 
     @Override
     public User findById(Long id) {
@@ -59,8 +63,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changeWeeklyLog(Long userId, String weeklyLog) {
         User user = userRepository.findById(userId).orElseThrow(()->new BusinessException(ResponseMessage.WRONG_USER));
-        user.updateUserWeeklyLog(weeklyLog);
+        String formattedDate = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
+        user.updateUserWeeklyLog("["+formattedDate+"]"+weeklyLog);
         saveOrUpdateUser(user);
+    }
+
+    @Override
+    public String getWeeklyLogPeriod(User user) {
+        return calculatorClass.userWeeklyLogPeriod(user.getUserWeeklyLog());
+    }
+    @Override
+    public String getWeeklyLogContents(User user) {
+        return calculatorClass.userWeeklyLogContents(user.getUserWeeklyLog());
     }
 
     @Override

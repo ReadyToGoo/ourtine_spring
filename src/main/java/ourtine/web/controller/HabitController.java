@@ -13,6 +13,7 @@ import ourtine.domain.UserDetailsImpl;
 import ourtine.domain.enums.CategoryList;
 import ourtine.domain.enums.Sort;
 import ourtine.service.MessageService;
+import ourtine.service.UserService;
 import ourtine.service.impl.HabitServiceImpl;
 import ourtine.web.dto.common.BaseResponseDto;
 import ourtine.web.dto.common.SliceResponseDto;
@@ -30,6 +31,7 @@ public class HabitController {
 
     private final HabitServiceImpl habitService;
     private final MessageService messageService;
+    private final UserService userService;
 
     // 습관 개설
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -56,7 +58,10 @@ public class HabitController {
     public BaseResponseDto<HabitHomeGetResponseDto> getMyTodaysMyHabits(Pageable pageable){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
-        return new BaseResponseDto<>(habitService.getTodaysMyHabits(user,pageable));
+        HabitHomeGetResponseDto todaysMyHabits = habitService.getTodaysMyHabits(user, pageable);
+        todaysMyHabits.setUserWeeklyLogPeriod(userService.getWeeklyLogPeriod(user));
+        todaysMyHabits.setUserWeeklyLogContents(userService.getWeeklyLogContents(user));
+        return new BaseResponseDto<>(todaysMyHabits);
     }
 
     // 습관 프로필 조회

@@ -14,6 +14,8 @@ public interface UserService {
     public void changeHabitCount(Long userId, Long habitCount);
 
     public void changeWeeklyLog(Long userId, String weeklyLog);
+    public String getWeeklyLogPeriod(User user);
+    public String getWeeklyLogContents(User user);
 
     public void changePushAlert(Long userId);
     public void changeMarketingPushAlert(Long userId);

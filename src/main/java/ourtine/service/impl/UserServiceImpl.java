@@ -33,14 +33,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changeNickname(Long userId, String nickname) {
-        User user = userRepository.findById(userId).get();
+        User user = userRepository.findById(userId).orElseThrow(()->new BusinessException(ResponseMessage.WRONG_USER));
+        if (userRepository.existsByNickname(nickname)) {
+            throw new BusinessException(ResponseMessage.WRONG_NICKNAME);
+        }
         user.updateNickname(nickname);
         saveOrUpdateUser(user);
     }
 
     @Override
     public void changeGoal(Long userId, String goal) {
-        User user = userRepository.findById(userId).get();
+        User user = userRepository.findById(userId).orElseThrow(()->new BusinessException(ResponseMessage.WRONG_USER));
         user.updateGoal(goal);
         saveOrUpdateUser(user);
     }
@@ -48,28 +51,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changeHabitCount(Long userId, Long habitCount) {
-        User user = userRepository.findById(userId).get();
+        User user = userRepository.findById(userId).orElseThrow(()->new BusinessException(ResponseMessage.WRONG_USER));
         user.updateHabitCount(habitCount);
         saveOrUpdateUser(user);
     }
 
     @Override
     public void changeWeeklyLog(Long userId, String weeklyLog) {
-        User user = userRepository.findById(userId).get();
+        User user = userRepository.findById(userId).orElseThrow(()->new BusinessException(ResponseMessage.WRONG_USER));
         user.updateUserWeeklyLog(weeklyLog);
         saveOrUpdateUser(user);
     }
 
     @Override
     public void changePushAlert(Long userId) {
-        User user = userRepository.findById(userId).get();
+        User user = userRepository.findById(userId).orElseThrow(()->new BusinessException(ResponseMessage.WRONG_USER));
         user.updatePushAlert();
         saveOrUpdateUser(user);
     }
 
     @Override
     public void changeMarketingPushAlert(Long userId) {
-        User user = userRepository.findById(userId).get();
+        User user = userRepository.findById(userId).orElseThrow(()->new BusinessException(ResponseMessage.WRONG_USER));
         user.updateMarketingPushAlert();
         saveOrUpdateUser(user);
     }

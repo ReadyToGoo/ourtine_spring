@@ -28,6 +28,13 @@ public interface HabitRepository extends JpaRepository<Habit,Long> {
             "order by h.id desc ")
     Slice<Habit> queryFindHabitsById(List<Long> habitIds);
 
+    // 아이디로 습관 정보 조회 (PUBLIC + PRIVATE)
+    @Query("select h from Habit h " +
+            "where h.id in :habitIds " +
+            "and h.endDate >= CURDATE() " + // 종료 되지 않은 습관 필터링
+            "order by h.startTime asc")
+    Slice<Habit> queryFindHabitsByStartTime(List<Long> habitIds);
+
     // 습관 아이디로 습관 정보 조회 (PUBLIC ONLY) 유저 프로필
     @Query("select h from Habit h " +
             "where h.id in :habitIds " +

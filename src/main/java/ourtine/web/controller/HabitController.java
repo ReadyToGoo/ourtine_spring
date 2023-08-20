@@ -7,14 +7,11 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ourtine.aws.s3.UploadService;
 import ourtine.domain.Habit;
 import ourtine.domain.User;
 import ourtine.domain.UserDetailsImpl;
 import ourtine.domain.enums.CategoryList;
 import ourtine.domain.enums.Sort;
-import ourtine.exception.BusinessException;
-import ourtine.exception.enums.ResponseMessage;
 import ourtine.service.MessageService;
 import ourtine.service.impl.HabitServiceImpl;
 import ourtine.web.dto.common.BaseResponseDto;
@@ -57,10 +54,10 @@ public class HabitController {
     // 홈 - 팔로잉하는 습관 목록
     @GetMapping("/me")
     @ApiOperation(value = "홈 - 습관 참여 리스트", notes = "오늘 내가 진행할 습관들을 조회한다.")
-    public BaseResponseDto<SliceResponseDto<HabitMyFollowingListGetResponseDto>> getMyTodaysMyHabits(Pageable pageable){
+    public BaseResponseDto<HabitHomeGetResponseDto> getMyTodaysMyHabits(Pageable pageable){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
-        return new BaseResponseDto<>(new SliceResponseDto<>(habitService.getTodaysMyHabits(user,pageable)));
+        return new BaseResponseDto<>(habitService.getTodaysMyHabits(user,pageable));
     }
 
     // 습관 프로필 조회

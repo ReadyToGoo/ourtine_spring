@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -65,7 +66,16 @@ public class HabitServiceImpl implements HabitService {
     public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto requestDto, MultipartFile file, User user) throws IOException {
         Habit habit;
         Category category = categoryRepository.findByName(requestDto.getCategory()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
-        if (file.isEmpty()) throw new BusinessException(EMPTY_FILE);
+        if (file.isEmpty()) throw new IOException();
+        // 시작 날짜가 종료 날짜보다 이후일 때
+        if (requestDto.getEndDate().isBefore(requestDto.getStartDate())){
+            throw new BusinessException(WRONG_HABIT_DATE);
+        }
+        // 종료일이 오늘이면서, 시작 시간이 현재보다 과거일 때
+        if (Objects.equals(requestDto.getEndDate(), LocalDate.now(ZoneId.of("Asia/Seoul"))) &&
+                requestDto.getStartTime().isBefore(LocalTime.now(ZoneId.of("Asia/Seoul")))){
+            throw new BusinessException(WRONG_HABIT_TIME);
+        }
         if (requestDto.getHabitStatus()== HabitStatus.PUBLIC)
         {
             String imageUrl = s3Uploader.upload(file, "images/habits");
@@ -346,7 +356,7 @@ public class HabitServiceImpl implements HabitService {
                     return new HabitFollowerResponseDto(habitId, user.getId());
                 }
                 else
-                    throw new BusinessException(ResponseMessage.WRONG_HABIT_TIME);
+                    throw new BusinessException(ResponseMessage.WRONG_HABIT_JOIN_TIME);
         }
 
     }

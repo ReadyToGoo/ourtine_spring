@@ -27,11 +27,13 @@ public enum ResponseMessage {
     WRONG_HABIT_CATEGORY(NOT_FOUND,false,"해당 카테고리 찾을 수 없습니다."),
     WRONG_HABIT_DELETE(NOT_FOUND,false,"해당 습관을 삭제할 수 없습니다."),
     WRONG_HABIT_JOIN(NOT_FOUND,false,"이미 습관에 참여하고 있습니다."),
-    WRONG_HABIT_TIME(NOT_FOUND,false,"참여하고 있는 습관과 시간이 겹칩니다."),
+    WRONG_HABIT_JOIN_TIME(NOT_FOUND,false,"참여하고 있는 습관과 시간이 겹칩니다."),
     WRONG_HABIT_QUIT(NOT_FOUND,false,"이미 참여하고 있지 않은 습관입니다."),
     WRONG_HABIT_INVITE(NOT_FOUND,false,"초대할 수 있는 인원 수를 초과했습니다."),
     WRONG_HABIT_SEARCH(BAD_REQUEST,false, "습관을 검색할 수 없습니다."),
     WRONG_HABIT_HOST(BAD_REQUEST, false, "습관의 수정 및 삭제에 대한 권한이 없습니다."),
+    WRONG_HABIT_DATE(BAD_REQUEST, false, "습관의 시작 날짜는 종료 날짜보다 앞서야 합니다."),
+    WRONG_HABIT_TIME(BAD_REQUEST,false,"습관의 시작 시간은 현재의 이후여야 합니다."),
 
     // HABIT-SESSION
     WRONG_HABIT_SESSION(NOT_FOUND,false,"해당 습관 세션을 찾을 수 없습니다."),

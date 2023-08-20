@@ -124,9 +124,8 @@ public class User extends BaseEntity {
         this.refreshToken = refreshToken;
     }
 
-    public void signup(String nickname, String introduce, String goal, Boolean termsAgreed, Boolean privacyAgreed, Boolean marketingAgreed){
+    public void signup(String nickname, String goal, Boolean termsAgreed, Boolean privacyAgreed, Boolean marketingAgreed){
         this.nickname = nickname;
-        this.introduce =introduce;
         this.goal = goal;
         this.termsAgreed = termsAgreed;
         this.privacyAgreed = privacyAgreed;

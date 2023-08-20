@@ -38,12 +38,12 @@ public class UserController {
     private final UserCategoryService userCategoryService;
     private final CategoryService categoryService;
     private final FollowService followService;
-    private final NicknameValidator nicknameValidator;
-    @InitBinder("targetObject")
-    public void initBinder(WebDataBinder binder) {
-        binder.addValidators(nicknameValidator);
-        //binder.setValidator(new NicknameValidator());
-    }
+//    private final NicknameValidator nicknameValidator;
+//    @InitBinder("targetObject")
+//    public void initBinder(WebDataBinder binder) {
+//        binder.addValidators(nicknameValidator);
+//        //binder.setValidator(new NicknameValidator());
+//    }
 
     // 프로필 사진 업로드 추가를 위해 임시로 만든 회원가입 API
     @PostMapping("/user/signup")
@@ -108,7 +108,7 @@ public class UserController {
     }
 
     @PatchMapping("/user/weeklyLog")
-    @ApiOperation(value = "위클리로그 변경", notes = "User의 위클리로그를 변경한다.")
+    @ApiOperation(value = "위클리로그 작성", notes = "User의 위클리로그를 작성한다.")
     public BaseResponseDto<UserUpdateResponseDto> changeWeeklyLog(@RequestBody String weeklyLog) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();

@@ -20,6 +20,7 @@ public enum ResponseMessage {
 
     // USER
     WRONG_USER(NOT_FOUND,false, "해당 유저를 찾을 수 없습니다."),
+    WRONG_NICKNAME(BAD_REQUEST, false, "이미 사용 중인 닉네임입니다."),
 
     // HABIT
     WRONG_HABIT(NOT_FOUND,false,"해당 습관을 찾을 수 없습니다."),

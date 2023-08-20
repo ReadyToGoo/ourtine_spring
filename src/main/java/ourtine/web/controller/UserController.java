@@ -61,6 +61,7 @@ public class UserController {
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id"));
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User me = userDetails.getUser();
+        userService.changeHabitCount(me.getId(), habitService.getMyHabitCount(me, pageable));
         me.updateHabitCount(habitService.getMyHabitCount(me, pageable));
         Long myFollowerCount = followService.getMyFollowerCount(me, pageable);
         Long myFollowingCount = followService.getMyFollowingCount(me, pageable);
@@ -75,6 +76,7 @@ public class UserController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User me = userDetails.getUser();
         User user = userService.findById(userId);
+        userService.changeHabitCount(user.getId(), habitService.getMyHabitCount(user, pageable));
         user.updateHabitCount(habitService.getMyHabitCount(user, pageable));
         List<String> categories = userCategoryService.findUsersAllCategory(me.getId());
         Boolean isFollow = followService.getFollowStatus(userId, me.getId()).getIsFollow();

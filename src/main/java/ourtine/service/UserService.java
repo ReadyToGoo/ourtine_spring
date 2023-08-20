@@ -11,6 +11,8 @@ public interface UserService {
 
     public void changeNickname(Long userId, String nickname);
     public void changeGoal(Long userId, String goal);
+    public void changeHabitCount(Long userId, Long habitCount);
+
 //    public void changeWeeklyLog(Long userId, String weeklyLog);
 
     public void changePushAlert(Long userId);

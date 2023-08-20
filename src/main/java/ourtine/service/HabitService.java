@@ -22,7 +22,7 @@ public interface HabitService {
 
     //습관 개설하기
     @Transactional
-    public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto habitCreatePostRequestDto, MultipartFile file, User user) throws IOException;
+    public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto habitCreatePostRequestDto, User user) throws IOException;
 
     //습관 프로필 변경
     public HabitUpdateImagePatchResponseDto updateHabitImage(Long habitId, MultipartFile file, User user) throws IOException;

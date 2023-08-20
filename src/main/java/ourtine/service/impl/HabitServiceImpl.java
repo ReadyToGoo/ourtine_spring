@@ -61,10 +61,11 @@ public class HabitServiceImpl implements HabitService {
 
     // 습관 개설하기
     @Override
-    public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto requestDto, MultipartFile file, User user) throws IOException {
+    public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto requestDto, User user) throws IOException {
         Habit habit;
+        MultipartFile profileImage = requestDto.getProfileImage();
         Category category = categoryRepository.findByName(requestDto.getCategory()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
-        if (file.isEmpty()) throw new IOException();
+        if (profileImage.isEmpty()) throw new IOException();
         // 시작 날짜가 종료 날짜보다 이후일 때
         if (requestDto.getEndDate().isBefore(requestDto.getStartDate())){
             throw new BusinessException(WRONG_HABIT_DATE);
@@ -76,7 +77,7 @@ public class HabitServiceImpl implements HabitService {
         }
         if (requestDto.getHabitStatus()== HabitStatus.PUBLIC)
         {
-            String imageUrl = s3Uploader.upload(file, "images/habits");
+            String imageUrl = s3Uploader.upload(profileImage, "images/habits");
 
             habit = PublicHabit.builder()
                     .host(user)
@@ -92,7 +93,7 @@ public class HabitServiceImpl implements HabitService {
                     .build();
         }
         else if (requestDto.getHabitStatus()==HabitStatus.PRIVATE){
-            String imageUrl = s3Uploader.upload(file,"images/habits");
+            String imageUrl = s3Uploader.upload(profileImage,"images/habits");
 
             habit = PrivateHabit.builder()
                     .host(user)

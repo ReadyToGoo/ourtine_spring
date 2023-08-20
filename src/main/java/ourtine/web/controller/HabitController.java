@@ -78,15 +78,6 @@ public class HabitController {
         return new BaseResponseDto<>(new SliceResponseDto<>(habitService.getHabitWeeklyLog(habit_id,user)));
     }
 
-    // 내 프로필 - 위클리 로그
-    @GetMapping(value = "/me/weekly-log")
-    @ApiOperation(value = "마이 페이지 - 위클리 로그", notes = "이번주에 내가 진행했던 습관 기록들에 대해 조회한다.")
-    public BaseResponseDto<List<HabitWeeklyLogGetResponseDto>> getMyWeeklyLog(){
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userDetails.getUser();
-        return new BaseResponseDto<>(habitService.getMyWeeklyLog(user));
-    }
-
     // 내 프로필 - 참여한 습관 목록
     @GetMapping(value = "/users/me")
     @ApiOperation(value = "내 프로필 - 참여한 습관 목록", notes = "내 프로필의 내가 참여한 습관들에 대해서 조회한다.")

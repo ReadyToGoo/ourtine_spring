@@ -250,13 +250,17 @@ public class HabitServiceImpl implements HabitService {
 
     // 내 프로필 - 위클리 로그
     @Override
+    @Transactional
     public List<HabitWeeklyLogGetResponseDto> getMyWeeklyLog(User user) {
-        LocalDateTime monday = dayConverter.getCurMonday();
+        LocalDateTime monday = dayConverter.getCurMonday().atStartOfDay();
         List<HabitSessionFollower> habitSessionFollowers = habitSessionFollowerRepository.getFollowerSessionInfo(monday, user.getId());
         List<HabitWeeklyLogGetResponseDto> responseDto = new ArrayList<>();
         habitSessionFollowers.forEach(follower ->
-                responseDto.add(new HabitWeeklyLogGetResponseDto(dayConverter.dayOfWeek(follower.getCreatedAt()),
-                follower.getVideoUrl(), follower.getEmotion())));
+                responseDto.add(new HabitWeeklyLogGetResponseDto(
+                        dayConverter.dayOfWeek(follower.getCreatedAt()),
+                        java.sql.Timestamp.valueOf(follower.getCreatedAt()),
+                        follower.getHabitSession().getHabit().getTitle(),
+                        follower.getVideoUrl(), follower.getEmotion())));
         return responseDto;
     }
 

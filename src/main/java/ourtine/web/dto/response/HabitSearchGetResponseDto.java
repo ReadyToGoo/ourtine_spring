@@ -40,6 +40,8 @@ public class HabitSearchGetResponseDto {
     private LocalTime startTime;
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "kk:mm:ss", timezone = "Asia/Seoul")
     private LocalTime endTime;
+    private Long followerCount ;
+    private Long followerLimit ;
 
     public HabitSearchGetResponseDto(Habit habit, Category category){
         this.id = habit.getId();
@@ -52,5 +54,7 @@ public class HabitSearchGetResponseDto {
         this.startTime = habit.getStartTime();
         this.endTime = habit.getEndTime();
         this.days = habit.getDays().stream().map(HabitDays::getDay).collect(Collectors.toList());
+        this.followerCount = habit.getFollowerCount();
+        this.followerLimit = habit.getFollowerLimit();
     }
 }

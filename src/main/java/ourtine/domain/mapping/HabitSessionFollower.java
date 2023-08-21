@@ -2,6 +2,7 @@ package ourtine.domain.mapping;
 
 import lombok.AccessLevel;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import ourtine.domain.HabitSession;
 import ourtine.domain.User;
 import ourtine.domain.common.BaseEntity;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert
 public class HabitSessionFollower extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -45,8 +47,8 @@ public class HabitSessionFollower extends BaseEntity {
     private HabitFollowerStatus habitFollowerStatus = HabitFollowerStatus.ENTERED;
 
     @Enumerated(value = EnumType.STRING)
-    @ColumnDefault("ACTIVE")
-    private Status status;
+    @ColumnDefault("'ACTIVE'")
+    private Status status= Status.ACTIVE;
 
     @Builder
     public HabitSessionFollower(HabitSession habitSession,User follower){

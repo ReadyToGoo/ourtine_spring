@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import ourtine.domain.common.BaseEntity;
 import ourtine.domain.enums.Provider;
 import ourtine.domain.enums.UserRoleEnum;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @Getter
 @Entity
+@DynamicInsert
 @Builder
 //@AllArgsConstructor(access = AccessLevel.PROTECTED)
 //@NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,7 +29,6 @@ public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
     private String nickname;
     private String introduce;
     private String imageUrl;
@@ -42,7 +43,7 @@ public class User extends BaseEntity {
     private List<UserCategory> userCategoryList;
 
     @Enumerated(value = EnumType.STRING)
-    @ColumnDefault("USER")
+    @ColumnDefault("'USER'")
     private UserRoleEnum userRole;
 
     @OneToMany(mappedBy = "follower", fetch = FetchType.EAGER)
@@ -70,9 +71,8 @@ public class User extends BaseEntity {
     private long habitCount;
 
     @Column
-    @ColumnDefault("")
+    @ColumnDefault("''")
     private String userWeeklyLog;
-
 
     // 푸쉬 알림 동의
     @Column(nullable = false)

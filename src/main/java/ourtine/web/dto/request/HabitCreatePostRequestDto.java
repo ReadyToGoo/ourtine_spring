@@ -33,9 +33,9 @@ public class HabitCreatePostRequestDto {
         @Schema(title = "습관명", description = "공백이 아닌 2자 이상 20자 이하의 한글, 영어 대/소문자, 띄어쓰기만 입력")
         private String title;
 
-        @NotBlank(message = "소개글은 10자 이상, 100자 이하여야 합니다.")
-        @Size(min = 10, max = 100, message = "소개글은 10자 이상, 100자 이하여야 합니다.")
-        @Schema(title = "소개글", description = "공백이 아닌 10자 이상 20자 이하의 문자열 입력")
+        @NotBlank(message = "소개글은 10자 이상, 120자 이하여야 합니다.")
+        @Size(min = 10, max = 200, message = "소개글은 10자 이상, 200자 이하여야 합니다.")
+        @Schema(title = "소개글", description = "공백이 아닌 10자 이상 200자 이하의 문자열 입력")
         private String detail;
 
         @NotNull(message = "시작 시간 입력은 필수입니다.")
@@ -84,7 +84,7 @@ public class HabitCreatePostRequestDto {
                 @Pattern(regexp = "^[0-9a-zA-Zㄱ-ㅎ가-힣]*$",message = "해시태그는 공백과 특수문자를 불포함한 해시태그만 입력할 수 있습니다.")
                 String> hashtags;
 
-        private MultipartFile profileImage;
+        //private MultipartFile profileImage;
 
         @NotNull(message = "습관 타입 입력은 필수입니다.")
         @Schema(title = "습관 타입", description = "PRIVATE 혹은 PUBLIC만 입력 가능")

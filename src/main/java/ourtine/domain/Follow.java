@@ -6,12 +6,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import ourtine.domain.common.BaseEntity;
 import ourtine.domain.enums.Status;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert
 public class Follow extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -28,8 +30,8 @@ public class Follow extends BaseEntity {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    @ColumnDefault("ACTIVE")
-    private Status status;
+    @ColumnDefault("'ACTIVE'")
+    private Status status = Status.ACTIVE;
 
     @Builder
     public Follow(User sender, User receiver){

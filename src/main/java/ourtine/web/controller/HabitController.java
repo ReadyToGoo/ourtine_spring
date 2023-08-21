@@ -40,6 +40,16 @@ public class HabitController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
         return new BaseResponseDto<>(habitService.createHabit(habitCreatePostRequestDto,user));
+
+    }
+
+    // 습관 개설2
+    @PostMapping(value = "/test",consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @ApiOperation(value = "습관 개설 - 습관 개설하기", notes = "습관을 개설한다.")
+    public BaseResponseDto<HabitCreatePostResponseDto> createHabit2(@RequestBody @Valid HabitCreatePostRequestDto habitCreatePostRequestDto) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userDetails.getUser();
+        return new BaseResponseDto<>(habitService.createHabit2(habitCreatePostRequestDto,user));
     }
 
     // 습관 프로필 사진 수정

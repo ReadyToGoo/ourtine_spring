@@ -63,9 +63,9 @@ public class HabitServiceImpl implements HabitService {
     @Override
     public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto requestDto, User user) throws IOException {
         Habit habit;
-        MultipartFile profileImage = requestDto.getProfileImage();
+        //MultipartFile profileImage = requestDto.getProfileImage();
         Category category = categoryRepository.findByName(requestDto.getCategory()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
-        if (profileImage.isEmpty()) throw new IOException();
+       // if (profileImage.isEmpty()) throw new IOException();
         // 시작 날짜가 종료 날짜보다 이후일 때
         if (requestDto.getEndDate().isBefore(requestDto.getStartDate())){
             throw new BusinessException(WRONG_HABIT_DATE);
@@ -77,13 +77,13 @@ public class HabitServiceImpl implements HabitService {
         }
         if (requestDto.getHabitStatus()== HabitStatus.PUBLIC)
         {
-            String imageUrl = s3Uploader.upload(profileImage, "images/habits");
+       //     String imageUrl = s3Uploader.upload(profileImage, "images/habits");
 
             habit = PublicHabit.builder()
                     .host(user)
                     .title(requestDto.getTitle())
                     .detail(requestDto.getDetail())
-                    .imageUrl(imageUrl)
+                    .imageUrl("imageUrl")
                     .categoryId(category.getId())
                     .startTime(requestDto.getStartTime())
                     .endTime(requestDto.getEndTime())
@@ -93,13 +93,13 @@ public class HabitServiceImpl implements HabitService {
                     .build();
         }
         else if (requestDto.getHabitStatus()==HabitStatus.PRIVATE){
-            String imageUrl = s3Uploader.upload(profileImage,"images/habits");
+       //     String imageUrl = s3Uploader.upload(profileImage,"images/habits");
 
             habit = PrivateHabit.builder()
                     .host(user)
                     .title(requestDto.getTitle())
                     .detail(requestDto.getDetail())
-                    .imageUrl(imageUrl)
+          //          .imageUrl(imageUrl)
                     .categoryId(category.getId())
                     .startTime(requestDto.getStartTime())
                     .endTime(requestDto.getEndTime())
@@ -125,6 +125,90 @@ public class HabitServiceImpl implements HabitService {
         requestDto.getDays().forEach(day ->{
                 HabitDays habitDays = HabitDays.builder().habit(savedHabit).day(day).build();
                 habitDaysRepository.save(habitDays);
+        });
+
+        // 해시태그 DB에 저장
+        requestDto.getHashtags().forEach(name->{
+            Hashtag hashtag;
+            if (hashtagRepository.findHashtagByName(name).isPresent()){
+                hashtag = hashtagRepository.findHashtagByName(name).get();
+            }
+            else {
+                hashtag = Hashtag.builder().name(name).build();
+                hashtagRepository.saveAndFlush(hashtag);
+            }
+            // 해시태그 매핑테이블에 저장
+            HabitHashtag habitHashtag = HabitHashtag.builder().habit(savedHabit).hashtag(hashtag).build();
+            habitHashtagRepository.save(habitHashtag);
+        });
+
+        // 팔로워 매핑테이블에 호스트 저장
+        HabitFollowers habitFollowers = HabitFollowers.builder().follower(user).habit(habit).build();
+        habitFollowersRepository.save(habitFollowers);
+
+        return new HabitCreatePostResponseDto(savedHabit.getId(),habitNum);
+    }
+    // 습관 개설하기
+    @Override
+    public HabitCreatePostResponseDto createHabit2(HabitCreatePostRequestDto requestDto, User user)  {
+        Habit habit;
+        Category category = categoryRepository.findByName(requestDto.getCategory()).orElseThrow(()-> new BusinessException(ResponseMessage.WRONG_HABIT_CATEGORY));
+        // 시작 날짜가 종료 날짜보다 이후일 때
+        if (requestDto.getEndDate().isBefore(requestDto.getStartDate())){
+            throw new BusinessException(WRONG_HABIT_DATE);
+        }
+        // 종료일이 오늘이면서, 시작 시간이 현재보다 과거일 때
+        if (Objects.equals(requestDto.getEndDate(), LocalDate.now(ZoneId.of("Asia/Seoul"))) &&
+                requestDto.getStartTime().isBefore(LocalTime.now(ZoneId.of("Asia/Seoul")))){
+            throw new BusinessException(WRONG_HABIT_TIME);
+        }
+        if (requestDto.getHabitStatus()== HabitStatus.PUBLIC)
+        {
+
+            habit = PublicHabit.builder()
+                    .host(user)
+                    .title(requestDto.getTitle())
+                    .detail(requestDto.getDetail())
+                    .imageUrl("imageUrl")
+                    .categoryId(category.getId())
+                    .startTime(requestDto.getStartTime())
+                    .endTime(requestDto.getEndTime())
+                    .startDate(requestDto.getStartDate())
+                    .endDate(requestDto.getEndDate())
+                    .followerLimit(requestDto.getFollowerLimit())
+                    .build();
+        }
+        else if (requestDto.getHabitStatus()==HabitStatus.PRIVATE){
+
+            habit = PrivateHabit.builder()
+                    .host(user)
+                    .title(requestDto.getTitle())
+                    .detail(requestDto.getDetail())
+                    .imageUrl("imageUrl")
+                    .categoryId(category.getId())
+                    .startTime(requestDto.getStartTime())
+                    .endTime(requestDto.getEndTime())
+                    .startDate(requestDto.getStartDate())
+                    .endDate(requestDto.getEndDate())
+                    .followerLimit(requestDto.getFollowerLimit())
+                    .build();
+        }
+        else throw new BusinessException(INTERVAL_SERVER_ERROR);
+
+        Habit savedHabit = saveOrUpdateHabit(habit);
+        Long habitNum = habitRepository.countByHost(user);
+
+        // 습관 시작 날짜와 시간이 오늘이라면
+        // 세션 바로 생성
+        if (Objects.equals(requestDto.getStartDate(), LocalDate.now()) && requestDto.getStartTime().isAfter(LocalTime.now()))
+        {
+            HabitSession habitSession = HabitSession.builder().habit(savedHabit).date(java.sql.Date.valueOf(requestDto.getStartDate())).build();
+            habitSessionRepository.save(habitSession);
+        }
+
+        requestDto.getDays().forEach(day ->{
+            HabitDays habitDays = HabitDays.builder().habit(savedHabit).day(day).build();
+            habitDaysRepository.save(habitDays);
         });
 
         // 해시태그 DB에 저장
@@ -181,23 +265,13 @@ public class HabitServiceImpl implements HabitService {
         Slice<Habit> followingHabits = habitRepository.queryFindHabitsByStartTime(followingHabitIds.getContent());
         List<HabitProfileHomeGetResponseDto> today = new ArrayList<>();
         List<HabitProfileHomeGetResponseDto> others = new ArrayList<>();
-        for (Habit habit: followingHabits){
-            // 오늘 진행되는 습관이면
-            if (habit.getDays().stream().map(HabitDays::getDay).collect(Collectors.toList()).contains(day)){
-                today.add (new HabitProfileHomeGetResponseDto(
-                                habit,
-                                calculatorClass.myHabitParticipationRate(habit.getId(),user,habitSessionRepository,habitSessionFollowerRepository,habitFollowersRepository),
-                                userMvpRepository.queryFindByHabitIdAndUserId(habit.getId(), user.getId()).size(),
-                                habitSessionFollowerRepository.existsByFollowerIdAndHabitSessionHabitId(user.getId(),habit.getId() )
-                        ));
-            }
-            else {
-                others.add(new HabitProfileHomeGetResponseDto(
-                        habit,
-                        calculatorClass.myHabitParticipationRate(habit.getId(),user,habitSessionRepository,habitSessionFollowerRepository,habitFollowersRepository),
-                        userMvpRepository.queryFindByHabitIdAndUserId(habit.getId(), user.getId()).size(),
-                        habitSessionFollowerRepository.existsByFollowerIdAndHabitSessionHabitId(user.getId(),habit.getId() )
-                ));
+            for (Day d : Day.values()) {
+                for (Habit habit: followingHabits){
+                    if (d == day){
+                        // 오늘 진행되는 습관
+                        today = homeHabitList(today,habit,day,user);
+                    }
+                    else others = homeHabitList(others,habit,d,user);
             }
         }
         return new HabitHomeGetResponseDto(today,others);
@@ -488,6 +562,20 @@ public class HabitServiceImpl implements HabitService {
             return new HabitUserFollowedGetResponseDto(habit, category, hashtags);
         });
         return responseDto;
+    }
+
+    @Transactional
+    public List<HabitProfileHomeGetResponseDto> homeHabitList( List<HabitProfileHomeGetResponseDto> list,Habit habit, Day day, User user){
+        if (habit.getDays().stream().map(HabitDays::getDay).collect(Collectors.toList()).contains(day)){
+            list.add (new HabitProfileHomeGetResponseDto(
+                    habit,
+                    calculatorClass.myHabitParticipationRate(habit.getId(),user,habitSessionRepository,habitSessionFollowerRepository,habitFollowersRepository),
+                    userMvpRepository.queryFindByHabitIdAndUserId(habit.getId(), user.getId()).size(),
+                    habitSessionFollowerRepository.existsByFollowerIdAndHabitSessionHabitId(user.getId(),habit.getId() ),
+                    day
+            ));
+        }
+        return list;
     }
 
 }

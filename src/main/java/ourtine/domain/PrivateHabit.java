@@ -14,7 +14,7 @@ import java.util.List;
 @DiscriminatorValue("Private")
 public class PrivateHabit extends Habit {
     @Builder
-    public PrivateHabit(User host, String title, String detail, String imageUrl, Long categoryId, /*Long followerCount, */Long followerLimit,
+    public PrivateHabit(User host, String title, String detail, String imageUrl, Long categoryId, Long followerLimit,
                         LocalTime startTime, LocalTime endTime, LocalDate startDate, LocalDate endDate){
         super(host, title, detail, imageUrl, categoryId, followerLimit, startTime, endTime, startDate, endDate, HabitStatus.PRIVATE);
 

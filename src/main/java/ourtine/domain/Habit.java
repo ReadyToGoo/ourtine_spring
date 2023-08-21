@@ -89,8 +89,8 @@ public class Habit extends BaseEntity {
     private Status status = Status.ACTIVE;
 
 
-    public Habit(User host, String title, String detail, String imageUrl, Long categoryId, /*Long followerCount, */Long followerLimit,
-                 LocalTime startTime, LocalTime endTime, LocalDate startDate, LocalDate endDate,Integer participateRate, HabitStatus habitStatus){
+    public Habit(User host, String title, String detail, String imageUrl, Long categoryId, Long followerLimit,
+                 LocalTime startTime, LocalTime endTime, LocalDate startDate, LocalDate endDate, HabitStatus habitStatus){
         this.host = host;
         this.title = title;
         this.detail = detail;
@@ -99,7 +99,6 @@ public class Habit extends BaseEntity {
         this.followerLimit = followerLimit;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.participateRate = participateRate;
         this.startDate  =startDate;
         this.endDate = endDate;
         this.habitStatus = habitStatus;

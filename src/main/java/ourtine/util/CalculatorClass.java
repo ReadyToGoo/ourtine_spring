@@ -86,7 +86,7 @@ public final class CalculatorClass {
 
     //userWeeklyLog 기간 파싱
     public String userWeeklyLogPeriod(String weeklyLog) {
-        if (weeklyLog==null) return "empty";
+        if (weeklyLog.isBlank()) return "empty";
         else {
             String dateString = weeklyLog.substring(1, 11);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -99,7 +99,7 @@ public final class CalculatorClass {
 
     // userWeeklyLog 본문 파싱
     public String userWeeklyLogContents(String weeklyLog) {
-        if (weeklyLog==null) return "empty";
+        if (weeklyLog.isBlank()) return "empty";
         else return weeklyLog.substring(12);
     }
 }

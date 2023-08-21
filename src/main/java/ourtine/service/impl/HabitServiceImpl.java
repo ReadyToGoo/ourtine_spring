@@ -269,9 +269,9 @@ public class HabitServiceImpl implements HabitService {
             for (Day d : Day.values()) {
                 if (d == day){
                     // 오늘 진행되는 습관
-                    today = homeHabitList(habit,day,user);
+                    today = homeHabitList(today,habit,day,user);
                 }
-                else others = homeHabitList(habit,day,user);
+                else others = homeHabitList(others,habit,d,user);
             }
         }
         return new HabitHomeGetResponseDto(today,others);
@@ -565,8 +565,7 @@ public class HabitServiceImpl implements HabitService {
     }
 
     @Transactional
-    public List<HabitProfileHomeGetResponseDto> homeHabitList(Habit habit, Day day, User user){
-        List<HabitProfileHomeGetResponseDto> list = new ArrayList<>();
+    public List<HabitProfileHomeGetResponseDto> homeHabitList( List<HabitProfileHomeGetResponseDto> list,Habit habit, Day day, User user){
         if (habit.getDays().stream().map(HabitDays::getDay).collect(Collectors.toList()).contains(day)){
             list.add (new HabitProfileHomeGetResponseDto(
                     habit,

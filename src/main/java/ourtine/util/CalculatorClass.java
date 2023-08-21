@@ -86,16 +86,20 @@ public final class CalculatorClass {
 
     //userWeeklyLog 기간 파싱
     public String userWeeklyLogPeriod(String weeklyLog) {
-        String dateString = weeklyLog.substring(1, 11);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate currentDate = LocalDate.parse(dateString, formatter);
-        LocalDate.parse(dateString, formatter).atStartOfDay();
-        LocalDate startDate = currentDate.minus(7, ChronoUnit.DAYS);
-        return startDate.format(DateTimeFormatter.ofPattern("MM/dd")) + " ~ " + currentDate.format(DateTimeFormatter.ofPattern("MM/dd"));
+        if (weeklyLog==null) return "empty";
+        else {
+            String dateString = weeklyLog.substring(1, 11);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate currentDate = LocalDate.parse(dateString, formatter);
+            LocalDate.parse(dateString, formatter).atStartOfDay();
+            LocalDate startDate = currentDate.minus(7, ChronoUnit.DAYS);
+            return startDate.format(DateTimeFormatter.ofPattern("MM/dd")) + " ~ " + currentDate.format(DateTimeFormatter.ofPattern("MM/dd"));
+        }
     }
 
     // userWeeklyLog 본문 파싱
     public String userWeeklyLogContents(String weeklyLog) {
-        return weeklyLog.substring(12);
+        if (weeklyLog==null) return "empty";
+        else return weeklyLog.substring(12);
     }
 }

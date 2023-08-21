@@ -198,10 +198,9 @@ public class HabitServiceImpl implements HabitService {
         Habit savedHabit = saveOrUpdateHabit(habit);
         Long habitNum = habitRepository.countByHost(user);
 
-        // 습관 시작 시간이 습관 세션 생성 예정 시간보다 빠르다면
+        // 습관 시작 날짜와 시간이 오늘이라면
         // 세션 바로 생성
-        if (Objects.equals(requestDto.getStartDate(), LocalDate.now()) &&
-                requestDto.getStartTime().isBefore(LocalTime.now().plusMinutes(15)) )
+        if (Objects.equals(requestDto.getStartDate(), LocalDate.now()) && requestDto.getStartTime().isAfter(LocalTime.now()))
         {
             HabitSession habitSession = HabitSession.builder().habit(savedHabit).date(java.sql.Date.valueOf(requestDto.getStartDate())).build();
             habitSessionRepository.save(habitSession);
@@ -266,13 +265,13 @@ public class HabitServiceImpl implements HabitService {
         Slice<Habit> followingHabits = habitRepository.queryFindHabitsByStartTime(followingHabitIds.getContent());
         List<HabitProfileHomeGetResponseDto> today = new ArrayList<>();
         List<HabitProfileHomeGetResponseDto> others = new ArrayList<>();
-        for (Habit habit: followingHabits){
             for (Day d : Day.values()) {
-                if (d == day){
-                    // 오늘 진행되는 습관
-                    today = homeHabitList(today,habit,day,user);
-                }
-                else others = homeHabitList(others,habit,d,user);
+                for (Habit habit: followingHabits){
+                    if (d == day){
+                        // 오늘 진행되는 습관
+                        today = homeHabitList(today,habit,day,user);
+                    }
+                    else others = homeHabitList(others,habit,d,user);
             }
         }
         return new HabitHomeGetResponseDto(today,others);

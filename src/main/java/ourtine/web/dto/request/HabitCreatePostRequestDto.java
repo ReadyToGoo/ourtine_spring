@@ -33,9 +33,9 @@ public class HabitCreatePostRequestDto {
         @Schema(title = "습관명", description = "공백이 아닌 2자 이상 20자 이하의 한글, 영어 대/소문자, 띄어쓰기만 입력")
         private String title;
 
-        @NotBlank(message = "소개글은 10자 이상, 100자 이하여야 합니다.")
-        @Size(min = 10, max = 100, message = "소개글은 10자 이상, 100자 이하여야 합니다.")
-        @Schema(title = "소개글", description = "공백이 아닌 10자 이상 20자 이하의 문자열 입력")
+        @NotBlank(message = "소개글은 10자 이상, 120자 이하여야 합니다.")
+        @Size(min = 10, max = 200, message = "소개글은 10자 이상, 200자 이하여야 합니다.")
+        @Schema(title = "소개글", description = "공백이 아닌 10자 이상 200자 이하의 문자열 입력")
         private String detail;
 
         @NotNull(message = "시작 시간 입력은 필수입니다.")

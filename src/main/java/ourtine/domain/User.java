@@ -45,7 +45,7 @@ public class User extends BaseEntity {
 
     @Enumerated(value = EnumType.STRING)
     @ColumnDefault("'USER'")
-    private UserRoleEnum userRole;
+    private UserRoleEnum userRole = UserRoleEnum.USER;
 
     @OneToMany(mappedBy = "follower", fetch = FetchType.EAGER)
     private List<HabitFollowers> habitFollowersList;
@@ -53,44 +53,44 @@ public class User extends BaseEntity {
     // 이용 약관 동의
     @Column(nullable = false)
     @ColumnDefault("false")
-    private boolean termsAgreed;
+    private boolean termsAgreed =false;
     // 개인 정보 수집 동의
     @Column(nullable = false)
     @ColumnDefault("false")
-    private boolean privacyAgreed;
+    private boolean privacyAgreed=false;
 
     // 이벤트 정보 수신 동의
     @Column(nullable = false)
     @ColumnDefault("false")
-    private boolean marketingAgreed;
+    private boolean marketingAgreed=false;
 
     @ColumnDefault("0")
-    private Integer participationRate;
+    private Integer participationRate=0;
 
     @Column(nullable = false)
     @ColumnDefault("0")
-    private long habitCount;
+    private long habitCount=0l;
 
     @Column
     @ColumnDefault("''")
-    private String userWeeklyLog;
+    private String userWeeklyLog="";
 
 
     // 푸쉬 알림 동의
     @Column(nullable = false)
     @ColumnDefault("true")
-    private boolean pushAlert;
+    private boolean pushAlert= true;
 
     // 마케팅 푸쉬 알림 동의
     @Column(nullable = false)
     @ColumnDefault("true")
-    private boolean marketingPushAlert;
+    private boolean marketingPushAlert = true;
 
     private String refreshToken;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
-    private UserStatus userStatus;
+    private UserStatus userStatus ;
 
     public void updateNickname(String nickname) {
         this.nickname = nickname;

@@ -174,6 +174,9 @@ public class KakaoService{
                     .privacyAgreed(false)
                     .marketingAgreed(false)
                     .termsAgreed(false)
+                    .pushAlert(true)
+                    .userWeeklyLog("")
+                    .marketingPushAlert(true)
                     .build();
             log.info(""+kakaoUser.getProvider());
             log.info("ID = "+kakaoUser.getId());

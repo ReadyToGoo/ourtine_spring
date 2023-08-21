@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import ourtine.domain.common.BaseEntity;
 import ourtine.domain.enums.Provider;
 import ourtine.domain.enums.UserRoleEnum;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @Getter
 @Entity
+@DynamicInsert
 @Builder
 //@AllArgsConstructor(access = AccessLevel.PROTECTED)
 //@NoArgsConstructor(access = AccessLevel.PROTECTED)

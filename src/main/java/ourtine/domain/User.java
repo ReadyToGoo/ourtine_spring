@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import ourtine.domain.common.BaseEntity;
 import ourtine.domain.enums.Provider;
 import ourtine.domain.enums.UserRoleEnum;
@@ -23,6 +24,7 @@ import java.util.List;
 //@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @NoArgsConstructor
+@DynamicInsert
 public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -70,7 +72,7 @@ public class User extends BaseEntity {
     private long habitCount;
 
     @Column
-    @ColumnDefault("''")
+    @ColumnDefault("")
     private String userWeeklyLog;
 
 

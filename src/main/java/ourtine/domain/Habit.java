@@ -27,6 +27,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn
+@DynamicInsert
 public class Habit extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import ourtine.domain.Habit;
 import ourtine.domain.common.BaseEntity;
 import ourtine.domain.enums.Day;
@@ -16,6 +17,7 @@ import java.time.ZoneId;
 @Getter
 @NoArgsConstructor
 @Entity
+@DynamicInsert
 public class HabitDays extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

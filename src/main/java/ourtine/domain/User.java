@@ -72,7 +72,7 @@ public class User extends BaseEntity {
     private long habitCount;
 
     @Column
-    @ColumnDefault("")
+    @ColumnDefault("''")
     private String userWeeklyLog;
 
 

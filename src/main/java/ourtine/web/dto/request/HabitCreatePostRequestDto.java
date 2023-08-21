@@ -84,7 +84,7 @@ public class HabitCreatePostRequestDto {
                 @Pattern(regexp = "^[0-9a-zA-Zㄱ-ㅎ가-힣]*$",message = "해시태그는 공백과 특수문자를 불포함한 해시태그만 입력할 수 있습니다.")
                 String> hashtags;
 
-        //private MultipartFile profileImage;
+        private MultipartFile profileImage;
 
         @NotNull(message = "습관 타입 입력은 필수입니다.")
         @Schema(title = "습관 타입", description = "PRIVATE 혹은 PUBLIC만 입력 가능")

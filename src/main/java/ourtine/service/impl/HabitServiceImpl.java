@@ -181,22 +181,12 @@ public class HabitServiceImpl implements HabitService {
         List<HabitProfileHomeGetResponseDto> today = new ArrayList<>();
         List<HabitProfileHomeGetResponseDto> others = new ArrayList<>();
         for (Habit habit: followingHabits){
-            // 오늘 진행되는 습관이면
-            if (habit.getDays().stream().map(HabitDays::getDay).collect(Collectors.toList()).contains(day)){
-                today.add (new HabitProfileHomeGetResponseDto(
-                                habit,
-                                calculatorClass.myHabitParticipationRate(habit.getId(),user,habitSessionRepository,habitSessionFollowerRepository,habitFollowersRepository),
-                                userMvpRepository.queryFindByHabitIdAndUserId(habit.getId(), user.getId()).size(),
-                                habitSessionFollowerRepository.existsByFollowerIdAndHabitSessionHabitId(user.getId(),habit.getId() )
-                        ));
-            }
-            else {
-                others.add(new HabitProfileHomeGetResponseDto(
-                        habit,
-                        calculatorClass.myHabitParticipationRate(habit.getId(),user,habitSessionRepository,habitSessionFollowerRepository,habitFollowersRepository),
-                        userMvpRepository.queryFindByHabitIdAndUserId(habit.getId(), user.getId()).size(),
-                        habitSessionFollowerRepository.existsByFollowerIdAndHabitSessionHabitId(user.getId(),habit.getId() )
-                ));
+            for (Day d : Day.values()) {
+                if (d == day){
+                    // 오늘 진행되는 습관
+                    today = homeHabitList(habit,day,user);
+                }
+                else others = homeHabitList(habit,day,user);
             }
         }
         return new HabitHomeGetResponseDto(today,others);
@@ -487,6 +477,21 @@ public class HabitServiceImpl implements HabitService {
             return new HabitUserFollowedGetResponseDto(habit, category, hashtags);
         });
         return responseDto;
+    }
+
+    @Transactional
+    public List<HabitProfileHomeGetResponseDto> homeHabitList(Habit habit, Day day, User user){
+        List<HabitProfileHomeGetResponseDto> list = new ArrayList<>();
+        if (habit.getDays().stream().map(HabitDays::getDay).collect(Collectors.toList()).contains(day)){
+            list.add (new HabitProfileHomeGetResponseDto(
+                    habit,
+                    calculatorClass.myHabitParticipationRate(habit.getId(),user,habitSessionRepository,habitSessionFollowerRepository,habitFollowersRepository),
+                    userMvpRepository.queryFindByHabitIdAndUserId(habit.getId(), user.getId()).size(),
+                    habitSessionFollowerRepository.existsByFollowerIdAndHabitSessionHabitId(user.getId(),habit.getId() ),
+                    day
+            ));
+        }
+        return list;
     }
 
 }

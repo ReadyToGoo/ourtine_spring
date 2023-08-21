@@ -34,9 +34,9 @@ public class HabitController {
     private final UserService userService;
 
     // 습관 개설
-    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "습관 개설 - 습관 개설하기", notes = "습관을 개설한다.")
-    public BaseResponseDto<HabitCreatePostResponseDto> createHabit(@ModelAttribute @Valid HabitCreatePostRequestDto habitCreatePostRequestDto) throws IOException {
+    public BaseResponseDto<HabitCreatePostResponseDto> createHabit(@RequestBody @Valid HabitCreatePostRequestDto habitCreatePostRequestDto) throws IOException {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
         return new BaseResponseDto<>(habitService.createHabit(habitCreatePostRequestDto,user));

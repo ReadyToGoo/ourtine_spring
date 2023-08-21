@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
 import ourtine.domain.common.BaseEntity;
 import ourtine.domain.enums.Provider;
 import ourtine.domain.enums.UserRoleEnum;
@@ -24,7 +23,6 @@ import java.util.List;
 //@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @NoArgsConstructor
-@DynamicInsert
 public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -45,7 +43,7 @@ public class User extends BaseEntity {
 
     @Enumerated(value = EnumType.STRING)
     @ColumnDefault("'USER'")
-    private UserRoleEnum userRole = UserRoleEnum.USER;
+    private UserRoleEnum userRole;
 
     @OneToMany(mappedBy = "follower", fetch = FetchType.EAGER)
     private List<HabitFollowers> habitFollowersList;
@@ -53,44 +51,43 @@ public class User extends BaseEntity {
     // 이용 약관 동의
     @Column(nullable = false)
     @ColumnDefault("false")
-    private boolean termsAgreed =false;
+    private boolean termsAgreed;
     // 개인 정보 수집 동의
     @Column(nullable = false)
     @ColumnDefault("false")
-    private boolean privacyAgreed=false;
+    private boolean privacyAgreed;
 
     // 이벤트 정보 수신 동의
     @Column(nullable = false)
     @ColumnDefault("false")
-    private boolean marketingAgreed=false;
+    private boolean marketingAgreed;
 
     @ColumnDefault("0")
-    private Integer participationRate=0;
+    private Integer participationRate;
 
     @Column(nullable = false)
     @ColumnDefault("0")
-    private long habitCount=0l;
+    private long habitCount;
 
     @Column
     @ColumnDefault("''")
-    private String userWeeklyLog="";
-
+    private String userWeeklyLog;
 
     // 푸쉬 알림 동의
     @Column(nullable = false)
     @ColumnDefault("true")
-    private boolean pushAlert= true;
+    private boolean pushAlert;
 
     // 마케팅 푸쉬 알림 동의
     @Column(nullable = false)
     @ColumnDefault("true")
-    private boolean marketingPushAlert = true;
+    private boolean marketingPushAlert;
 
     private String refreshToken;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
-    private UserStatus userStatus ;
+    private UserStatus userStatus;
 
     public void updateNickname(String nickname) {
         this.nickname = nickname;

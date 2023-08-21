@@ -71,11 +71,11 @@ public class Habit extends BaseEntity {
 
     @Column(nullable = false)
     @ColumnDefault("0")
-    private Integer participateRate ;
+    private Integer participateRate = 0;
 
     @Column(nullable = false, precision =2, scale = 1)
     @ColumnDefault("0.0")
-    private BigDecimal starRate;
+    private BigDecimal starRate = BigDecimal.valueOf(0.0);
 
     // 공개/비공개 여부
     @Column(nullable = false)
@@ -86,11 +86,11 @@ public class Habit extends BaseEntity {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     @ColumnDefault("'ACTIVE'")
-    private Status status;
+    private Status status = Status.ACTIVE;
 
 
     public Habit(User host, String title, String detail, String imageUrl, Long categoryId, /*Long followerCount, */Long followerLimit,
-                 LocalTime startTime, LocalTime endTime, LocalDate startDate, LocalDate endDate, HabitStatus habitStatus){
+                 LocalTime startTime, LocalTime endTime, LocalDate startDate, LocalDate endDate,Integer participateRate, HabitStatus habitStatus){
         this.host = host;
         this.title = title;
         this.detail = detail;
@@ -99,6 +99,7 @@ public class Habit extends BaseEntity {
         this.followerLimit = followerLimit;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.participateRate = participateRate;
         this.startDate  =startDate;
         this.endDate = endDate;
         this.habitStatus = habitStatus;

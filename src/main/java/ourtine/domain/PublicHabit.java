@@ -15,7 +15,7 @@ import java.util.List;
 public class PublicHabit extends Habit {
     @Builder
     public PublicHabit(User host, String title, String detail, String imageUrl, Long categoryId, Long followerLimit,
-                       LocalTime startTime, LocalTime endTime, LocalDate startDate, LocalDate endDate){
-        super(host, title, detail, imageUrl, categoryId, followerLimit, startTime, endTime, startDate, endDate, HabitStatus.PUBLIC);
+                       LocalTime startTime, LocalTime endTime, LocalDate startDate, LocalDate endDate, Integer participateRate){
+        super(host, title, detail, imageUrl, categoryId, followerLimit, startTime, endTime, startDate, endDate,participateRate, HabitStatus.PUBLIC);
     }
 }

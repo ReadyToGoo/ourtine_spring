@@ -42,7 +42,7 @@ public class User extends BaseEntity {
     private List<UserCategory> userCategoryList;
 
     @Enumerated(value = EnumType.STRING)
-    @ColumnDefault("USER")
+    @ColumnDefault("'USER'")
     private UserRoleEnum userRole;
 
     @OneToMany(mappedBy = "follower", fetch = FetchType.EAGER)
@@ -70,7 +70,7 @@ public class User extends BaseEntity {
     private long habitCount;
 
     @Column
-    @ColumnDefault("")
+    @ColumnDefault("''")
     private String userWeeklyLog;
 
 

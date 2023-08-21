@@ -28,7 +28,7 @@ public class HabitFollowers extends BaseEntity {
 
 
     @Enumerated(value = EnumType.STRING)
-    @ColumnDefault("ACTIVE")
+    @ColumnDefault("'ACTIVE'")
     private Status status;
 
     @Builder

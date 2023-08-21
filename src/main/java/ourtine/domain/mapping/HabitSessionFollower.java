@@ -45,7 +45,7 @@ public class HabitSessionFollower extends BaseEntity {
     private HabitFollowerStatus habitFollowerStatus = HabitFollowerStatus.ENTERED;
 
     @Enumerated(value = EnumType.STRING)
-    @ColumnDefault("ACTIVE")
+    @ColumnDefault("'ACTIVE'")
     private Status status;
 
     @Builder

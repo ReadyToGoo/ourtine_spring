@@ -33,7 +33,7 @@ public class HabitSession extends BaseEntity {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    @ColumnDefault("ACTIVE")
+    @ColumnDefault("'ACTIVE'")
     private Status status;
 
     @OneToMany( mappedBy = "habitSession",fetch = FetchType.EAGER)

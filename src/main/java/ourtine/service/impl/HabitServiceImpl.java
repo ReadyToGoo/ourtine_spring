@@ -265,13 +265,13 @@ public class HabitServiceImpl implements HabitService {
         Slice<Habit> followingHabits = habitRepository.queryFindHabitsByStartTime(followingHabitIds.getContent());
         List<HabitProfileHomeGetResponseDto> today = new ArrayList<>();
         List<HabitProfileHomeGetResponseDto> others = new ArrayList<>();
-        for (Habit habit: followingHabits){
             for (Day d : Day.values()) {
-                if (d == day){
-                    // 오늘 진행되는 습관
-                    today = homeHabitList(today,habit,day,user);
-                }
-                else others = homeHabitList(others,habit,d,user);
+                for (Habit habit: followingHabits){
+                    if (d == day){
+                        // 오늘 진행되는 습관
+                        today = homeHabitList(today,habit,day,user);
+                    }
+                    else others = homeHabitList(others,habit,d,user);
             }
         }
         return new HabitHomeGetResponseDto(today,others);

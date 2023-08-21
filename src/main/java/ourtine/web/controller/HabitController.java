@@ -40,6 +40,7 @@ public class HabitController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
         return new BaseResponseDto<>(habitService.createHabit(habitCreatePostRequestDto,user));
+
     }
 
     // 습관 개설2

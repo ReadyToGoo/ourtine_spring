@@ -2,6 +2,7 @@ package ourtine.domain.mapping;
 
 import lombok.Getter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import ourtine.domain.Habit;
 import ourtine.domain.User;
 import ourtine.domain.common.BaseEntity;
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Entity
+@DynamicInsert
 public class HabitFollowers extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

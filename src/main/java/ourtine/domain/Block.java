@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import ourtine.domain.common.BaseEntity;
 import ourtine.domain.enums.Status;
 
@@ -12,6 +13,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert
 public class Block extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

@@ -24,8 +24,6 @@ public interface HabitService {
     @Transactional
     public HabitCreatePostResponseDto createHabit(HabitCreatePostRequestDto habitCreatePostRequestDto, MultipartFile file, User user) throws IOException;
 
-    //습관 개설하기
-    public HabitCreatePostResponseDto createHabit2(HabitCreatePostRequestDto habitCreatePostRequestDto, User user);
     //습관 프로필 변경
     public HabitUpdateImagePatchResponseDto updateHabitImage(Long habitId, MultipartFile file, User user) throws IOException;
     // 홈 - 팔로잉하는 습관 목록 (요일 필터링)
